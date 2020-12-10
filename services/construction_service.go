@@ -405,9 +405,9 @@ func (s *ConstructionAPIService) ConstructionSubmit(
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
-	//if err := s.client.SendTransaction(ctx, &signedTx); err != nil {
-	//	return nil, wrapErr(ErrBroadcastFailed, err)
-	//}
+	if err := s.client.SendTransaction(signedTx); err != nil {
+		return nil, wrapErr(ErrBroadcastFailed, err)
+	}
 
 	h := "0x" + hex.EncodeToString(signedTx.TxHash())
 	txIdentifier := &types.TransactionIdentifier{

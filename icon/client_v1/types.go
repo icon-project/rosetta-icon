@@ -104,6 +104,39 @@ type TransactionV3 struct {
 	Data      json.RawMessage  `json:"data,omitempty"`
 }
 
+func (tx *TransactionV3WithSig) ToJSON() (interface{}, error) {
+	jso := map[string]interface{}{
+		"version":   &tx.Version,
+		"from":      &tx.From,
+		"to":        &tx.To,
+		"stepLimit": &tx.StepLimit,
+		"timestamp": &tx.Timestamp,
+		"signature": &tx.Signature,
+	}
+	if tx.Value != nil {
+		jso["value"] = tx.Value
+	}
+	if tx.NID != nil {
+		jso["nid"] = tx.NID
+	}
+	if tx.Nonce != nil {
+		jso["nonce"] = tx.Nonce
+	}
+	if tx.DataType != nil {
+		jso["dataType"] = *tx.DataType
+	}
+	if tx.Data != nil {
+		jso["data"] = tx.Data
+	}
+	jso["txHash"] = common.HexBytes(tx.Hash)
+
+	return jso, nil
+
+}
+func (tx *TransactionV3) ToJson() (map[string]interface{}, error) {
+	return nil, nil
+}
+
 func (tx *TransactionV3) CalcHash() ([]byte, error) {
 	// sha := sha3.New256()
 	sha := bytes.NewBuffer(nil)

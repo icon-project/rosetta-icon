@@ -81,6 +81,13 @@ var (
 		Message: "Signature invalid",
 	}
 
+	// ErrBroadcastFailed is returned when transaction
+	// broadcast fails.
+	ErrBroadcastFailed = &types.Error{
+		Code:    7, //nolint
+		Message: "Unable to broadcast transaction",
+	}
+
 	// ErrInvalidAddress is returned when an address
 	// is not valid.
 	ErrInvalidAddress = &types.Error{
