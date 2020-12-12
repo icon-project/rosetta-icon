@@ -206,7 +206,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	// Required Fields for constructing a ICON transaction
 	tOp, amount := m[1].First()
 	ta := tOp.Account.Address
-	//nid := s.config.Network.Network
+	nid := mapNetwork(s.config.Network.Network)
 
 	// Additional Fields for constructing custom ICON tx struct
 	fOp, _ := m[0].First()
@@ -218,8 +218,8 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 		Value:     common.NewHexInt(amount.Int64()),
 		StepLimit: *common.NewHexInt(client_v1.TransferStepLimit.Int64()),
 		Timestamp: common.HexInt64{Value: time.Now().UTC().UnixNano()},
-		NID:       &common.HexInt64{Value: 3},
-		Nonce:     common.NewHexInt(22),
+		NID:       nid,
+		Nonce:     common.NewHexInt(1),
 	}
 	h, err := uTx.CalcHash()
 	if err != nil {
@@ -360,16 +360,13 @@ func (s *ConstructionAPIService) ConstructionParse(
 		},
 	}
 
-	// TODO Metadata Parse추가
-	//metadata := &parseMetadata{
-	//	Nonce:    tx.Nonce,
-	//	GasPrice: tx.GasPrice,
-	//	ChainID:  tx.ChainID,
-	//}
-	//metaMap, err := marshalJSONMap(metadata)
-	//if err != nil {
-	//	return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
-	//}
+	metadata := &parseMetadata{
+		StepPrice: client_v1.StepPrice,
+	}
+	metaMap, e := marshalJSONMap(metadata)
+	if e != nil {
+		return nil, wrapErr(ErrUnableToParseIntermediateResult, e)
+	}
 
 	var resp *types.ConstructionParseResponse
 	if request.Signed {
@@ -386,7 +383,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 		resp = &types.ConstructionParseResponse{
 			Operations:               ops,
 			AccountIdentifierSigners: []*types.AccountIdentifier{},
-			Metadata:                 nil,
+			Metadata:                 metaMap,
 		}
 	}
 	return resp, nil

@@ -33,6 +33,8 @@ var (
 
 	OperationTypes = []string{
 		"TEST",
+		CallOpType,
+		FeeOpType,
 	}
 
 	// OperationStatuses are all supported operation statuses.
@@ -50,9 +52,9 @@ var (
 	MiddlewareVersion = "0.0.1"
 	RosettaVersion    = "1.4.0"
 	NodeVersion       = "1.8.0"
-	StepPrice         = big.NewInt(100000)
-	TransferStepPrice = big.NewInt(12500000000)
-	TransferStepLimit = big.NewInt(1000000000000000)
+	StepPrice         = big.NewInt(12500000000)
+	TransferStepPrice = big.NewInt(100000)
+	TransferStepLimit = new(big.Int).Mul(StepPrice, TransferStepPrice)
 )
 
 const (
