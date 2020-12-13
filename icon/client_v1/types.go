@@ -22,7 +22,6 @@ import (
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/icon-project/goloop/service/transaction"
 	"math/big"
-	"time"
 )
 
 var (
@@ -94,19 +93,20 @@ type TransactionRPCRequest struct {
 }
 
 type TransactionV3 struct {
-	Version   common.HexUint16 `json:"version"`
-	From      common.Address   `json:"from"`
-	To        common.Address   `json:"to"`
-	Value     *common.HexInt   `json:"value,omitempty"`
-	StepLimit common.HexInt    `json:"stepLimit"`
-	Timestamp common.HexInt64  `json:"timestamp"`
-	NID       *common.HexInt64 `json:"nid"`
-	Nonce     *common.HexInt   `json:"nonce,omitempty"`
-	DataType  *string          `json:"dataType,omitempty"`
-	Data      json.RawMessage  `json:"data,omitempty"`
+	Version   common.HexUint16  `json:"version"`
+	From      common.Address    `json:"from"`
+	To        common.Address    `json:"to"`
+	Value     *common.HexInt    `json:"value,omitempty"`
+	StepLimit common.HexInt     `json:"stepLimit"`
+	Timestamp common.HexInt64   `json:"timestamp"`
+	NID       *common.HexInt64  `json:"nid"`
+	Nonce     *common.HexInt    `json:"nonce,omitempty"`
+	Signature *common.Signature `json:"signature,omitempty"`
+	DataType  *string           `json:"dataType,omitempty"`
+	Data      json.RawMessage   `json:"data,omitempty"`
 }
 
-func (tx *TransactionV3WithSig) ToJSON() (interface{}, error) {
+func (tx *TransactionV3) ToJSON() (interface{}, error) {
 	jso := map[string]interface{}{
 		"version":   &tx.Version,
 		"from":      &tx.From,
@@ -130,13 +130,9 @@ func (tx *TransactionV3WithSig) ToJSON() (interface{}, error) {
 	if tx.Data != nil {
 		jso["data"] = tx.Data
 	}
-	jso["txHash"] = common.HexBytes(tx.Hash)
 
 	return jso, nil
 
-}
-func (tx *TransactionV3) ToJson() (map[string]interface{}, error) {
-	return nil, nil
 }
 
 func (tx *TransactionV3) CalcHash() ([]byte, error) {
@@ -207,13 +203,7 @@ func (tx *TransactionV3) CalcHash() ([]byte, error) {
 	return crypto.SHA3Sum256(sha.Bytes()), nil
 }
 
-type TransactionV3WithSig struct {
-	TransactionV3
-	Signature common.Signature `json:"signature"`
-	Hash      []byte           `json:"txHash"`
-}
-
-func (tx *TransactionV3WithSig) VerifySignature() error {
+func (tx *TransactionV3) VerifySignature() error {
 	pk, err := tx.Signature.RecoverPublicKey(tx.TxHash())
 	if err != nil {
 		return transaction.InvalidSignatureError.Wrap(err, "fail to recover public key")
@@ -225,30 +215,15 @@ func (tx *TransactionV3WithSig) VerifySignature() error {
 	return transaction.InvalidSignatureError.New("fail to verify signature")
 }
 
-func (tx *TransactionV3WithSig) TxHash() []byte {
-	if tx.Hash == nil {
-		h, err := tx.CalcHash()
-		if err != nil {
-			tx.Hash = []byte{}
-		} else {
-			tx.Hash = h
-		}
+func (tx *TransactionV3) TxHash() []byte {
+	h, err := tx.CalcHash()
+	if err != nil {
+		return []byte{}
 	}
-	return tx.Hash
+	return h
 }
 
-func (tx *TransactionV3WithSig) UnmarshalJSON(input []byte) error {
-	if err := json.Unmarshal(input, tx); err != nil {
-		return err
-	}
-	if tx.VerifySignature() != nil {
-		return transaction.InvalidSignatureError.New("failed to verify signature")
-	}
-	tx.Timestamp = common.HexInt64{Value: time.Now().UTC().UnixNano()}
-	return nil
-}
-
-func ParseV3JSON(js []byte, raw bool) (*TransactionV3, error) {
+func ParseV3JSON(js []byte) (*TransactionV3, error) {
 	tx := new(TransactionV3)
 
 	if err := json.Unmarshal(js, tx); err != nil {

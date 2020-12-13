@@ -99,7 +99,7 @@ func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 	return peers, nil
 }
 
-func (ic *Client) SendTransaction(tx client_v1.TransactionV3WithSig) error {
+func (ic *Client) SendTransaction(tx client_v1.TransactionV3) error {
 	js, err := tx.ToJSON()
 	if err != nil {
 		return err

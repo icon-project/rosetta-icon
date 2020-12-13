@@ -260,10 +260,8 @@ func (s *ConstructionAPIService) ConstructionCombine(
 		return nil, wrapErr(ErrSignatureInvalid, err)
 	}
 
-	signedTx := client_v1.TransactionV3WithSig{
-		TransactionV3: unsignedTx,
-		Signature:     sig,
-	}
+	signedTx := unsignedTx
+	signedTx.Signature = &sig
 
 	if err = signedTx.VerifySignature(); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
@@ -283,7 +281,7 @@ func (s *ConstructionAPIService) ConstructionHash(
 	ctx context.Context,
 	request *types.ConstructionHashRequest,
 ) (*types.TransactionIdentifierResponse, *types.Error) {
-	signedTx := &client_v1.TransactionV3WithSig{}
+	signedTx := &client_v1.TransactionV3{}
 	if err := json.Unmarshal([]byte(request.SignedTransaction), signedTx); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -308,8 +306,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 		}
 	} else {
-		t := new(client_v1.TransactionV3WithSig)
-		err := t.UnmarshalJSON([]byte(request.Transaction))
+		err := json.Unmarshal([]byte(request.Transaction), &tx)
 		if err != nil {
 			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 		}
@@ -377,7 +374,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 					Address: tx.From.String(),
 				},
 			},
-			Metadata: nil,
+			Metadata: metaMap,
 		}
 	} else {
 		resp = &types.ConstructionParseResponse{
@@ -397,8 +394,8 @@ func (s *ConstructionAPIService) ConstructionSubmit(
 		return nil, ErrUnavailableOffline
 	}
 
-	var signedTx client_v1.TransactionV3WithSig
-	if _, err := client_v1.ParseV3JSON([]byte(request.SignedTransaction), false); err != nil {
+	var signedTx client_v1.TransactionV3
+	if _, err := client_v1.ParseV3JSON([]byte(request.SignedTransaction)); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
