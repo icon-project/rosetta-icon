@@ -34,7 +34,7 @@ func mapNetwork(n string) *common.HexInt64 {
 	case client_v1.MainnetNetwork:
 		return &common.HexInt64{Value: 1}
 	case client_v1.TestnetNetwork:
-		return &common.HexInt64{Value: 2}
+		return &common.HexInt64{Value: 3}
 	default:
 		return &common.HexInt64{Value: 3}
 	}

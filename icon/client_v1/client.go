@@ -161,7 +161,7 @@ func (c *ClientV3) GetPRep(prep string) (*map[string]interface{}, error) {
 }
 
 func (c *ClientV3) SendTransaction(req interface{}) error {
-	resp := map[string]interface{}{}
+	resp := ""
 	_, err := c.Do("icx_sendTransaction", req, &resp)
 	if err != nil {
 		return err

@@ -394,12 +394,12 @@ func (s *ConstructionAPIService) ConstructionSubmit(
 		return nil, ErrUnavailableOffline
 	}
 
-	var signedTx client_v1.TransactionV3
-	if _, err := client_v1.ParseV3JSON([]byte(request.SignedTransaction)); err != nil {
+	signedTx, err := client_v1.ParseV3JSON([]byte(request.SignedTransaction))
+	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
-	if err := s.client.SendTransaction(signedTx); err != nil {
+	if err := s.client.SendTransaction(*signedTx); err != nil {
 		return nil, wrapErr(ErrBroadcastFailed, err)
 	}
 
