@@ -2,7 +2,7 @@ package tools
 
 import "encoding/json"
 
-func marshalJSONMap(i interface{}) (map[string]interface{}, error) {
+func MarshalJSONMap(i interface{}) (map[string]interface{}, error) {
 	b, err := json.Marshal(i)
 	if err != nil {
 		return nil, err
@@ -16,7 +16,7 @@ func marshalJSONMap(i interface{}) (map[string]interface{}, error) {
 	return m, nil
 }
 
-func unmarshalJSONMap(m map[string]interface{}, i interface{}) error {
+func UnmarshalJSONMap(m map[string]interface{}, i interface{}) error {
 	b, err := json.Marshal(m)
 	if err != nil {
 		return err
