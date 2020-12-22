@@ -203,6 +203,14 @@ type GenesisAccount struct {
 	Balance *common.HexInt `json:"balance"`
 }
 
+func (ga *GenesisAccount) Addr() string {
+	return ga.Address.String()
+}
+
+func (ga *GenesisAccount) Balances() string {
+	return ga.Balance.String()
+}
+
 type GenesisTransaction struct {
 	Accounts []GenesisAccount `json:"accounts"`
 	Message  string           `json:"message"`
@@ -226,12 +234,28 @@ type Transaction struct {
 	Method    string            `json:"method,omitempty"`
 }
 
-func (tx *Transaction) GetValue() string {
+func (tx *Transaction) Values() string {
 	if tx.Value != nil {
 		return tx.Value.String()
 	} else {
 		return "0x0"
 	}
+}
+
+func (tx *Transaction) FromAddr() string {
+	return tx.From.String()
+}
+
+func (tx *Transaction) ToAddr() string {
+	return tx.To.String()
+}
+
+func (tx *Transaction) FeeValue() string {
+	return tx.Fee.String()
+}
+
+func (tx *Transaction) StepValue() string {
+	return tx.StepLimit.String()
 }
 
 func (tx *Transaction) MetaV2() map[string]interface{} {

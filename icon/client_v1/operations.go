@@ -14,10 +14,10 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 			Type:   CallOpType,
 			Status: SuccessStatus,
 			Account: &types.AccountIdentifier{
-				Address: account.Address.String(),
+				Address: account.Addr(),
 			},
 			Amount: &types.Amount{
-				Value:    account.Balance.String(),
+				Value:    account.Balances(),
 				Currency: ICXCurrency,
 			},
 			Metadata: map[string]interface{}{
@@ -53,10 +53,10 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 		Type:   dataType,
 		Status: "",
 		Account: &types.AccountIdentifier{
-			Address: transaction.From.String(),
+			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.GetValue(),
+			Value:    transaction.Values(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -75,10 +75,10 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 		Type:   dataType,
 		Status: "",
 		Account: &types.AccountIdentifier{
-			Address: transaction.To.String(),
+			Address: transaction.ToAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.GetValue(),
+			Value:    transaction.Values(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -97,10 +97,10 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 		Type:   FeeOpType,
 		Status: "",
 		Account: &types.AccountIdentifier{
-			Address: transaction.From.String(),
+			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.Fee.String(),
+			Value:    transaction.FeeValue(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -149,10 +149,10 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 		Type:   dataType,
 		Status: "",
 		Account: &types.AccountIdentifier{
-			Address: transaction.From.String(),
+			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.GetValue(),
+			Value:    transaction.Values(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -172,10 +172,10 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 		Type:   dataType,
 		Status: "",
 		Account: &types.AccountIdentifier{
-			Address: transaction.To.String(),
+			Address: transaction.ToAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.GetValue(),
+			Value:    transaction.Values(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -195,10 +195,10 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 		Type:   FeeOpType,
 		Status: "",
 		Account: &types.AccountIdentifier{
-			Address: transaction.From.String(),
+			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.StepLimit.String(),
+			Value:    transaction.StepValue(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -221,7 +221,7 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 			Address: TreasuryAddress,
 		},
 		Amount: &types.Amount{
-			Value:    transaction.StepLimit.String(),
+			Value:    transaction.StepValue(),
 			Currency: ICXCurrency,
 		},
 	}
