@@ -22,6 +22,7 @@ import (
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/icon-project/goloop/service/transaction"
 	"math/big"
+	"strings"
 )
 
 var (
@@ -76,11 +77,11 @@ const (
 
 	TreasuryAddress = "hx1000000000000000000000000000000000000000"
 
-	CallOpType = "CALL"
-	FeeOpType  = "FEE"
+	CallOpType = "Call"
+	FeeOpType  = "Fee"
 
-	SuccessStatus = "SUCCESS"
-	FailureStatus = "FAIL"
+	SuccessStatus = "Success"
+	FailureStatus = "Fail"
 )
 
 type BlockRPCRequest struct {
@@ -92,7 +93,122 @@ type TransactionRPCRequest struct {
 	Hash string `json:"Hash"`
 }
 
-type TransactionV3 struct {
+type Block01a struct {
+	ID                 common.HexBytes   `json:"block_hash"`
+	Version            string            `json:"version"`
+	Height             common.HexInt64   `json:"height"`
+	Timestamp          common.HexInt64   `json:"time_stamp"`
+	Proposer           common.Address    `json:"peer_id"`
+	PrevID             common.HexBytes   `json:"prev_block_hash"`
+	MerkleTreeRootHash common.HexBytes   `json:"merkle_tree_root_hash"`
+	Signature          common.Signature  `json:"signature"`
+	NextLeader         common.Address    `json:"next_leader"`
+	Transactions       []json.RawMessage `json:"confirmed_transaction_list" `
+}
+
+func (b *Block01a) Number() int64 {
+	return b.Height.Value
+}
+
+func (b *Block01a) Hash() string {
+	return b.ID.String()
+}
+
+func (b *Block01a) PrevHash() string {
+	return b.PrevID.String()
+}
+
+func (b *Block01a) Time() int64 {
+	return b.Timestamp.Value
+}
+
+func (b *Block01a) GenesisMeta() map[string]interface{} {
+	return map[string]interface{}{
+		"version":               b.Version,
+		"peer_id":               b.Proposer,
+		"signature":             "",
+		"next_leader":           b.NextLeader,
+		"merkle_tree_root_hash": b.MerkleTreeRootHash,
+	}
+}
+
+func (b *Block01a) Meta() map[string]interface{} {
+	return map[string]interface{}{
+		"version":               b.Version,
+		"peer_id":               b.Proposer,
+		"signature":             b.Signature,
+		"next_leader":           b.NextLeader,
+		"merkle_tree_root_hash": b.MerkleTreeRootHash,
+	}
+}
+
+type Block03 struct {
+	ID               common.HexBytes   `json:"hash"`
+	Version          string            `json:"version"`
+	Height           common.HexInt64   `json:"height"`
+	Timestamp        common.HexInt64   `json:"timestamp"`
+	Leader           common.Address    `json:"leader"`
+	PrevID           common.HexBytes   `json:"prevHash"`
+	TransactionsHash common.HexBytes   `json:"transactionsHash"`
+	Signature        *common.Signature `json:"signature,omitempty"`
+	NextLeader       common.Address    `json:"nextLeader"`
+	Transactions     []json.RawMessage `json:"transactions"`
+	StateHash        common.HexBytes   `json:"stateHash"`
+	ReceiptsHash     common.HexBytes   `json:"receiptsHash"`
+	RepsHash         common.HexBytes   `json:"repsHash"`
+	NextRepsHash     common.HexBytes   `json:"nextRepsHash"`
+	LeaderVotesHash  common.HexBytes   `json:"leaderVotesHash"`
+	PrevVotesHash    common.HexBytes   `json:"prevVotesHash"`
+	LogsBloom        common.HexBytes   `json:"logsBloom"`
+	//LeaderVotes          []voteItem	         `json:"leaderVotes"`
+	//PrevVotes			   []voteItem            `json:"prevVotes"`
+}
+
+func (b *Block03) Number() int64 {
+	return b.Height.Value
+}
+
+func (b *Block03) Hash() string {
+	return b.ID.String()
+}
+
+func (b *Block03) Time() int64 {
+	return b.Timestamp.Value
+}
+
+func (b *Block03) PrevHash() string {
+	return b.PrevID.String()
+}
+
+func (b *Block03) Meta() map[string]interface{} {
+	return map[string]interface{}{
+		"version":          b.Version,
+		"transactionsHash": b.TransactionsHash,
+		"stateHash":        b.StateHash,
+		"receiptsHash":     b.ReceiptsHash,
+		"repsHash":         b.RepsHash,
+		"nextRepsHash":     b.NextRepsHash,
+		"leaderVotesHash":  b.LeaderVotesHash,
+		"prevVotesHash":    b.PrevVotesHash,
+		"logsBloom":        b.LogsBloom,
+		"leader":           b.Leader,
+		"signature":        &b.Signature,
+		"nextLeader":       b.NextLeader,
+	}
+}
+
+type GenesisAccount struct {
+	Name    string         `json:"name"`
+	Address common.Address `json:"address"`
+	Balance *common.HexInt `json:"balance"`
+}
+
+type GenesisTransaction struct {
+	Accounts []GenesisAccount `json:"accounts"`
+	Message  string           `json:"message"`
+}
+
+type Transaction struct {
 	Version   common.HexUint16  `json:"version"`
 	From      common.Address    `json:"from"`
 	To        common.Address    `json:"to"`
@@ -104,9 +220,60 @@ type TransactionV3 struct {
 	Signature *common.Signature `json:"signature,omitempty"`
 	DataType  *string           `json:"dataType,omitempty"`
 	Data      json.RawMessage   `json:"data,omitempty"`
+	Fee       common.HexInt     `json:"fee,omitempty"`
+	TxHashV3  common.HexBytes   `json:"txHash,omitempty"`
+	TxHashV2  common.HexBytes   `json:"tx_hash,omitempty"`
+	Method    string            `json:"method,omitempty"`
 }
 
-func (tx *TransactionV3) ToJSON() (interface{}, error) {
+func (tx *Transaction) GetValue() string {
+	if tx.Value != nil {
+		return tx.Value.String()
+	} else {
+		return "0x0"
+	}
+}
+
+func (tx *Transaction) MetaV2() map[string]interface{} {
+	return map[string]interface{}{
+		"nonce":     &tx.Nonce,
+		"signature": &tx.Signature,
+		"method":    tx.Method,
+	}
+}
+
+func (tx *Transaction) MetaV3() map[string]interface{} {
+	meta := map[string]interface{}{
+		"version":   tx.Version,
+		"timestamp": tx.Timestamp,
+		"data":      tx.Data,
+		"dataType":  &tx.DataType,
+	}
+
+	if tx.GetDataType() == "Base" {
+		return meta
+	} else {
+		meta["nid"] = &tx.NID
+		meta["nonce"] = &tx.Nonce
+		meta["signature"] = &tx.Signature
+		return meta
+	}
+}
+
+func (tx *Transaction) GetDataType() string {
+	defaultType := [4]string{"call", "deploy", "message", "base"}
+
+	if tx.DataType != nil {
+		for _, dataType := range defaultType {
+			if *tx.DataType == dataType {
+				return strings.Title(dataType)
+			}
+		}
+	}
+	return "Transfer"
+}
+
+func (tx *Transaction) ToJSON() (interface{}, error) {
 	jso := map[string]interface{}{
 		"version":   &tx.Version,
 		"from":      &tx.From,
@@ -135,7 +302,7 @@ func (tx *TransactionV3) ToJSON() (interface{}, error) {
 
 }
 
-func (tx *TransactionV3) CalcHash() ([]byte, error) {
+func (tx *Transaction) CalcHash() ([]byte, error) {
 	// sha := sha3.New256()
 	sha := bytes.NewBuffer(nil)
 	sha.Write([]byte("icx_sendTransaction"))
@@ -203,7 +370,7 @@ func (tx *TransactionV3) CalcHash() ([]byte, error) {
 	return crypto.SHA3Sum256(sha.Bytes()), nil
 }
 
-func (tx *TransactionV3) VerifySignature() error {
+func (tx *Transaction) VerifySignature() error {
 	pk, err := tx.Signature.RecoverPublicKey(tx.TxHash())
 	if err != nil {
 		return transaction.InvalidSignatureError.Wrap(err, "fail to recover public key")
@@ -215,7 +382,7 @@ func (tx *TransactionV3) VerifySignature() error {
 	return transaction.InvalidSignatureError.New("fail to verify signature")
 }
 
-func (tx *TransactionV3) TxHash() []byte {
+func (tx *Transaction) TxHash() []byte {
 	h, err := tx.CalcHash()
 	if err != nil {
 		return []byte{}
@@ -223,8 +390,8 @@ func (tx *TransactionV3) TxHash() []byte {
 	return h
 }
 
-func ParseV3JSON(js []byte) (*TransactionV3, error) {
-	tx := new(TransactionV3)
+func ParseV3JSON(js []byte) (*Transaction, error) {
+	tx := new(Transaction)
 
 	if err := json.Unmarshal(js, tx); err != nil {
 		return nil, transaction.InvalidFormat.Wrapf(err, "Invalid json for transactionV3(%s)", string(js))

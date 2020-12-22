@@ -48,18 +48,19 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 
 	//이렇게 하는 방법밖에 없는가?
 	var reqParams *client_v1.BlockRPCRequest
-	if params.Index != nil && params.Hash != nil {
+
+	if params.Index == nil && params.Hash == nil {
 		return nil, errors.New("Invalid Both value")
+	}
+
+	if params.Index != nil {
+		reqParams = &client_v1.BlockRPCRequest{
+			Height: common.HexInt64{Value: *params.Index}.String(),
+		}
 	} else if params.Hash != nil {
 		reqParams = &client_v1.BlockRPCRequest{
 			Hash: *params.Hash,
 		}
-	} else if params.Index != nil {
-		reqParams = &client_v1.BlockRPCRequest{
-			Height: common.HexInt64{Value: *params.Index}.String(),
-		}
-	} else {
-		reqParams = &client_v1.BlockRPCRequest{}
 	}
 
 	block, err := ic.iconV1.GetBlock(reqParams)
@@ -99,7 +100,7 @@ func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 	return peers, nil
 }
 
-func (ic *Client) SendTransaction(tx client_v1.TransactionV3) error {
+func (ic *Client) SendTransaction(tx client_v1.Transaction) error {
 	js, err := tx.ToJSON()
 	if err != nil {
 		return err

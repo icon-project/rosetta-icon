@@ -23,6 +23,7 @@ import (
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/leeheonseung/rosetta-icon/icon"
 	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/leeheonseung/rosetta-icon/tools"
 	"strconv"
 	"time"
 
@@ -122,7 +123,7 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 		From: fa,
 	}
 
-	marshaled, err := marshalJSONMap(preprocessOutput)
+	marshaled, err := tools.MarshalJSONMap(preprocessOutput)
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -141,7 +142,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 	}
 
 	var input options
-	if err := unmarshalJSONMap(request.Options, &input); err != nil {
+	if err := tools.UnmarshalJSONMap(request.Options, &input); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
@@ -149,7 +150,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 		StepPrice: client_v1.StepPrice,
 	}
 
-	metadataMap, err := marshalJSONMap(metadata)
+	metadataMap, err := tools.MarshalJSONMap(metadata)
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -206,12 +207,12 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	// Required Fields for constructing a ICON transaction
 	tOp, amount := m[1].First()
 	ta := tOp.Account.Address
-	nid := mapNetwork(s.config.Network.Network)
+	nid := tools.MapNetwork(s.config.Network.Network)
 
 	// Additional Fields for constructing custom ICON tx struct
 	fOp, _ := m[0].First()
 	fa := fOp.Account.Address
-	uTx := &client_v1.TransactionV3{
+	uTx := &client_v1.Transaction{
 		Version:   common.HexUint16{Value: 3},
 		From:      *common.NewAddressFromString(fa),
 		To:        *common.NewAddressFromString(ta),
@@ -247,7 +248,7 @@ func (s *ConstructionAPIService) ConstructionCombine(
 	ctx context.Context,
 	request *types.ConstructionCombineRequest,
 ) (*types.ConstructionCombineResponse, *types.Error) {
-	var unsignedTx client_v1.TransactionV3
+	var unsignedTx client_v1.Transaction
 	var err error
 	if err = json.Unmarshal([]byte(request.UnsignedTransaction), &unsignedTx); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
@@ -281,7 +282,7 @@ func (s *ConstructionAPIService) ConstructionHash(
 	ctx context.Context,
 	request *types.ConstructionHashRequest,
 ) (*types.TransactionIdentifierResponse, *types.Error) {
-	signedTx := &client_v1.TransactionV3{}
+	signedTx := &client_v1.Transaction{}
 	if err := json.Unmarshal([]byte(request.SignedTransaction), signedTx); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -299,7 +300,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 	ctx context.Context,
 	request *types.ConstructionParseRequest,
 ) (*types.ConstructionParseResponse, *types.Error) {
-	var tx client_v1.TransactionV3
+	var tx client_v1.Transaction
 	if !request.Signed {
 		err := json.Unmarshal([]byte(request.Transaction), &tx)
 		if err != nil {
@@ -360,7 +361,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 	metadata := &parseMetadata{
 		StepPrice: client_v1.StepPrice,
 	}
-	metaMap, e := marshalJSONMap(metadata)
+	metaMap, e := tools.MarshalJSONMap(metadata)
 	if e != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, e)
 	}
