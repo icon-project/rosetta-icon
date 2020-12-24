@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/leeheonseung/rosetta-icon/tools"
 )
 
 func ParseBlock(raw map[string]interface{}) (*types.Block, error) {
@@ -13,13 +12,13 @@ func ParseBlock(raw map[string]interface{}) (*types.Block, error) {
 	switch version {
 	case "0.1a":
 		blk := &Block01a{}
-		if err := tools.UnmarshalJSONMap(raw, blk); err != nil {
+		if err := UnmarshalJSONMap(raw, blk); err != nil {
 			return nil, err
 		}
 		return ParseBlock01a(blk)
 	case "0.3", "0.4", "0.5":
 		blk := &Block03{}
-		if err := tools.UnmarshalJSONMap(raw, blk); err != nil {
+		if err := UnmarshalJSONMap(raw, blk); err != nil {
 			return nil, err
 		}
 		return ParseBlock03(blk)

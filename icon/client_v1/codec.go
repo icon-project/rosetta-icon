@@ -1,9 +1,8 @@
-package tools
+package client_v1
 
 import (
 	"encoding/json"
 	"github.com/icon-project/goloop/common"
-	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
 )
 
 func MarshalJSONMap(i interface{}) (map[string]interface{}, error) {
@@ -31,9 +30,9 @@ func UnmarshalJSONMap(m map[string]interface{}, i interface{}) error {
 
 func MapNetwork(n string) *common.HexInt64 {
 	switch n {
-	case client_v1.MainnetNetwork:
+	case MainnetNetwork:
 		return &common.HexInt64{Value: 1}
-	case client_v1.TestnetNetwork:
+	case TestnetNetwork:
 		return &common.HexInt64{Value: 3}
 	default:
 		return &common.HexInt64{Value: 3}

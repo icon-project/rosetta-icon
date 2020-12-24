@@ -23,7 +23,6 @@ import (
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/leeheonseung/rosetta-icon/icon"
 	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
-	"github.com/leeheonseung/rosetta-icon/tools"
 	"strconv"
 	"time"
 
@@ -123,7 +122,7 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 		From: fa,
 	}
 
-	marshaled, err := tools.MarshalJSONMap(preprocessOutput)
+	marshaled, err := client_v1.MarshalJSONMap(preprocessOutput)
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -142,7 +141,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 	}
 
 	var input options
-	if err := tools.UnmarshalJSONMap(request.Options, &input); err != nil {
+	if err := client_v1.UnmarshalJSONMap(request.Options, &input); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
@@ -150,7 +149,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 		StepPrice: client_v1.StepPrice,
 	}
 
-	metadataMap, err := tools.MarshalJSONMap(metadata)
+	metadataMap, err := client_v1.MarshalJSONMap(metadata)
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -207,7 +206,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	// Required Fields for constructing a ICON transaction
 	tOp, amount := m[1].First()
 	ta := tOp.Account.Address
-	nid := tools.MapNetwork(s.config.Network.Network)
+	nid := client_v1.MapNetwork(s.config.Network.Network)
 
 	// Additional Fields for constructing custom ICON tx struct
 	fOp, _ := m[0].First()
@@ -361,7 +360,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 	metadata := &parseMetadata{
 		StepPrice: client_v1.StepPrice,
 	}
-	metaMap, e := tools.MarshalJSONMap(metadata)
+	metaMap, e := client_v1.MarshalJSONMap(metadata)
 	if e != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, e)
 	}

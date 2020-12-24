@@ -228,7 +228,7 @@ type Transaction struct {
 	Signature *common.Signature `json:"signature,omitempty"`
 	DataType  *string           `json:"dataType,omitempty"`
 	Data      json.RawMessage   `json:"data,omitempty"`
-	Fee       common.HexInt     `json:"fee,omitempty"`
+	Fee       *common.HexInt    `json:"fee,omitempty"`
 	TxHashV3  common.HexBytes   `json:"txHash,omitempty"`
 	TxHashV2  common.HexBytes   `json:"tx_hash,omitempty"`
 	Method    string            `json:"method,omitempty"`
