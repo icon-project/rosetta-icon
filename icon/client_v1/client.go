@@ -73,14 +73,30 @@ func (c *ClientV3) GetBlock(param *BlockRPCRequest) (*types.Block, error) {
 	return block, nil
 }
 
-func (c *ClientV3) GetBlockReceipts(param *BlockRPCRequest) (interface{}, error) {
-	trsRaw := map[string]interface{}{}
+func (c *ClientV3) GetBlockReceipts(param *BlockRPCRequest) ([]*TransactionResult, error) {
+	trsRaw := &[]interface{}{}
 
 	_, err := c.Do("icx_getBlockReceipts", param, trsRaw)
 	if err != nil {
 		return nil, err
 	}
-	return trsRaw, nil
+
+	trsArray, err := ParseTransactionResults(trsRaw)
+	if err != nil {
+		return nil, err
+	}
+	return trsArray, nil
+}
+
+func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*TransactionResult) (*types.Block, error) {
+	for index, tx := range block.Transactions {
+		tx = block.Transactions[index]
+		for _, op := range tx.Operations {
+			op.Status = trsArray[index].StatusFlag
+		}
+	}
+	// TODO TxResult도 block Metadata에 넣을 필요가 있는가?
+	return block, nil
 }
 
 func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (interface{}, error) {

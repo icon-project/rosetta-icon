@@ -422,3 +422,20 @@ func ParseV3JSON(js []byte) (*Transaction, error) {
 	}
 	return tx, nil
 }
+
+type TransactionResult struct {
+	StatusFlag			string
+	Status             	json.RawMessage		`json:"status"`
+	BlockHeight        	*json.RawMessage	`json:"blockHeight"`
+	BlockHash         	*json.RawMessage	`json:"blockHash"`
+	TxHash             	*json.RawMessage	`json:"txHash"`
+	TxIndex            	*json.RawMessage	`json:"txIndex"`
+	To                 	*json.RawMessage	`json:"to"`
+	ScoreAddress       	*json.RawMessage	`json:"scoreAddress"`
+	StepUsed           	*json.RawMessage	`json:"scoreAddress"`
+	CumulativeStepUsed	*json.RawMessage	`json:"cumulativeStepUsed"`
+	StepPrice			*json.RawMessage	`json:"stepPrice"`
+	LogsBloom          	*json.RawMessage	`json:"logsBloom"`
+	EventLogs			*json.RawMessage	`json:"eventLogs"`
+	Failure				*json.RawMessage	`json:"failure"`
+}

@@ -68,14 +68,11 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
-	//Get transactionResults
-	//RPCServer, LoopChain branch참고: append_icx_getBlockReceipts
-
-	//trsRaw, err := ic.iconV1.GetBlockReceipts(reqParams)
-	//if err != nil {
-	//	return nil, fmt.Errorf("%w: could not get block", err)
-	//}
-	//fmt.Print(trsRaw)
+	trsArray, err := ic.iconV1.GetBlockReceipts(reqParams)
+	if err != nil {
+		return nil, fmt.Errorf("%w: could not get block", err)
+	}
+	ic.iconV1.MakeBlockWithReceipts(block, trsArray)
 	return block, nil
 }
 

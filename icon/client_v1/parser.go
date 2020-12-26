@@ -48,3 +48,28 @@ func ParseTransactions(txArray []json.RawMessage) ([]*types.Transaction, error) 
 	}
 	return transactions, nil
 }
+
+func ParseTransactionResults(trsRaws *[]interface{}) ([]*TransactionResult, error) {
+	var trsArray []*TransactionResult
+
+	for _, raw := range *trsRaws {
+		bs, _ := json.Marshal(raw)
+		txResult := TransactionResult{}
+		if err := json.Unmarshal(bs, &txResult); err != nil {
+			return nil, err
+		}
+
+		bs, _ = txResult.Status.MarshalJSON()
+		var status string
+		if err := json.Unmarshal(bs, &status); err != nil {
+			return nil, err
+		}
+		if status == "0x1" {
+			txResult.StatusFlag = SuccessStatus
+		} else {
+			txResult.StatusFlag = FailureStatus
+		}
+		trsArray = append(trsArray, &txResult)
+	}
+	return trsArray, nil
+}
