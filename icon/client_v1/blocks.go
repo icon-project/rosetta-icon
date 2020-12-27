@@ -11,7 +11,7 @@ func ParseGenesisBlock(blk *Block01a) (*types.Block, error) {
 			Index: blk.Number(),
 			Hash:  blk.Hash(),
 		},
-		Timestamp:    blk.Time(),
+		Timestamp:    blk.TimestampMilli(),
 		Transactions: transactions,
 		Metadata:     blk.GenesisMeta(),
 	}, nil
@@ -31,7 +31,7 @@ func ParseBlock01a(blk *Block01a) (*types.Block, error) {
 				Index: blk.Number() - 1,
 				Hash:  blk.PrevHash(),
 			},
-			Timestamp:    blk.Time(),
+			Timestamp:    blk.TimestampMilli(),
 			Transactions: transactions,
 			Metadata:     blk.Meta(),
 		}, nil
@@ -49,7 +49,7 @@ func ParseBlock03(blk *Block03) (*types.Block, error) {
 			Index: blk.Number() - 1,
 			Hash:  blk.PrevHash(),
 		},
-		Timestamp:    blk.Time(),
+		Timestamp:    blk.TimestampMilli(),
 		Transactions: transactions,
 		Metadata:     blk.Meta(),
 	}, nil

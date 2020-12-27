@@ -35,6 +35,7 @@ var (
 		"TEST",
 		CallOpType,
 		FeeOpType,
+		BaseOpType,
 	}
 
 	// OperationStatuses are all supported operation statuses.
@@ -79,6 +80,7 @@ const (
 
 	CallOpType = "Call"
 	FeeOpType  = "Fee"
+	BaseOpType = "Base"
 
 	SuccessStatus = "Success"
 	FailureStatus = "Fail"
@@ -120,6 +122,10 @@ func (b *Block01a) PrevHash() string {
 
 func (b *Block01a) Time() int64 {
 	return b.Timestamp.Value
+}
+
+func (b *Block01a) TimestampMilli() int64 {
+	return b.Timestamp.Value / 1000
 }
 
 func (b *Block01a) GenesisMeta() map[string]interface{} {
@@ -174,6 +180,10 @@ func (b *Block03) Hash() string {
 
 func (b *Block03) Time() int64 {
 	return b.Timestamp.Value
+}
+
+func (b *Block03) TimestampMilli() int64 {
+	return b.Timestamp.Value / 1000
 }
 
 func (b *Block03) PrevHash() string {
@@ -424,18 +434,18 @@ func ParseV3JSON(js []byte) (*Transaction, error) {
 }
 
 type TransactionResult struct {
-	StatusFlag			string
-	Status             	json.RawMessage		`json:"status"`
-	BlockHeight        	*json.RawMessage	`json:"blockHeight"`
-	BlockHash         	*json.RawMessage	`json:"blockHash"`
-	TxHash             	*json.RawMessage	`json:"txHash"`
-	TxIndex            	*json.RawMessage	`json:"txIndex"`
-	To                 	*json.RawMessage	`json:"to"`
-	ScoreAddress       	*json.RawMessage	`json:"scoreAddress"`
-	StepUsed           	*json.RawMessage	`json:"scoreAddress"`
-	CumulativeStepUsed	*json.RawMessage	`json:"cumulativeStepUsed"`
-	StepPrice			*json.RawMessage	`json:"stepPrice"`
-	LogsBloom          	*json.RawMessage	`json:"logsBloom"`
-	EventLogs			*json.RawMessage	`json:"eventLogs"`
-	Failure				*json.RawMessage	`json:"failure"`
+	StatusFlag         string
+	Status             json.RawMessage  `json:"status"`
+	BlockHeight        *json.RawMessage `json:"blockHeight"`
+	BlockHash          *json.RawMessage `json:"blockHash"`
+	TxHash             *json.RawMessage `json:"txHash"`
+	TxIndex            *json.RawMessage `json:"txIndex"`
+	To                 *json.RawMessage `json:"to"`
+	ScoreAddress       *json.RawMessage `json:"scoreAddress"`
+	StepUsed           *json.RawMessage `json:"scoreAddress"`
+	CumulativeStepUsed *json.RawMessage `json:"cumulativeStepUsed"`
+	StepPrice          *json.RawMessage `json:"stepPrice"`
+	LogsBloom          *json.RawMessage `json:"logsBloom"`
+	EventLogs          *json.RawMessage `json:"eventLogs"`
+	Failure            *json.RawMessage `json:"failure"`
 }
