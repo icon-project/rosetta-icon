@@ -54,8 +54,7 @@ var (
 	RosettaVersion    = "1.4.0"
 	NodeVersion       = "1.8.0"
 	StepPrice         = big.NewInt(12500000000)
-	TransferStepPrice = big.NewInt(100000)
-	TransferStepLimit = new(big.Int).Mul(StepPrice, TransferStepPrice)
+	TransferStepCost  = big.NewInt(100000)
 )
 
 const (

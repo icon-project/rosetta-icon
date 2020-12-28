@@ -23,7 +23,6 @@ import (
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/leeheonseung/rosetta-icon/icon"
 	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
-	"strconv"
 	"time"
 
 	"github.com/leeheonseung/rosetta-icon/configuration"
@@ -154,16 +153,8 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
-	fee := metadata.StepPrice.Int64() * client_v1.TransferStepPrice.Int64()
-
 	return &types.ConstructionMetadataResponse{
 		Metadata: metadataMap,
-		SuggestedFee: []*types.Amount{
-			{
-				Value:    strconv.FormatInt(fee, 10),
-				Currency: client_v1.ICXCurrency,
-			},
-		},
 	}, nil
 }
 
@@ -216,8 +207,8 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 		From:      *common.NewAddressFromString(fa),
 		To:        *common.NewAddressFromString(ta),
 		Value:     common.NewHexInt(amount.Int64()),
-		StepLimit: *common.NewHexInt(client_v1.TransferStepLimit.Int64()),
-		Timestamp: common.HexInt64{Value: time.Now().UTC().UnixNano()},
+		StepLimit: *common.NewHexInt(client_v1.TransferStepCost.Int64()),
+		Timestamp: common.HexInt64{Value: time.Now().UnixNano() / int64(time.Microsecond)},
 		NID:       nid,
 		Nonce:     common.NewHexInt(1),
 	}
@@ -357,14 +348,6 @@ func (s *ConstructionAPIService) ConstructionParse(
 		},
 	}
 
-	metadata := &parseMetadata{
-		StepPrice: client_v1.StepPrice,
-	}
-	metaMap, e := client_v1.MarshalJSONMap(metadata)
-	if e != nil {
-		return nil, wrapErr(ErrUnableToParseIntermediateResult, e)
-	}
-
 	var resp *types.ConstructionParseResponse
 	if request.Signed {
 		resp = &types.ConstructionParseResponse{
@@ -374,13 +357,11 @@ func (s *ConstructionAPIService) ConstructionParse(
 					Address: tx.From.String(),
 				},
 			},
-			Metadata: metaMap,
 		}
 	} else {
 		resp = &types.ConstructionParseResponse{
 			Operations:               ops,
 			AccountIdentifierSigners: []*types.AccountIdentifier{},
-			Metadata:                 metaMap,
 		}
 	}
 	return resp, nil
