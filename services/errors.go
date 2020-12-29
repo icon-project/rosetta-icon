@@ -98,7 +98,7 @@ var (
 	// ErrNotReady is returned when ICON Node is not
 	// yet ready to serve queries.
 	ErrWrongBlockHash = &types.Error{
-		Code:      -4,
+		Code:      13,
 		Message:   "Wrong Block Hash",
 		Retriable: true,
 	}

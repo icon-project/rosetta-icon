@@ -77,12 +77,12 @@ const (
 
 	TreasuryAddress = "hx1000000000000000000000000000000000000000"
 
-	CallOpType = "Call"
-	FeeOpType  = "Fee"
-	BaseOpType = "Base"
+	CallOpType = "CALL"
+	FeeOpType  = "FEE"
+	BaseOpType = "BASE"
 
-	SuccessStatus = "Success"
-	FailureStatus = "Fail"
+	SuccessStatus = "SUCCESS"
+	FailureStatus = "FAIL"
 )
 
 type BlockRPCRequest struct {
@@ -245,9 +245,9 @@ type Transaction struct {
 
 func (tx *Transaction) Values() string {
 	if tx.Value != nil {
-		return tx.Value.String()
+		return tx.Value.Text(10)
 	} else {
-		return "0x0"
+		return "0"
 	}
 }
 
@@ -263,8 +263,8 @@ func (tx *Transaction) FeeValue() string {
 	return tx.Fee.String()
 }
 
-func (tx *Transaction) StepValue() string {
-	return tx.StepLimit.String()
+func (tx *Transaction) StepValues() string {
+	return tx.StepLimit.Text(10)
 }
 
 func (tx *Transaction) MetaV2() map[string]interface{} {

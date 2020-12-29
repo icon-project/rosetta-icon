@@ -29,8 +29,8 @@ func ParseGenesisTransaction(txArray []json.RawMessage) ([]*types.Transaction, e
 	return transactions, nil
 }
 
-func ParseTransactionV2(index int64, transaction Transaction) (*types.Transaction, error) {
-	operations, _ := ParseOperationsV2(index, transaction)
+func ParseTransactionV2(transaction Transaction) (*types.Transaction, error) {
+	operations, _ := ParseOperationsV2(transaction)
 	return &types.Transaction{
 		TransactionIdentifier: &types.TransactionIdentifier{
 			Hash: transaction.TxHashV2.String(),
@@ -40,8 +40,8 @@ func ParseTransactionV2(index int64, transaction Transaction) (*types.Transactio
 	}, nil
 }
 
-func ParseTransactionV3(index int64, transaction Transaction) (*types.Transaction, error) {
-	operations, _ := ParseOperationsV3(index, transaction)
+func ParseTransactionV3(transaction Transaction) (*types.Transaction, error) {
+	operations, _ := ParseOperationsV3(transaction)
 
 	return &types.Transaction{
 		TransactionIdentifier: &types.TransactionIdentifier{

@@ -29,7 +29,7 @@ func ParseBlock(raw map[string]interface{}) (*types.Block, error) {
 func ParseTransactions(txArray []json.RawMessage) ([]*types.Transaction, error) {
 	var transactions []*types.Transaction
 
-	for index, raw := range txArray {
+	for _, raw := range txArray {
 		var tx *types.Transaction
 
 		bs, _ := raw.MarshalJSON()
@@ -40,9 +40,9 @@ func ParseTransactions(txArray []json.RawMessage) ([]*types.Transaction, error) 
 
 		switch transaction.Version.String() {
 		case "0x3":
-			tx, _ = ParseTransactionV3(int64(index), transaction)
+			tx, _ = ParseTransactionV3(transaction)
 		default:
-			tx, _ = ParseTransactionV2(int64(index), transaction)
+			tx, _ = ParseTransactionV2(transaction)
 		}
 		transactions = append(transactions, tx)
 	}

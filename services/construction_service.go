@@ -324,7 +324,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 				Address: tx.From.String(),
 			},
 			Amount: &types.Amount{
-				Value:    tx.Value.String(),
+				Value:    "-" + tx.Values(),
 				Currency: client_v1.ICXCurrency,
 			},
 		},
@@ -342,7 +342,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 				Address: tx.To.String(),
 			},
 			Amount: &types.Amount{
-				Value:    tx.Value.String(),
+				Value:    tx.Values(),
 				Currency: client_v1.ICXCurrency,
 			},
 		},

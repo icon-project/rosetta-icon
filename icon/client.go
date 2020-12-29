@@ -15,7 +15,6 @@
 package icon
 
 import (
-	"errors"
 	"fmt"
 	RosettaTypes "github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
@@ -50,7 +49,8 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 	var reqParams *client_v1.BlockRPCRequest
 
 	if params.Index == nil && params.Hash == nil {
-		return nil, errors.New("Invalid Both value")
+		reqParams = &client_v1.BlockRPCRequest{}
+		//return nil, errors.New("Invalid Both value")
 	}
 
 	if params.Index != nil {
@@ -68,11 +68,11 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
-	trsArray, err := ic.iconV1.GetBlockReceipts(reqParams)
-	if err != nil {
-		return nil, fmt.Errorf("%w: could not get block", err)
-	}
-	ic.iconV1.MakeBlockWithReceipts(block, trsArray)
+	//trsArray, err := ic.iconV1.GetBlockReceipts(reqParams)
+	//if err != nil {
+	//	return nil, fmt.Errorf("%w: could not get block", err)
+	//}
+	//ic.iconV1.MakeBlockWithReceipts(block, trsArray)
 	return block, nil
 }
 

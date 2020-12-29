@@ -41,22 +41,22 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 	return ops, nil
 }
 
-func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Operation, error) {
+func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 	var ops []*types.Operation
 
 	dataType := transaction.GetDataType()
-
+	dataType = CallOpType
 	fromOp := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
-			Index: int64(len(ops)) + startIndex,
+			Index: 0,
 		},
 		Type:   dataType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.Values(),
+			Value:    "-" + transaction.Values(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -73,7 +73,7 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 			},
 		},
 		Type:   dataType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.ToAddr(),
 		},
@@ -95,12 +95,12 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 			},
 		},
 		Type:   FeeOpType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.FeeValue(),
+			Value:    "-" + transaction.Fee.Text(10),
 			Currency: ICXCurrency,
 		},
 	}
@@ -118,12 +118,12 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 			},
 		},
 		Type:   FeeOpType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: TreasuryAddress,
 		},
 		Amount: &types.Amount{
-			Value:    transaction.Fee.String(),
+			Value:    transaction.Fee.Text(10),
 			Currency: ICXCurrency,
 		},
 	}
@@ -131,28 +131,29 @@ func ParseOperationsV2(startIndex int64, transaction Transaction) ([]*types.Oper
 	return ops, nil
 }
 
-func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Operation, error) {
+func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 	var ops []*types.Operation
 
 	dataType := transaction.GetDataType()
 
-	if dataType == "Base" {
-		baseOp, _ := MakeBaseOperations(startIndex, transaction.GetDataType(), int64(len(ops)))
+	if dataType == BaseOpType {
+		baseOp, _ := MakeBaseOperations()
 		ops = append(ops, baseOp)
 		return ops, nil
 	}
+	dataType = CallOpType
 
 	fromOp := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
-			Index: int64(len(ops)) + startIndex,
+			Index: 0,
 		},
 		Type:   dataType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.Values(),
+			Value:    "-" + transaction.Values(),
 			Currency: ICXCurrency,
 		},
 	}
@@ -170,7 +171,7 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 			},
 		},
 		Type:   dataType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.ToAddr(),
 		},
@@ -193,12 +194,12 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 			},
 		},
 		Type:   FeeOpType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
 		Amount: &types.Amount{
-			Value:    transaction.StepValue(),
+			Value:    "-" + transaction.StepLimit.Text(10),
 			Currency: ICXCurrency,
 		},
 	}
@@ -216,12 +217,12 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 			},
 		},
 		Type:   FeeOpType,
-		Status: "",
+		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: TreasuryAddress,
 		},
 		Amount: &types.Amount{
-			Value:    transaction.StepValue(),
+			Value:    transaction.StepLimit.Text(10),
 			Currency: ICXCurrency,
 		},
 	}
@@ -230,13 +231,13 @@ func ParseOperationsV3(startIndex int64, transaction Transaction) ([]*types.Oper
 	return ops, nil
 }
 
-func MakeBaseOperations(startIndex int64, dataType string, size int64) (*types.Operation, error) {
+func MakeBaseOperations() (*types.Operation, error) {
 	baseOp := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
-			Index: size + startIndex,
+			Index: 0,
 		},
-		Type:   dataType,
-		Status: "",
+		Type:   BaseOpType,
+		Status: SuccessStatus,
 	}
 	return baseOp, nil
 }
