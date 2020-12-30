@@ -206,7 +206,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 		Version:   common.HexUint16{Value: 3},
 		From:      *common.NewAddressFromString(fa),
 		To:        *common.NewAddressFromString(ta),
-		Value:     common.NewHexInt(amount.Int64()),
+		Value:     &common.HexInt{Int: *amount},
 		StepLimit: *common.NewHexInt(client_v1.TransferStepCost.Int64()),
 		Timestamp: common.HexInt64{Value: time.Now().UnixNano() / int64(time.Microsecond)},
 		NID:       nid,

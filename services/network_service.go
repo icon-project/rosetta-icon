@@ -58,7 +58,9 @@ func (s *NetworkAPIService) NetworkStatus(
 		return nil, wrapErr(ErrUnavailableOffline, nil)
 	}
 
+	gh := int64(0)
 	params := &types.PartialBlockIdentifier{
+		Index: &gh,
 	}
 	genesisBlock, err := s.client.GetBlock(params)
 	if err != nil {
