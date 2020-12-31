@@ -34,6 +34,8 @@ func MapNetwork(n string) *common.HexInt64 {
 		return &common.HexInt64{Value: 1}
 	case TestnetNetwork:
 		return &common.HexInt64{Value: 3}
+	case DevelopNetwork:
+		return &common.HexInt64{Value: 80}
 	default:
 		return &common.HexInt64{Value: 3}
 	}

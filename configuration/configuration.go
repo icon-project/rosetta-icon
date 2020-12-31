@@ -43,6 +43,8 @@ const (
 	// Testnet is ICON Testnet3.
 	Testnet string = "TESTNET"
 
+	Devnet string = "DEVNET"
+
 	// ModeEnv is the environment variable read
 	// to determine mode.
 	ModeEnv = "MODE"
@@ -105,6 +107,11 @@ func LoadConfiguration() (*Configuration, error) {
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.TestnetNetwork,
+		}
+	case Devnet:
+		config.Network = &types.NetworkIdentifier{
+			Blockchain: client_v1.Blockchain,
+			Network:    client_v1.DevelopNetwork,
 		}
 	case "":
 		return nil, errors.New("NETWORK must be populated")

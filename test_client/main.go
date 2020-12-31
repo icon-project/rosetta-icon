@@ -25,8 +25,8 @@ func main() {
 }
 
 func _testGetBlock(client *icon.Client) {
-	// 이렇게 할당해야하는가?
-	index := int64(1)
+	// 이렇게 할당해야하는가?s
+	index := int64(5977334)
 	params := &types.PartialBlockIdentifier{
 		Index: &index,
 	}

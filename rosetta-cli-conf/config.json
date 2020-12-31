@@ -1,7 +1,7 @@
 {
   "network": {
     "blockchain": "ICON",
-    "network": "Testnet"
+    "network": "Devnet"
   },
   "data_directory": "cli-data",
   "http_timeout": 300,
@@ -9,19 +9,19 @@
   "max_online_connections": 500,
   "max_sync_concurrency": 64,
   "tip_delay": 120,
-  "compression_disabled":true,
-  "memory_limit_disabled":true,
+  "compression_disabled": true,
+  "memory_limit_disabled": true,
   "construction": {
     "stale_depth": 3,
     "broadcast_limit": 5,
-    "constructor_dsl_file": "testnet.ros",
+    "constructor_dsl_file": "devnet.ros",
     "end_conditions": {
       "create_account": 10,
       "transfer": 20
     }
   },
   "data": {
-    "initial_balance_fetch_disabled":true,
+    "initial_balance_fetch_disabled": true,
     "active_reconciliation_concurrency": 32,
     "end_conditions": {
       "reconciliation_coverage": {

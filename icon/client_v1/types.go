@@ -69,6 +69,9 @@ const (
 	// in TestnetNetworkIdentifier.
 	TestnetNetwork string = "Testnet"
 
+	// for develop
+	DevelopNetwork string = "Devnet"
+
 	ICXSymbol   = "ICX"
 	ICXDecimals = 18
 
