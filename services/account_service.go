@@ -55,5 +55,10 @@ func (s *AccountAPIService) AccountBalance(
 	//	return nil, wrapErr(ErrGeth, err)
 	//}
 
-	return nil, nil
+	balance, err := s.client.GetBalance(request.AccountIdentifier)
+
+	if err != nil {
+		return nil, wrapErr(ErrInvalidAddress, err)
+	}
+	return balance, nil
 }

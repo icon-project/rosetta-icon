@@ -107,3 +107,14 @@ func (ic *Client) SendTransaction(tx client_v1.Transaction) error {
 	}
 	return nil
 }
+
+func (ic *Client) GetBalance(params *RosettaTypes.AccountIdentifier) (*RosettaTypes.AccountBalanceResponse, error) {
+	reqParam := &client_v1.BalanceRPCRequest{
+		Address: params.Address,
+	}
+	result, err := ic.iconV1.GetBalance(reqParam)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}

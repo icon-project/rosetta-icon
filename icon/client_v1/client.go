@@ -16,8 +16,8 @@ package client_v1
 
 import (
 	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/server/jsonrpc"
-	v3 "github.com/icon-project/goloop/server/v3"
 	"net/http"
 	"net/url"
 	"strings"
@@ -119,13 +119,32 @@ func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (interface
 	return trRaw, nil
 }
 
-func (c *ClientV3) GetBalance(param *v3.AddressParam) (*jsonrpc.HexInt, error) {
-	var result jsonrpc.HexInt
-	_, err := c.Do("icx_getBalance", param, &result)
+func (c *ClientV3) GetBalance(address *BalanceRPCRequest) (*types.AccountBalanceResponse, error) {
+	var balance *common.HexInt
+	var blk BalanceWithBlockId
+
+	_, blkErr := c.Do("icx_getLastBlock", nil, &blk)
+	if blkErr != nil {
+		return nil, blkErr
+	}
+
+	_, err := c.Do("icx_getBalance", address, &balance)
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
+
+	return &types.AccountBalanceResponse{
+		BlockIdentifier: &types.BlockIdentifier{
+			Index: blk.Number(),
+			Hash:  blk.Hash(),
+		},
+		Balances: []*types.Amount{
+			{
+				Value:    balance.String(),
+				Currency: ICXCurrency,
+			},
+		},
+	}, nil
 }
 
 func (c *ClientV3) GetTotalSupply() (*jsonrpc.HexInt, error) {

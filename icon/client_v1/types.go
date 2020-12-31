@@ -97,6 +97,10 @@ type TransactionRPCRequest struct {
 	Hash string `json:"Hash"`
 }
 
+type BalanceRPCRequest struct {
+	Address string `json:"address"`
+}
+
 type Block01a struct {
 	ID                 common.HexBytes   `json:"block_hash"`
 	Version            string            `json:"version"`
@@ -450,4 +454,17 @@ type TransactionResult struct {
 	LogsBloom          *json.RawMessage `json:"logsBloom"`
 	EventLogs          *json.RawMessage `json:"eventLogs"`
 	Failure            *json.RawMessage `json:"failure"`
+}
+
+type BalanceWithBlockId struct {
+	ID     common.HexBytes `json:"block_hash"`
+	Height common.HexInt64 `json:"height"`
+}
+
+func (info *BalanceWithBlockId) Hash() string {
+	return info.ID.String()
+}
+
+func (info *BalanceWithBlockId) Number() int64 {
+	return info.Height.Value
 }
