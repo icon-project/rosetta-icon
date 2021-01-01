@@ -45,16 +45,6 @@ func (s *AccountAPIService) AccountBalance(
 		return nil, ErrUnavailableOffline
 	}
 
-	// TODO Account 개발
-	//balanceResponse, err := s.client.Balance(
-	//	ctx,
-	//	request.AccountIdentifier,
-	//	request.BlockIdentifier,
-	//)
-	//if err != nil {
-	//	return nil, wrapErr(ErrGeth, err)
-	//}
-
 	balance, err := s.client.GetBalance(request.AccountIdentifier)
 
 	if err != nil {
