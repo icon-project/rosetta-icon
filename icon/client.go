@@ -68,6 +68,7 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
+	reqParams = &client_v1.BlockRPCRequest{Hash: block.BlockIdentifier.Hash}
 	trsArray, err := ic.iconV1.GetBlockReceipts(reqParams)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get blockReceipts", err)

@@ -140,7 +140,7 @@ func (c *ClientV3) GetBalance(address *BalanceRPCRequest) (*types.AccountBalance
 		},
 		Balances: []*types.Amount{
 			{
-				Value:    balance.String(),
+				Value:    balance.Text(10),
 				Currency: ICXCurrency,
 			},
 		},

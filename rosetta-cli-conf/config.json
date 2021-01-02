@@ -12,9 +12,22 @@
   "compression_disabled": true,
   "memory_limit_disabled": true,
   "construction": {
-    "stale_depth": 3,
+    "stale_depth": 10,
     "broadcast_limit": 5,
     "constructor_dsl_file": "devnet.ros",
+    "prefunded_accounts": [
+      {
+        "privkey": "6de5d79c681bb324aae2670e8093ba4a655c0abe69bdc8e7f517b5c77bb2f93f",
+        "account_identifier": {
+          "address": "hxd2301d66ad53b7dcc8c07807687c57162cbb54a8"
+        },
+        "curve_type": "secp256k1",
+        "currency": {
+          "symbol": "ICX",
+          "decimals": 18
+        }
+      }
+    ],
     "end_conditions": {
       "create_account": 10,
       "transfer": 20
