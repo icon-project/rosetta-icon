@@ -99,7 +99,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 			if su.Cmp(zeroBigInt) != 0 {
 				f := su.Mul(&su.Int, &sp.Int)
 				fee := f.Text(10)
-				tx.Operations[2].Amount.Value = fee
+				tx.Operations[2].Amount.Value = "-" + fee
 				tx.Operations[3].Amount.Value = fee
 			}
 
