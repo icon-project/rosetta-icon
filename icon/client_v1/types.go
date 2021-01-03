@@ -224,7 +224,7 @@ func (ga *GenesisAccount) Addr() string {
 }
 
 func (ga *GenesisAccount) Balances() string {
-	return ga.Balance.String()
+	return ga.Balance.Text(10)
 }
 
 type GenesisTransaction struct {

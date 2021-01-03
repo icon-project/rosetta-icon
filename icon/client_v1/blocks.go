@@ -11,6 +11,10 @@ func ParseGenesisBlock(blk *Block01a) (*types.Block, error) {
 			Index: blk.Number(),
 			Hash:  blk.Hash(),
 		},
+		ParentBlockIdentifier: &types.BlockIdentifier{
+			Index: blk.Number(),
+			Hash:  blk.Hash(),
+		},
 		Timestamp:    blk.TimestampMilli(),
 		Transactions: transactions,
 		Metadata:     blk.GenesisMeta(),

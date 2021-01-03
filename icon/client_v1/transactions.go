@@ -19,7 +19,7 @@ func ParseGenesisTransaction(txArray []json.RawMessage) ([]*types.Transaction, e
 
 		tx := &types.Transaction{
 			TransactionIdentifier: &types.TransactionIdentifier{
-				Hash: "",
+				Hash: "0000000000000000000000000000000000000000000000000000000000000000",
 			},
 			Operations: operations,
 			Metadata:   nil,
