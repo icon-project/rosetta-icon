@@ -448,9 +448,9 @@ type TransactionResult struct {
 	TxIndex            *json.RawMessage `json:"txIndex"`
 	To                 *json.RawMessage `json:"to"`
 	ScoreAddress       *json.RawMessage `json:"scoreAddress"`
-	StepUsed           *json.RawMessage `json:"scoreAddress"`
-	CumulativeStepUsed *json.RawMessage `json:"cumulativeStepUsed"`
-	StepPrice          *json.RawMessage `json:"stepPrice"`
+	StepUsed           *common.HexInt   `json:"stepUsed"`
+	CumulativeStepUsed *common.HexInt   `json:"cumulativeStepUsed"`
+	StepPrice          *common.HexInt   `json:"stepPrice"`
 	LogsBloom          *json.RawMessage `json:"logsBloom"`
 	EventLogs          *json.RawMessage `json:"eventLogs"`
 	Failure            *json.RawMessage `json:"failure"`

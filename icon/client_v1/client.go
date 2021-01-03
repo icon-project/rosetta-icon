@@ -18,6 +18,7 @@ import (
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/server/jsonrpc"
+	"math/big"
 	"net/http"
 	"net/url"
 	"strings"
@@ -89,8 +90,20 @@ func (c *ClientV3) GetBlockReceipts(param *BlockRPCRequest) ([]*TransactionResul
 }
 
 func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*TransactionResult) (*types.Block, error) {
+	zeroBigInt := new(big.Int)
 	for index, tx := range block.Transactions {
 		tx = block.Transactions[index]
+		if len(tx.Operations) == 4 {
+			su := trsArray[index].StepUsed
+			sp := trsArray[index].StepPrice
+			if su.Cmp(zeroBigInt) != 0 {
+				f := su.Mul(&su.Int, &sp.Int)
+				fee := f.Text(10)
+				tx.Operations[2].Amount.Value = fee
+				tx.Operations[3].Amount.Value = fee
+			}
+
+		}
 		for _, op := range tx.Operations {
 			op.Status = trsArray[index].StatusFlag
 		}
