@@ -91,9 +91,10 @@ func (c *ClientV3) GetBlockReceipts(param *BlockRPCRequest) ([]*TransactionResul
 
 func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*TransactionResult) (*types.Block, error) {
 	zeroBigInt := new(big.Int)
+	fa := SystemScoreAddress
 	for index, tx := range block.Transactions {
 		tx = block.Transactions[index]
-		if len(tx.Operations) == 4 {
+		if len(tx.Operations) == 4 { //general tx(transfer, call, deploy...)
 			su := trsArray[index].StepUsed
 			sp := trsArray[index].StepPrice
 			if su.Cmp(zeroBigInt) != 0 {
@@ -102,13 +103,16 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 				tx.Operations[2].Amount.Value = "-" + fee
 				tx.Operations[3].Amount.Value = fee
 			}
-
+			fa = tx.Operations[0].Account.Address
+		}
+		if trsArray[index].EventLogs != nil {
+			ops := GetOperations(fa, trsArray[index].EventLogs, int64(len(tx.Operations))-1)
+			tx.Operations = append(tx.Operations, ops...)
 		}
 		for _, op := range tx.Operations {
 			op.Status = trsArray[index].StatusFlag
 		}
 	}
-	// TODO TxResult도 block Metadata에 넣을 필요가 있는가?
 	return block, nil
 }
 

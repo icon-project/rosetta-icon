@@ -22,7 +22,6 @@ import (
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/icon-project/goloop/service/transaction"
 	"math/big"
-	"strings"
 )
 
 var (
@@ -33,9 +32,13 @@ var (
 
 	OperationTypes = []string{
 		"TEST",
-		CallOpType,
+		TransferOpType,
 		FeeOpType,
 		BaseOpType,
+		IssueOpType,
+		BurnOpType,
+		ICXTransferOpType,
+		ClaimOpType,
 	}
 
 	// OperationStatuses are all supported operation statuses.
@@ -78,11 +81,18 @@ const (
 	GenesisBlockIndex          = int64(0)
 	HistoricalBalanceSupported = false
 
-	TreasuryAddress = "hx1000000000000000000000000000000000000000"
+	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
+	SystemScoreAddress = "cx0000000000000000000000000000000000000000"
 
-	CallOpType = "CALL"
-	FeeOpType  = "FEE"
-	BaseOpType = "BASE"
+	TransferOpType    = "TRANSFER"
+	FeeOpType         = "FEE"
+	BaseOpType        = "BASE"
+	BurnOpType        = "BURN"
+	ICXTransferOpType = "ICXTRANSFER"
+	ClaimOpType       = "CLAIM"
+	IssueOpType       = "ISSUE"
+
+	BaseDataType = "base"
 
 	SuccessStatus = "SUCCESS"
 	FailureStatus = "FAIL"
@@ -306,11 +316,11 @@ func (tx *Transaction) GetDataType() string {
 	if tx.DataType != nil {
 		for _, dataType := range defaultType {
 			if *tx.DataType == dataType {
-				return strings.Title(dataType)
+				return dataType
 			}
 		}
 	}
-	return "Transfer"
+	return "transfer"
 }
 
 func (tx *Transaction) ToJSON() (interface{}, error) {
@@ -439,21 +449,27 @@ func ParseV3JSON(js []byte) (*Transaction, error) {
 	return tx, nil
 }
 
+type EventLog struct {
+	Addr    string `json:"scoreAddress"`
+	Indexed []*string       `json:"indexed"`
+	Data    []*string       `json:"data"`
+}
+
 type TransactionResult struct {
 	StatusFlag         string
-	Status             json.RawMessage  `json:"status"`
-	BlockHeight        *json.RawMessage `json:"blockHeight"`
-	BlockHash          *json.RawMessage `json:"blockHash"`
-	TxHash             *json.RawMessage `json:"txHash"`
-	TxIndex            *json.RawMessage `json:"txIndex"`
-	To                 *json.RawMessage `json:"to"`
-	ScoreAddress       *json.RawMessage `json:"scoreAddress"`
-	StepUsed           *common.HexInt   `json:"stepUsed"`
-	CumulativeStepUsed *common.HexInt   `json:"cumulativeStepUsed"`
-	StepPrice          *common.HexInt   `json:"stepPrice"`
-	LogsBloom          *json.RawMessage `json:"logsBloom"`
-	EventLogs          *json.RawMessage `json:"eventLogs"`
-	Failure            *json.RawMessage `json:"failure"`
+	Status             json.RawMessage    `json:"status"`
+	BlockHeight        *json.RawMessage   `json:"blockHeight"`
+	BlockHash          *json.RawMessage   `json:"blockHash"`
+	TxHash             *json.RawMessage   `json:"txHash"`
+	TxIndex            *json.RawMessage   `json:"txIndex"`
+	To                 *json.RawMessage   `json:"to"`
+	ScoreAddress       *json.RawMessage   `json:"scoreAddress"`
+	StepUsed           *common.HexInt     `json:"stepUsed"`
+	CumulativeStepUsed *common.HexInt     `json:"cumulativeStepUsed"`
+	StepPrice          *common.HexInt     `json:"stepPrice"`
+	LogsBloom          *json.RawMessage   `json:"logsBloom"`
+	EventLogs          []*EventLog `json:"eventLogs"`
+	Failure            *json.RawMessage   `json:"failure"`
 }
 
 type BalanceWithBlockId struct {

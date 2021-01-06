@@ -2,6 +2,17 @@ package client_v1
 
 import (
 	"github.com/coinbase/rosetta-sdk-go/types"
+	"math/big"
+)
+
+const (
+	icxTransferSig = "ICXTransfer(Address,Address,int)"
+	issueSig       = "ICXIssued(int,int,int,int)"
+	claimSig       = "IScoreClaimed(int,int)"
+	claimSig2      = "IScoreClaimedV2(Address,int,int)"
+	burnSig1       = "ICXBurned"
+	burnSig2       = "ICXBurned(int)"
+	burnSig3       = "ICXBurnedV2(Address,int,int)"
 )
 
 func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error) {
@@ -11,7 +22,7 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: int64(len(ops)),
 			},
-			Type:   CallOpType,
+			Type:   TransferOpType,
 			Status: SuccessStatus,
 			Account: &types.AccountIdentifier{
 				Address: account.Addr(),
@@ -31,7 +42,7 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: int64(len(ops)),
 		},
-		Type:   CallOpType,
+		Type:   TransferOpType,
 		Status: SuccessStatus,
 		Metadata: map[string]interface{}{
 			"message": tx.Message,
@@ -44,13 +55,12 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 	var ops []*types.Operation
 
-	dataType := transaction.GetDataType()
-	dataType = CallOpType
+	opType := TransferOpType
 	fromOp := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: 0,
 		},
-		Type:   dataType,
+		Type:   opType,
 		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
@@ -72,7 +82,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 				Index: lastOpIndex,
 			},
 		},
-		Type:   dataType,
+		Type:   opType,
 		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.ToAddr(),
@@ -136,18 +146,18 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 
 	dataType := transaction.GetDataType()
 
-	if dataType == BaseOpType {
+	if dataType == BaseDataType {
 		baseOp, _ := MakeBaseOperations()
 		ops = append(ops, baseOp)
 		return ops, nil
 	}
-	dataType = CallOpType
+	opType := TransferOpType
 
 	fromOp := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: 0,
 		},
-		Type:   dataType,
+		Type:   opType,
 		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
@@ -170,7 +180,7 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 				Index: lastOpIndex,
 			},
 		},
-		Type:   dataType,
+		Type:   opType,
 		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
 			Address: transaction.ToAddr(),
@@ -240,4 +250,156 @@ func MakeBaseOperations() (*types.Operation, error) {
 		Status: SuccessStatus,
 	}
 	return baseOp, nil
+}
+
+func GetOperations(fa string, els []*EventLog, lastOpIndex int64) []*types.Operation {
+	ops := make([]*types.Operation, 0)
+	for _, el := range els {
+		switch *el.Indexed[0] {
+		case icxTransferSig:
+			value := new(big.Int)
+			value.SetString((*el.Indexed[3])[2:], 16)
+			ops = append(ops, &types.Operation{
+				OperationIdentifier: &types.OperationIdentifier{
+					Index: lastOpIndex + 1,
+				},
+				Type:   ICXTransferOpType,
+				Status: SuccessStatus,
+				Account: &types.AccountIdentifier{
+					Address: *el.Indexed[1],
+				},
+				Amount: &types.Amount{
+					Value:    "-" + value.Text(10),
+					Currency: ICXCurrency,
+				},
+			})
+			lastOpIndex += 1
+			ops = append(ops, &types.Operation{
+				OperationIdentifier: &types.OperationIdentifier{
+					Index: lastOpIndex + 1,
+				},
+				RelatedOperations: []*types.OperationIdentifier{
+					{
+						Index: lastOpIndex,
+					},
+				},
+				Type:   ICXTransferOpType,
+				Status: SuccessStatus,
+				Account: &types.AccountIdentifier{
+					Address: *el.Indexed[2],
+				},
+				Amount: &types.Amount{
+					Value:    value.Text(10),
+					Currency: ICXCurrency,
+				},
+			})
+			lastOpIndex += 1
+		case issueSig:
+			value := new(big.Int)
+			value.SetString((*el.Data[2])[2:], 16)
+			ops = append(ops, &types.Operation{
+				OperationIdentifier: &types.OperationIdentifier{
+					Index: lastOpIndex + 1,
+				},
+				Type:   IssueOpType,
+				Status: SuccessStatus,
+				Account: &types.AccountIdentifier{
+					Address: TreasuryAddress,
+				},
+				Amount: &types.Amount{
+					Value:    value.Text(10),
+					Currency: ICXCurrency,
+				},
+			})
+			lastOpIndex += 1
+		case claimSig:
+			op := getClaimOps(fa, el, lastOpIndex)
+			ops = append(ops, op...)
+			lastOpIndex += 2
+		case claimSig2:
+			op := getClaimOps(fa, el, lastOpIndex)
+			ops = append(ops, op...)
+			lastOpIndex += 2
+		case burnSig1:
+			op := getBurnOps(el, lastOpIndex)
+			ops = append(ops, op)
+			lastOpIndex += 1
+		case burnSig2:
+			op := getBurnOps(el, lastOpIndex)
+			ops = append(ops, op)
+			lastOpIndex += 1
+		case burnSig3:
+			op := getBurnOps(el, lastOpIndex)
+			ops = append(ops, op)
+			lastOpIndex += 1
+		}
+	}
+	return ops
+}
+
+func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation {
+	value := new(big.Int)
+	value.SetString((*el.Data[1])[2:], 16)
+	if len(el.Indexed) >= 2 {
+		fa = *el.Indexed[1]
+	}
+	ops := make([]*types.Operation, 0)
+	op := &types.Operation{
+		OperationIdentifier: &types.OperationIdentifier{
+			Index: lastOpIndex + 1,
+		},
+		Type:   ClaimOpType,
+		Status: SuccessStatus,
+		Account: &types.AccountIdentifier{
+			Address: TreasuryAddress,
+		},
+		Amount: &types.Amount{
+			Value:    "-" + value.Text(10),
+			Currency: ICXCurrency,
+		},
+	}
+	lastOpIndex += 1
+	ops = append(ops, op)
+	op = &types.Operation{
+		OperationIdentifier: &types.OperationIdentifier{
+			Index: lastOpIndex + 1,
+		},
+		RelatedOperations: []*types.OperationIdentifier{
+			&types.OperationIdentifier{
+				Index: lastOpIndex,
+			},
+		},
+		Type:   ClaimOpType,
+		Status: SuccessStatus,
+		Account: &types.AccountIdentifier{
+			Address: fa,
+		},
+		Amount: &types.Amount{
+			Value:    value.Text(10),
+			Currency: ICXCurrency,
+		},
+	}
+	ops = append(ops, op)
+	return ops
+}
+
+func getBurnOps(el *EventLog, lastOpIndex int64) *types.Operation {
+	value := new(big.Int)
+	value.SetString((*el.Data[0])[2:], 16)
+	fa := SystemScoreAddress
+	op := &types.Operation{
+		OperationIdentifier: &types.OperationIdentifier{
+			Index: lastOpIndex + 1,
+		},
+		Type:   BurnOpType,
+		Status: SuccessStatus,
+		Account: &types.AccountIdentifier{
+			Address: fa,
+		},
+		Amount: &types.Amount{
+			Value:    "-" + value.Text(10),
+			Currency: ICXCurrency,
+		},
+	}
+	return op
 }

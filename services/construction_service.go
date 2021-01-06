@@ -70,7 +70,7 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 	descriptions := &parser.Descriptions{
 		OperationDescriptions: []*parser.OperationDescription{
 			{
-				Type: client_v1.CallOpType,
+				Type: client_v1.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
@@ -81,7 +81,7 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 				},
 			},
 			{
-				Type: client_v1.CallOpType,
+				Type: client_v1.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
@@ -165,7 +165,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	d := &parser.Descriptions{
 		OperationDescriptions: []*parser.OperationDescription{
 			{
-				Type: client_v1.CallOpType,
+				Type: client_v1.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
@@ -176,7 +176,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 				},
 			},
 			{
-				Type: client_v1.CallOpType,
+				Type: client_v1.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
@@ -316,7 +316,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 
 	ops := []*types.Operation{
 		{
-			Type: client_v1.CallOpType,
+			Type: client_v1.TransferOpType,
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: 0,
 			},
@@ -329,7 +329,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 			},
 		},
 		{
-			Type: client_v1.CallOpType,
+			Type: client_v1.TransferOpType,
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: 1,
 			},
