@@ -1,0 +1,46 @@
+{
+  "network": {
+    "blockchain": "ICON",
+    "network": "Testnet"
+  },
+  "data_directory": "cli-data",
+  "http_timeout": 300,
+  "max_retries": 15,
+  "max_online_connections": 500,
+  "max_sync_concurrency": 64,
+  "tip_delay": 120,
+  "compression_disabled": true,
+  "memory_limit_disabled": true,
+  "construction": {
+    "stale_depth": 10,
+    "broadcast_limit": 5,
+    "constructor_dsl_file": "testnet.ros",
+    "prefunded_accounts": [
+      {
+        "privkey": "e9aae7d17c4033fc5156d6579815e0729c39e8a3cf8e511dd29f7ad49940b885",
+        "account_identifier": {
+          "address": "hxd209c7d4ca9dde0099f5510b6d04b8859c39bdc1"
+        },
+        "curve_type": "secp256k1",
+        "currency": {
+          "symbol": "ICX",
+          "decimals": 18
+        }
+      }
+    ],
+    "end_conditions": {
+      "create_account": 10,
+      "transfer": 20
+    }
+  },
+  "data": {
+    "initial_balance_fetch_disabled": true,
+    "active_reconciliation_concurrency": 32,
+    "end_conditions": {
+      "reconciliation_coverage": {
+        "coverage": 0.95,
+        "from_tip": true
+      }
+    }
+  }
+}
