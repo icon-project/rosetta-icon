@@ -94,11 +94,11 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 	fa := SystemScoreAddress
 	for index, tx := range block.Transactions {
 		tx = block.Transactions[index]
-		if len(tx.Operations) == 4 { //general tx(transfer, call, deploy...)
+		if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
 			su := trsArray[index].StepUsed
 			sp := trsArray[index].StepPrice
 			if su.Cmp(zeroBigInt) != 0 {
-				f := su.Mul(&su.Int, &sp.Int)
+				f := new(big.Int).Mul(&su.Int, &sp.Int)
 				fee := f.Text(10)
 				tx.Operations[2].Amount.Value = "-" + fee
 				tx.Operations[3].Amount.Value = fee
@@ -110,7 +110,9 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 			tx.Operations = append(tx.Operations, ops...)
 		}
 		for _, op := range tx.Operations {
-			op.Status = trsArray[index].StatusFlag
+			if op.Type == TransferOpType {
+				op.Status = trsArray[index].StatusFlag
+			}
 		}
 	}
 	return block, nil

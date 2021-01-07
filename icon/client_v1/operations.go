@@ -340,11 +340,8 @@ func GetOperations(fa string, els []*EventLog, lastOpIndex int64) []*types.Opera
 func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation {
 	value := new(big.Int)
 	value.SetString((*el.Data[1])[2:], 16)
-	if len(el.Indexed) >= 2 {
-		fa = *el.Indexed[1]
-	}
 	ops := make([]*types.Operation, 0)
-	op := &types.Operation{
+	ops = append(ops, &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: lastOpIndex + 1,
 		},
@@ -357,10 +354,9 @@ func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation 
 			Value:    "-" + value.Text(10),
 			Currency: ICXCurrency,
 		},
-	}
+	})
 	lastOpIndex += 1
-	ops = append(ops, op)
-	op = &types.Operation{
+	ops = append(ops, &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: lastOpIndex + 1,
 		},
@@ -378,15 +374,13 @@ func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation 
 			Value:    value.Text(10),
 			Currency: ICXCurrency,
 		},
-	}
-	ops = append(ops, op)
+	})
 	return ops
 }
 
 func getBurnOps(el *EventLog, lastOpIndex int64) *types.Operation {
 	value := new(big.Int)
 	value.SetString((*el.Data[0])[2:], 16)
-	fa := SystemScoreAddress
 	op := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: lastOpIndex + 1,
@@ -394,7 +388,7 @@ func getBurnOps(el *EventLog, lastOpIndex int64) *types.Operation {
 		Type:   BurnOpType,
 		Status: SuccessStatus,
 		Account: &types.AccountIdentifier{
-			Address: fa,
+			Address: SystemScoreAddress,
 		},
 		Amount: &types.Amount{
 			Value:    "-" + value.Text(10),
