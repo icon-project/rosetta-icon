@@ -1,0 +1,38 @@
+name: Go
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'github release tag'
+        required: true
+        default: '0.0.1'
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.15
+
+    - name: Build
+      run: make
+    
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.RELEASE_SECRET }}
+        file: bin/rosetta-icon
+        asset_name: Rosetta-ICON
+        tag: ${{ github.event.inputs.release_tag }}
+        overwrite: true
+        body: "Rosetta-ICON"
