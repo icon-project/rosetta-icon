@@ -17,7 +17,7 @@ GOMOD = go mod
 GOBUILD_TAGS =
 GOBUILD_ENVS = CGO_ENABLED=0 GO111MODULE=on
 GOBUILD_LDFLAGS = -ldflags ""
-GOBUILD_FLAGS = -mod=mod $(GOBUILD_TAGS) $(GOBUILD_LDFLAGS)
+GOBUILD_FLAGS = -mod= $(GOBUILD_TAGS) $(GOBUILD_LDFLAGS)
 
 # Build flags
 GL_VERSION ?= $(shell git describe --always --tags --dirty)
