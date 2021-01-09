@@ -30,7 +30,7 @@
     ],
     "end_conditions": {
       "create_account": 10,
-      "transfer": 20
+      "transfer": 1
     }
   },
   "data": {
@@ -38,7 +38,7 @@
     "active_reconciliation_concurrency": 32,
     "end_conditions": {
       "reconciliation_coverage": {
-        "coverage": 0.95,
+        "coverage": 0.01,
         "from_tip": true
       }
     }
