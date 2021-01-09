@@ -22,7 +22,7 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: int64(len(ops)),
 			},
-			Type:   TransferOpType,
+			Type:   GenesisOpType,
 			Status: SuccessStatus,
 			Account: &types.AccountIdentifier{
 				Address: account.Addr(),
@@ -42,7 +42,7 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 		OperationIdentifier: &types.OperationIdentifier{
 			Index: int64(len(ops)),
 		},
-		Type:   TransferOpType,
+		Type:   MessageOpType,
 		Status: SuccessStatus,
 		Metadata: map[string]interface{}{
 			"message": tx.Message,

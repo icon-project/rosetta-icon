@@ -31,7 +31,7 @@ var (
 	}
 
 	OperationTypes = []string{
-		"TEST",
+		GenesisOpType,
 		TransferOpType,
 		FeeOpType,
 		BaseOpType,
@@ -39,6 +39,7 @@ var (
 		BurnOpType,
 		ICXTransferOpType,
 		ClaimOpType,
+		MessageOpType,
 	}
 
 	// OperationStatuses are all supported operation statuses.
@@ -84,6 +85,7 @@ const (
 	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
 	SystemScoreAddress = "cx0000000000000000000000000000000000000000"
 
+	GenesisOpType     = "GENESIS"
 	TransferOpType    = "TRANSFER"
 	FeeOpType         = "FEE"
 	BaseOpType        = "BASE"
@@ -91,6 +93,7 @@ const (
 	ICXTransferOpType = "ICXTRANSFER"
 	ClaimOpType       = "CLAIM"
 	IssueOpType       = "ISSUE"
+	MessageOpType     = "MESSAGE"
 
 	BaseDataType = "base"
 
