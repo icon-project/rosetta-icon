@@ -16,7 +16,6 @@ package client_v1
 
 import (
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/server/jsonrpc"
 	"math/big"
 	"net/http"
@@ -35,10 +34,12 @@ func guessDebugEndpoint(endpoint string) string {
 		return ""
 	}
 	ps := strings.Split(uo.Path, "/")
+
 	for i, v := range ps {
 		if v == "api" {
 			if len(ps) > i+1 && ps[i+1] == "v3" {
-				ps[i+1] = "v3d"
+				ps[i+1] = "debug"
+				ps = append(ps, "v3")
 				uo.Path = strings.Join(ps, "/")
 				return uo.String()
 			}
@@ -138,17 +139,15 @@ func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (interface
 	return trRaw, nil
 }
 
-func (c *ClientV3) GetBalance(address *BalanceRPCRequest) (*types.AccountBalanceResponse, error) {
-	var balance *common.HexInt
+func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceResponse, error) {
+	var debugAccount *DebugAccount
 	var blk BalanceWithBlockId
 
-	_, blkErr := c.Do("icx_getLastBlock", nil, &blk)
-	if blkErr != nil {
+	if _, blkErr := c.Do("icx_getLastBlock", nil, &blk); blkErr != nil {
 		return nil, blkErr
 	}
 
-	_, err := c.Do("icx_getBalance", address, &balance)
-	if err != nil {
+	if _, err := c.DoURL(c.DebugEndPoint, "debug_getAccount", param, &debugAccount); err != nil {
 		return nil, err
 	}
 
@@ -159,7 +158,7 @@ func (c *ClientV3) GetBalance(address *BalanceRPCRequest) (*types.AccountBalance
 		},
 		Balances: []*types.Amount{
 			{
-				Value:    balance.Text(10),
+				Value:    debugAccount.Balance(),
 				Currency: ICXCurrency,
 			},
 		},

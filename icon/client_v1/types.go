@@ -109,6 +109,7 @@ type TransactionRPCRequest struct {
 
 type BalanceRPCRequest struct {
 	Address string `json:"address"`
+	Filter  string `json:"filter"`
 }
 
 type Block01a struct {
@@ -450,26 +451,26 @@ func ParseV3JSON(js []byte) (*Transaction, error) {
 }
 
 type EventLog struct {
-	Addr    string `json:"scoreAddress"`
-	Indexed []*string       `json:"indexed"`
-	Data    []*string       `json:"data"`
+	Addr    string    `json:"scoreAddress"`
+	Indexed []*string `json:"indexed"`
+	Data    []*string `json:"data"`
 }
 
 type TransactionResult struct {
 	StatusFlag         string
-	Status             json.RawMessage    `json:"status"`
-	BlockHeight        *json.RawMessage   `json:"blockHeight"`
-	BlockHash          *json.RawMessage   `json:"blockHash"`
-	TxHash             *json.RawMessage   `json:"txHash"`
-	TxIndex            *json.RawMessage   `json:"txIndex"`
-	To                 *json.RawMessage   `json:"to"`
-	ScoreAddress       *json.RawMessage   `json:"scoreAddress"`
-	StepUsed           *common.HexInt     `json:"stepUsed"`
-	CumulativeStepUsed *common.HexInt     `json:"cumulativeStepUsed"`
-	StepPrice          *common.HexInt     `json:"stepPrice"`
-	LogsBloom          *json.RawMessage   `json:"logsBloom"`
-	EventLogs          []*EventLog `json:"eventLogs"`
-	Failure            *json.RawMessage   `json:"failure"`
+	Status             json.RawMessage  `json:"status"`
+	BlockHeight        *json.RawMessage `json:"blockHeight"`
+	BlockHash          *json.RawMessage `json:"blockHash"`
+	TxHash             *json.RawMessage `json:"txHash"`
+	TxIndex            *json.RawMessage `json:"txIndex"`
+	To                 *json.RawMessage `json:"to"`
+	ScoreAddress       *json.RawMessage `json:"scoreAddress"`
+	StepUsed           *common.HexInt   `json:"stepUsed"`
+	CumulativeStepUsed *common.HexInt   `json:"cumulativeStepUsed"`
+	StepPrice          *common.HexInt   `json:"stepPrice"`
+	LogsBloom          *json.RawMessage `json:"logsBloom"`
+	EventLogs          []*EventLog      `json:"eventLogs"`
+	Failure            *json.RawMessage `json:"failure"`
 }
 
 type BalanceWithBlockId struct {
@@ -483,4 +484,41 @@ func (info *BalanceWithBlockId) Hash() string {
 
 func (info *BalanceWithBlockId) Number() int64 {
 	return info.Height.Value
+}
+
+type coin struct {
+	Balance *common.HexInt `json:"balance"`
+}
+
+type stake struct {
+	Stake   *common.HexInt `json:"stake"`
+	UnStake *common.HexInt `json:"unstake"`
+}
+
+func (s *stake) TotalStake() *common.HexInt {
+	var ret common.HexInt
+
+	result := HexIntAdd(s.Stake, s.UnStake)
+	ret.SetString(result.Text(10), 10)
+	return &ret
+}
+
+type DebugAccount struct {
+	Coin  coin  `json:"coin"`
+	Stake stake `json:"stake"`
+}
+
+func (da *DebugAccount) Balance() string {
+	totalBalance := HexIntAdd(da.Coin.Balance, da.Stake.TotalStake())
+	return totalBalance.Text(10)
+}
+
+func HexIntAdd(x *common.HexInt, y *common.HexInt) *big.Int {
+	a := big.NewInt(0)
+	b := big.NewInt(0)
+
+	a.SetString(x.Text(10), 10)
+	b.SetString(y.Text(10), 10)
+
+	return a.Add(a, b)
 }

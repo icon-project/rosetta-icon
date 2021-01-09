@@ -112,7 +112,9 @@ func (ic *Client) SendTransaction(tx client_v1.Transaction) error {
 func (ic *Client) GetBalance(params *RosettaTypes.AccountIdentifier) (*RosettaTypes.AccountBalanceResponse, error) {
 	reqParam := &client_v1.BalanceRPCRequest{
 		Address: params.Address,
+		Filter:  "0x3",
 	}
+
 	result, err := ic.iconV1.GetBalance(reqParam)
 	if err != nil {
 		return nil, err
