@@ -18,21 +18,21 @@ import (
 	"context"
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/leeheonseung/rosetta-icon/configuration"
-	"github.com/leeheonseung/rosetta-icon/icon"
+	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
 )
 
 type AccountAPIService struct {
 	config *configuration.Configuration
-	client *icon.Client
+	i      Indexer
 }
 
 func NewAccountAPIService(
 	config *configuration.Configuration,
-	client *icon.Client,
+	i Indexer,
 ) *AccountAPIService {
 	return &AccountAPIService{
 		config: config,
-		client: client,
+		i:      i,
 	}
 }
 
@@ -42,13 +42,32 @@ func (s *AccountAPIService) AccountBalance(
 	request *types.AccountBalanceRequest,
 ) (*types.AccountBalanceResponse, *types.Error) {
 	if s.config.Mode != configuration.Online {
-		return nil, ErrUnavailableOffline
+		return nil, wrapErr(ErrUnavailableOffline, nil)
 	}
 
-	balance, err := s.client.GetBalance(request.AccountIdentifier)
+	// TODO: filter balances by request currencies
 
+	// If we are fetching a historical balance,
+	// use balance storage and don't return coins.
+	amount, block, err := s.i.GetBalance(
+		ctx,
+		request.AccountIdentifier,
+		client_v1.ICXCurrency,
+		request.BlockIdentifier,
+	)
 	if err != nil {
-		return nil, wrapErr(ErrInvalidAddress, err)
+		return nil, wrapErr(ErrUnableToGetBalance, err)
 	}
-	return balance, nil
+
+	return &types.AccountBalanceResponse{
+		BlockIdentifier: block,
+		Balances: []*types.Amount{
+			amount,
+		},
+	}, nil
+}
+
+// AccountBalance implements /account/coin.
+func (s *AccountAPIService) AccountCoins(ctx context.Context, request *types.AccountCoinsRequest) (*types.AccountCoinsResponse, *types.Error) {
+	return nil, nil
 }

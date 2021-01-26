@@ -14,6 +14,8 @@
   "construction": {
     "stale_depth": 10,
     "broadcast_limit": 5,
+    "ignore_broadcast_failures": true,
+    "broadcast_behind_tip": true,
     "constructor_dsl_file": "devnet.ros",
     "prefunded_accounts": [
       {

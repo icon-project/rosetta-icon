@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/leeheonseung/rosetta-icon/indexer"
 	"log"
 	"net/http"
 	"time"
@@ -70,6 +71,7 @@ func runRunCmd(cmd *cobra.Command, args []string) error {
 		client_v1.HistoricalBalanceSupported,
 		[]*types.NetworkIdentifier{cfg.Network},
 		nil,
+		false,
 	)
 	if err != nil {
 		return fmt.Errorf("%w: could not initialize server asserter", err)
@@ -82,8 +84,15 @@ func runRunCmd(cmd *cobra.Command, args []string) error {
 
 	g, ctx := errgroup.WithContext(ctx)
 
-	client := icon.NewClient(cfg.URL, client_v1.ICXCurrency)
-	router := services.NewBlockchainRouter(cfg, client, asserter)
+	cv3 := client_v1.NewClientV3(cfg.URL, cfg.GenesisBlockIdentifier)
+	client := icon.NewClient(cv3, client_v1.ICXCurrency)
+	i, err := indexer.Initialize(ctx, cfg, cancel, cv3)
+
+	g.Go(func() error {
+		return i.Sync(ctx)
+	})
+
+	router := services.NewBlockchainRouter(cfg, client, i, asserter)
 
 	loggedRouter := server.LoggerMiddleware(router)
 	corsRouter := server.CorsMiddleware(loggedRouter)
@@ -110,6 +119,11 @@ func runRunCmd(cmd *cobra.Command, args []string) error {
 	})
 
 	err = g.Wait()
+
+	if i != nil {
+		i.CloseDatabase(ctx)
+	}
+
 	if SignalReceived {
 		return errors.New("rosetta-icon halted")
 	}

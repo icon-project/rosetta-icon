@@ -33,7 +33,7 @@ func ParseTransactionV2(transaction Transaction) (*types.Transaction, error) {
 	operations, _ := ParseOperationsV2(transaction)
 	return &types.Transaction{
 		TransactionIdentifier: &types.TransactionIdentifier{
-			Hash: transaction.TxHashV2.String(),
+			Hash: transaction.TxHashV2.String()[2:],
 		},
 		Operations: operations,
 		Metadata:   transaction.MetaV2(),
@@ -45,7 +45,7 @@ func ParseTransactionV3(transaction Transaction) (*types.Transaction, error) {
 
 	return &types.Transaction{
 		TransactionIdentifier: &types.TransactionIdentifier{
-			Hash: transaction.TxHashV3.String(),
+			Hash: transaction.TxHashV3.String()[2:],
 		},
 		Operations: operations,
 		Metadata:   transaction.MetaV3(),

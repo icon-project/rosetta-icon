@@ -58,7 +58,7 @@ var (
 	RosettaVersion    = "1.4.0"
 	NodeVersion       = "1.8.0"
 	StepPrice         = big.NewInt(12500000000)
-	TransferStepCost  = big.NewInt(100000)
+	TransferStepCost  = big.NewInt(1000000)
 )
 
 const (
@@ -144,11 +144,11 @@ func (b *Block01a) Number() int64 {
 }
 
 func (b *Block01a) Hash() string {
-	return b.ID.String()
+	return b.ID.String()[2:]
 }
 
 func (b *Block01a) PrevHash() string {
-	return b.PrevID.String()
+	return b.PrevID.String()[2:]
 }
 
 func (b *Block01a) Time() int64 {
@@ -206,7 +206,7 @@ func (b *Block03) Number() int64 {
 }
 
 func (b *Block03) Hash() string {
-	return b.ID.String()
+	return b.ID.String()[2:]
 }
 
 func (b *Block03) Time() int64 {
@@ -218,7 +218,7 @@ func (b *Block03) TimestampMilli() int64 {
 }
 
 func (b *Block03) PrevHash() string {
-	return b.PrevID.String()
+	return b.PrevID.String()[2:]
 }
 
 func (b *Block03) Meta() map[string]interface{} {
@@ -510,30 +510,12 @@ type stake struct {
 	UnStake *common.HexInt `json:"unstake"`
 }
 
-func (s *stake) TotalStake() *common.HexInt {
-	var ret common.HexInt
-
-	result := HexIntAdd(s.Stake, s.UnStake)
-	ret.SetString(result.Text(10), 10)
-	return &ret
+func (s *stake) TotalStake() *big.Int {
+	ret := new(big.Int).Add(&s.UnStake.Int, &s.Stake.Int)
+	return ret
 }
 
 type DebugAccount struct {
 	Coin  coin  `json:"coin"`
 	Stake stake `json:"stake"`
-}
-
-func (da *DebugAccount) Balance() string {
-	totalBalance := HexIntAdd(da.Coin.Balance, da.Stake.TotalStake())
-	return totalBalance.Text(10)
-}
-
-func HexIntAdd(x *common.HexInt, y *common.HexInt) *big.Int {
-	a := big.NewInt(0)
-	b := big.NewInt(0)
-
-	a.SetString(x.Text(10), 10)
-	b.SetString(y.Text(10), 10)
-
-	return a.Add(a, b)
 }
