@@ -29,6 +29,24 @@ type Client interface {
 	) (*types.Block, error)
 }
 
+type Indexer interface {
+	GetBlockLazy(
+		context.Context,
+		*types.PartialBlockIdentifier,
+	) (*types.BlockResponse, error)
+	GetBalance(
+		context.Context,
+		*types.AccountIdentifier,
+		*types.Currency,
+		*types.PartialBlockIdentifier,
+	) (*types.Amount, *types.BlockIdentifier, error)
+	GetBlockTransaction(
+		context.Context,
+		*types.BlockIdentifier,
+		*types.TransactionIdentifier,
+	) (*types.Transaction, error)
+}
+
 type options struct {
 	From string `json:"from"`
 }

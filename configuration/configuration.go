@@ -67,15 +67,20 @@ const (
 	// read to determine the port for the Rosetta
 	// implementation.
 	PortEnv = "PORT"
+
+	//Genesis block hash
+	GenesisHashEnv = "GENESISHASH"
 )
 
 // Configuration determines how
 type Configuration struct {
-	Mode     Mode
-	Network  *types.NetworkIdentifier
-	URL      string
-	DebugURL string
-	Port     int
+	Mode                   Mode
+	Network                *types.NetworkIdentifier
+	URL                    string
+	DebugURL               string
+	Port                   int
+	IndexerPath            string
+	GenesisBlockIdentifier *types.BlockIdentifier
 }
 
 // LoadConfiguration attempts to create a new Configuration
@@ -102,16 +107,19 @@ func LoadConfiguration() (*Configuration, error) {
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.MainnetNetwork,
 		}
+		config.IndexerPath = ".dataIndexerMainNet"
 	case Testnet:
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.TestnetNetwork,
 		}
+		config.IndexerPath = ".dataIndexerTestNet"
 	case Devnet:
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.DevelopNetwork,
 		}
+		config.IndexerPath = ".dataIndexerDevNet"
 	case "":
 		return nil, errors.New("NETWORK must be populated")
 	default:
@@ -145,6 +153,11 @@ func LoadConfiguration() (*Configuration, error) {
 		return nil, fmt.Errorf("%w: unable to parser port %s", err, envPort)
 	}
 	config.Port = port
+
+	config.GenesisBlockIdentifier = &types.BlockIdentifier{
+		Index: 0,
+		Hash:  os.Getenv(GenesisHashEnv),
+	}
 
 	return config, nil
 }

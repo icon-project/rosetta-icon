@@ -28,22 +28,23 @@ import (
 func NewBlockchainRouter(
 	config *configuration.Configuration,
 	client *icon.Client,
+	indexer Indexer,
 	asserter *asserter.Asserter,
 ) http.Handler {
 
-	networkAPIService := NewNetworkAPIService(config, client)
+	networkAPIService := NewNetworkAPIService(config, client, indexer)
 	networkAPIController := server.NewNetworkAPIController(
 		networkAPIService,
 		asserter,
 	)
 
-	accountAPIService := NewAccountAPIService(config, client)
+	accountAPIService := NewAccountAPIService(config, indexer)
 	accountAPIController := server.NewAccountAPIController(
 		accountAPIService,
 		asserter,
 	)
 
-	blockAPIService := NewBlockAPIService(config, client)
+	blockAPIService := NewBlockAPIService(config, indexer)
 	blockAPIController := server.NewBlockAPIController(
 		blockAPIService,
 		asserter,

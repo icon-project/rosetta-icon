@@ -14,7 +14,6 @@
   "construction": {
     "stale_depth": 10,
     "broadcast_limit": 5,
-    "constructor_dsl_file": "testnet.ros",
     "prefunded_accounts": [
       {
         "privkey": "e9aae7d17c4033fc5156d6579815e0729c39e8a3cf8e511dd29f7ad49940b885",
@@ -28,6 +27,7 @@
         }
       }
     ],
+    "constructor_dsl_file": "local.ros",
     "end_conditions": {
       "create_account": 10,
       "transfer": 1

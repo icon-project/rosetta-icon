@@ -141,11 +141,11 @@ func (b *Block01a) Number() int64 {
 }
 
 func (b *Block01a) Hash() string {
-	return b.ID.String()
+	return b.ID.String()[2:]
 }
 
 func (b *Block01a) PrevHash() string {
-	return b.PrevID.String()
+	return b.PrevID.String()[2:]
 }
 
 func (b *Block01a) Time() int64 {
@@ -199,7 +199,7 @@ func (b *Block03) Number() int64 {
 }
 
 func (b *Block03) Hash() string {
-	return b.ID.String()
+	return b.ID.String()[2:]
 }
 
 func (b *Block03) Time() int64 {
@@ -211,7 +211,7 @@ func (b *Block03) TimestampMilli() int64 {
 }
 
 func (b *Block03) PrevHash() string {
-	return b.PrevID.String()
+	return b.PrevID.String()[2:]
 }
 
 func (b *Block03) Meta() map[string]interface{} {

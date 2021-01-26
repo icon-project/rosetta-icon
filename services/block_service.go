@@ -18,21 +18,20 @@ import (
 	"context"
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon"
 )
 
 type BlockAPIService struct {
 	config *configuration.Configuration
-	client *icon.Client
+	i      Indexer
 }
 
 func NewBlockAPIService(
 	config *configuration.Configuration,
-	client *icon.Client,
+	i Indexer,
 ) *BlockAPIService {
 	return &BlockAPIService{
 		config: config,
-		client: client,
+		i:      i,
 	}
 }
 
@@ -44,13 +43,29 @@ func (s *BlockAPIService) Block(
 	if s.config.Mode != configuration.Online {
 		return nil, ErrUnavailableOffline
 	}
-
-	block, err := s.client.GetBlock(request.BlockIdentifier)
+	br, err := s.i.GetBlockLazy(ctx, request.BlockIdentifier)
 	if err != nil {
 		return nil, wrapErr(ErrWrongBlockHash, err)
 	}
+
+	txs := make([]*types.Transaction, len(br.OtherTransactions))
+	for i, otherTx := range br.OtherTransactions {
+		transaction, err := s.i.GetBlockTransaction(
+			ctx,
+			br.Block.BlockIdentifier,
+			otherTx,
+		)
+		if err != nil {
+			return nil, wrapErr(ErrTransactionNotFound, err)
+		}
+
+		txs[i] = transaction
+	}
+	br.Block.Transactions = txs
+
+	br.OtherTransactions = nil
 	return &types.BlockResponse{
-		Block: block,
+		Block: br.Block,
 	}, nil
 }
 
@@ -63,12 +78,16 @@ func (s *BlockAPIService) BlockTransaction(
 		return nil, ErrUnavailableOffline
 	}
 
-	tx, err := s.client.GetTransaction(request.TransactionIdentifier)
+	transaction, err := s.i.GetBlockTransaction(
+		ctx,
+		request.BlockIdentifier,
+		request.TransactionIdentifier,
+	)
 	if err != nil {
-		return nil, wrapErr(ErrWrongBlockHash, err)
+		return nil, wrapErr(ErrTransactionNotFound, err)
 	}
 
 	return &types.BlockTransactionResponse{
-		Transaction: tx,
+		Transaction: transaction,
 	}, nil
 }

@@ -23,17 +23,20 @@ import (
 )
 
 type NetworkAPIService struct {
-	config *configuration.Configuration
-	client *icon.Client
+	config  *configuration.Configuration
+	client  *icon.Client
+	indexer Indexer
 }
 
 func NewNetworkAPIService(
 	config *configuration.Configuration,
 	client *icon.Client,
+	indexer Indexer,
 ) *NetworkAPIService {
 	return &NetworkAPIService{
-		config: config,
-		client: client,
+		config:  config,
+		client:  client,
+		indexer: indexer,
 	}
 }
 
@@ -62,22 +65,22 @@ func (s *NetworkAPIService) NetworkStatus(
 	params := &types.PartialBlockIdentifier{
 		Index: &gh,
 	}
-	genesisBlock, err := s.client.GetBlock(params)
+	gbr, err := s.indexer.GetBlockLazy(nil, params)
 	if err != nil {
 		return nil, wrapErr(ErrWrongBlockHash, err)
 	}
 
 	params = &types.PartialBlockIdentifier{}
-	lastBlock, err := s.client.GetBlock(params)
+	lbr, err := s.indexer.GetBlockLazy(nil, params)
 	if err != nil {
 		return nil, wrapErr(ErrWrongBlockHash, err)
 	}
 
 	peers, err := s.client.GetPeer()
 	return &types.NetworkStatusResponse{
-		CurrentBlockIdentifier: lastBlock.BlockIdentifier,
-		CurrentBlockTimestamp:  lastBlock.Timestamp,
-		GenesisBlockIdentifier: genesisBlock.BlockIdentifier,
+		CurrentBlockIdentifier: lbr.Block.BlockIdentifier,
+		CurrentBlockTimestamp:  lbr.Block.Timestamp,
+		GenesisBlockIdentifier: gbr.Block.BlockIdentifier,
 		SyncStatus:             nil,
 		Peers:                  peers,
 	}, nil

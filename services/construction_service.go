@@ -293,7 +293,7 @@ func (s *ConstructionAPIService) ConstructionHash(
 	if err := json.Unmarshal([]byte(request.SignedTransaction), signedTx); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
-	h := "0x" + hex.EncodeToString(signedTx.TxHash())
+	h := hex.EncodeToString(signedTx.TxHash())
 
 	return &types.TransactionIdentifierResponse{
 		TransactionIdentifier: &types.TransactionIdentifier{
@@ -401,7 +401,7 @@ func (s *ConstructionAPIService) ConstructionSubmit(
 		return nil, wrapErr(ErrBroadcastFailed, err)
 	}
 
-	h := "0x" + hex.EncodeToString(signedTx.TxHash())
+	h := hex.EncodeToString(signedTx.TxHash())
 	txIdentifier := &types.TransactionIdentifier{
 		Hash: h,
 	}

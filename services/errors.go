@@ -25,7 +25,14 @@ var (
 		ErrUnimplemented,
 		ErrUnavailableOffline,
 		ErrNotReady,
+		ErrUnableToDecompressPubkey,
+		ErrUnclearIntent,
+		ErrUnableToParseIntermediateResult,
+		ErrSignatureInvalid,
+		ErrBroadcastFailed,
 		ErrWrongBlockHash,
+		ErrTransactionNotFound,
+		ErrUnableToGetBalance,
 	}
 
 	// ErrUnimplemented is returned when an endpoint
@@ -101,6 +108,21 @@ var (
 		Code:      13,
 		Message:   "Wrong Block Hash",
 		Retriable: true,
+	}
+
+	// ErrTransactionNotFound is returned by the indexer
+	// when it is not possible to find a transaction.
+	ErrTransactionNotFound = &types.Error{
+		Code:    16, // nolint
+		Message: "Transaction not found",
+	}
+
+	// ErrUnableToGetBalance is returned by the i
+	// when it is not possible to get the balance
+	// of a *types.AccountIdentifier.
+	ErrUnableToGetBalance = &types.Error{
+		Code:    18, //nolint
+		Message: "Unable to get balance",
 	}
 )
 
