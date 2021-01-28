@@ -43,6 +43,8 @@ const (
 	// Testnet is ICON Testnet3.
 	Testnet string = "TESTNET"
 
+	Ziconet string = "ZICON"
+
 	Devnet string = "DEVNET"
 
 	// ModeEnv is the environment variable read
@@ -107,6 +109,11 @@ func LoadConfiguration() (*Configuration, error) {
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.TestnetNetwork,
+		}
+	case Ziconet:
+		config.Network = &types.NetworkIdentifier{
+			Blockchain: client_v1.Blockchain,
+			Network:    client_v1.ZiconNetwork,
 		}
 	case Devnet:
 		config.Network = &types.NetworkIdentifier{

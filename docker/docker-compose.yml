@@ -1,0 +1,36 @@
+version: '3'
+services:
+  prep-node:
+    image: 'iconloop/prep-node:dev'
+    network_mode: host
+    container_name: "prep-node"
+    restart: "on-failure"
+    environment:
+      LOOPCHAIN_LOG_LEVEL: "SPAM"
+      ICON_LOG_LEVEL: "DEBUG"
+      DEFAULT_PATH: "/data/loopchain"
+      LOG_OUTPUT_TYPE: "file"
+      SERVICE: "zicon"
+      IS_AUTOGEN_CERT: "true"
+      FASTEST_START: "yes"
+      IS_COMPRESS_LOG: "true"
+      USER_DEFINED_ENV: |
+        .CHANNEL_OPTION.icon_dex.crep_root_hash=0xb7cc19da5bff37a2c4954e16473ab65610a9481f8f864d7ea587c65bff82402f|configure_json
+    cap_add:
+      - SYS_TIME
+    volumes:
+      - ./data/loopchain/mainnet:/data/loopchain/
+      - ./cert:/prep_peer/cert
+    ports:
+      - '7100:7100'
+      - '9000:9000'
+  rosetta:
+    image: 'jinyyo/rosetta-test'
+    network_mode: host
+    container_name: "rosetta"
+    restart: "on-failure"
+    environment:
+      ENDPOINT: 'http://localhost:9000'
+      MODE: 'ONLINE'
+      NETWORK: 'TESTNET'
+      PORT: 8080

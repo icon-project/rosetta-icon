@@ -73,6 +73,8 @@ const (
 	// in TestnetNetworkIdentifier.
 	TestnetNetwork string = "Testnet"
 
+	ZiconNetwork string = "ZiconNet"
+
 	// for develop
 	DevelopNetwork string = "Devnet"
 
