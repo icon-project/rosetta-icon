@@ -329,7 +329,7 @@ func (tx *Transaction) GetDataType() string {
 	return "transfer"
 }
 
-func (tx *Transaction) ToJSON() (interface{}, error) {
+func (tx *Transaction) ToJSON() (map[string]interface{}, error) {
 	jso := map[string]interface{}{
 		"version":   &tx.Version,
 		"from":      &tx.From,

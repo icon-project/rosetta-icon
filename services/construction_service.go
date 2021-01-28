@@ -162,6 +162,27 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	ctx context.Context,
 	request *types.ConstructionPayloadsRequest,
 ) (*types.ConstructionPayloadsResponse, *types.Error) {
+	requestAmount := request.Operations[0].Amount.Value
+	isContractCall := false
+	isZero := false
+	var dataType string
+	_, ok := request.Metadata["dataType"]
+	if ok {
+		bs, err := json.Marshal(request.Metadata["dataType"])
+		if err != nil {
+			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
+		}
+		err = json.Unmarshal(bs, &dataType)
+		if err != nil {
+			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
+		}
+		isContractCall = true
+		if requestAmount == "0" {
+			isZero = true
+			request.Operations[0].Amount.Value = "-1"
+			request.Operations[1].Amount.Value = "1"
+		}
+	}
 	d := &parser.Descriptions{
 		OperationDescriptions: []*parser.OperationDescription{
 			{
@@ -212,6 +233,32 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 		NID:       nid,
 		Nonce:     common.NewHexInt(1),
 	}
+
+	if isContractCall {
+		uTx.DataType = &dataType
+		if isZero {
+			uTx.Value = common.NewHexInt(0)
+		}
+	}
+	_, ok = request.Metadata["data"]
+	if ok {
+		bs, err := json.Marshal(request.Metadata["data"])
+		if err != nil {
+			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
+		}
+		uTx.Data = bs
+	}
+
+	res, err := s.client.EstimateStep(*uTx)
+	if err != nil {
+		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
+	}
+	var step common.HexInt
+	if err = json.Unmarshal(res.Result, &step); err != nil {
+		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
+	}
+	uTx.StepLimit = step
+
 	h, err := uTx.CalcHash()
 	if err != nil {
 		return nil, ErrUnclearIntent

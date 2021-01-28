@@ -36,7 +36,3 @@ type options struct {
 type metadata struct {
 	StepPrice *big.Int `json:"stepPrice"`
 }
-
-type parseMetadata struct {
-	StepPrice *big.Int `json:"stepPrice"`
-}

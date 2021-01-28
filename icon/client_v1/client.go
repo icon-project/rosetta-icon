@@ -221,3 +221,12 @@ func (c *ClientV3) SendTransaction(req interface{}) error {
 	}
 	return nil
 }
+
+func (c *ClientV3) EstimateStep(req interface{}) (*Response, error) {
+	resp := ""
+	res, err := c.DoURL(c.DebugEndPoint, "debug_estimateStep", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}

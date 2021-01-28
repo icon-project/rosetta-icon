@@ -109,6 +109,20 @@ func (ic *Client) SendTransaction(tx client_v1.Transaction) error {
 	return nil
 }
 
+func (ic *Client) EstimateStep(tx client_v1.Transaction) (*client_v1.Response, error) {
+	js, err := tx.ToJSON()
+	if err != nil {
+		return nil, err
+	}
+	delete(js, "signature")
+	delete(js, "stepLimit")
+	res, err := ic.iconV1.EstimateStep(js)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (ic *Client) GetBalance(params *RosettaTypes.AccountIdentifier) (*RosettaTypes.AccountBalanceResponse, error) {
 	reqParam := &client_v1.BalanceRPCRequest{
 		Address: params.Address,
