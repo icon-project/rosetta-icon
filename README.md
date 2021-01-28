@@ -4,7 +4,7 @@
   </a>
 </p>
 <h3 align="center">
-   Zilliqa Rosetta
+   Rosetta ICON
 </h3>
 
 ## Overview
