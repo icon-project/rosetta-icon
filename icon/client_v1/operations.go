@@ -152,7 +152,7 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 		ops = append(ops, baseOp)
 		return ops, nil
 	}
-	opType := TransferOpType
+	opType := getOPType(dataType, transaction.To.String())
 
 	fromOp := &types.Operation{
 		OperationIdentifier: &types.OperationIdentifier{
@@ -422,4 +422,26 @@ func getDepositWithdrawn(el *EventLog, lastOpIndex int64) *types.Operation {
 		},
 	}
 	return op
+}
+
+func getOPType(dataType string, toAddress string) string {
+	switch dataType {
+	case DeployDataType:
+		return DeployOpType
+	case CallDataType:
+		return CallOpType
+	case TransferDataType:
+		if IsContract(toAddress) {
+			return CallOpType
+		}
+		return TransferOpType
+	case MessageDataType:
+		return MessageOpType
+	case BaseDataType:
+		return BaseOpType
+	case DepositDataType:
+		return DepositOpType
+	default:
+		return TransferOpType
+	}
 }

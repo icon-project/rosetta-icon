@@ -69,7 +69,6 @@ func (c *ClientV3) GetBlock(param *BlockRPCRequest) (*types.Block, error) {
 		return nil, err
 	}
 
-	// TODO Block을 Version에 맞춰서 변환
 	block, err := ParseBlock(blockRaw)
 	if err != nil {
 		return nil, err
@@ -105,17 +104,20 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 				f := new(big.Int).Mul(&su.Int, &sp.Int)
 				fee := f.Text(10)
 				tx.Operations[3].Amount.Value = fee
-				userStep := GetUserStep(tx.Operations[2].Account.Address, sd)
+				userStep := &su.Int
+				if len(sd) != 0 {
+					userStep = GetUserStep(tx.Operations[2].Account.Address, sd)
+				}
 				tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
+				fa = tx.Operations[0].Account.Address
 			}
-			fa = tx.Operations[0].Account.Address
 		}
 		if trsArray[index].EventLogs != nil {
 			ops := GetOperations(fa, trsArray[index].EventLogs, int64(len(tx.Operations))-1)
 			tx.Operations = append(tx.Operations, ops...)
 		}
 		for _, op := range tx.Operations {
-			if op.Type == TransferOpType {
+			if op.Type == TransferOpType || op.Type == CallOpType || op.Type == DeployOpType {
 				op.Status = trsArray[index].StatusFlag
 			}
 		}
@@ -162,17 +164,20 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 			f := new(big.Int).Mul(&su.Int, &sp.Int)
 			fee := f.Text(10)
 			tx.Operations[3].Amount.Value = fee
-			userStep := GetUserStep(tx.Operations[2].Account.Address, sd)
+			userStep := &su.Int
+			if len(sd) != 0 {
+				userStep = GetUserStep(tx.Operations[2].Account.Address, sd)
+			}
 			tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
+			fa = tx.Operations[0].Account.Address
 		}
-		fa = tx.Operations[0].Account.Address
 	}
 	if txResult.EventLogs != nil {
 		ops := GetOperations(fa, txResult.EventLogs, int64(len(tx.Operations))-1)
 		tx.Operations = append(tx.Operations, ops...)
 	}
 	for _, op := range tx.Operations {
-		if op.Type == TransferOpType {
+		if op.Type == TransferOpType || op.Type == CallOpType || op.Type == DeployOpType {
 			op.Status = txResult.StatusFlag
 		}
 	}
@@ -273,9 +278,6 @@ func (c *ClientV3) EstimateStep(req interface{}) (*Response, error) {
 
 func GetUserStep(from string, stepDetails map[string]*common.HexInt) *big.Int {
 	userUsed := new(big.Int)
-	if len(stepDetails) == 0 {
-		return userUsed
-	}
 	for f, v := range stepDetails {
 		if from == f {
 			userUsed.Set(&v.Int)

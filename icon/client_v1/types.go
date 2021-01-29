@@ -97,8 +97,16 @@ const (
 	ClaimOpType       = "CLAIM"
 	IssueOpType       = "ISSUE"
 	MessageOpType     = "MESSAGE"
+	DeployOpType = "DEPLOY"
+	CallOpType = "CALL"
+	DepositOpType = "DEPOSIT"
 
 	BaseDataType = "base"
+	TransferDataType = "transfer"
+	MessageDataType = "message"
+	DeployDataType = "deploy"
+	CallDataType = "call"
+	DepositDataType = "deposit"
 
 	SuccessStatus = "SUCCESS"
 	FailureStatus = "FAIL"
@@ -318,7 +326,7 @@ func (tx *Transaction) MetaV3() map[string]interface{} {
 }
 
 func (tx *Transaction) GetDataType() string {
-	defaultType := [4]string{"call", "deploy", "message", "base"}
+	defaultType := [5]string{"call", "deploy", "message", "base", "deposit"}
 
 	if tx.DataType != nil {
 		for _, dataType := range defaultType {

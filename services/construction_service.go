@@ -106,15 +106,15 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 	ta := t.Account.Address
 
 	// Ensure valid from address
-	e := icon.CheckAddress(fa)
+	e := client_v1.CheckAddress(fa)
 	if e != nil {
-		return nil, wrapErr(e, fmt.Errorf("%s is not a valid address", fa))
+		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", fa))
 	}
 
 	// Ensure valid to address
-	e = icon.CheckAddress(ta)
+	e = client_v1.CheckAddress(ta)
 	if e != nil {
-		return nil, wrapErr(e, fmt.Errorf("%s is not a valid address", ta))
+		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", ta))
 	}
 
 	preprocessOutput := &options{
@@ -162,27 +162,6 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	ctx context.Context,
 	request *types.ConstructionPayloadsRequest,
 ) (*types.ConstructionPayloadsResponse, *types.Error) {
-	requestAmount := request.Operations[0].Amount.Value
-	isContractCall := false
-	isZero := false
-	var dataType string
-	_, ok := request.Metadata["dataType"]
-	if ok {
-		bs, err := json.Marshal(request.Metadata["dataType"])
-		if err != nil {
-			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
-		}
-		err = json.Unmarshal(bs, &dataType)
-		if err != nil {
-			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
-		}
-		isContractCall = true
-		if requestAmount == "0" {
-			isZero = true
-			request.Operations[0].Amount.Value = "-1"
-			request.Operations[1].Amount.Value = "1"
-		}
-	}
 	d := &parser.Descriptions{
 		OperationDescriptions: []*parser.OperationDescription{
 			{
@@ -234,20 +213,6 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 		Nonce:     common.NewHexInt(1),
 	}
 
-	if isContractCall {
-		uTx.DataType = &dataType
-		if isZero {
-			uTx.Value = common.NewHexInt(0)
-		}
-	}
-	_, ok = request.Metadata["data"]
-	if ok {
-		bs, err := json.Marshal(request.Metadata["data"])
-		if err != nil {
-			return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
-		}
-		uTx.Data = bs
-	}
 
 	res, err := s.client.EstimateStep(*uTx)
 	if err != nil {
@@ -351,14 +316,14 @@ func (s *ConstructionAPIService) ConstructionParse(
 
 	}
 
-	err := icon.CheckAddress(tx.From.String())
+	err := client_v1.CheckAddress(tx.From.String())
 	if err != nil {
-		return nil, wrapErr(err, fmt.Errorf("%s is not a valid address", tx.From.String()))
+		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", tx.From.String()))
 	}
 
-	err = icon.CheckAddress(tx.From.String())
+	err = client_v1.CheckAddress(tx.From.String())
 	if err != nil {
-		return nil, wrapErr(err, fmt.Errorf("%s is not a valid address", tx.To))
+		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", tx.To))
 	}
 
 	ops := []*types.Operation{
