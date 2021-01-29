@@ -30,7 +30,7 @@ jobs:
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
-        repo_token: ${{ secrets.RELEASE_SECRET }}
+        repo_token: ${{ secrets.ROSETTA_SECRET }}
         file: bin/rosetta-icon
         asset_name: Rosetta-ICON
         tag: ${{ github.event.inputs.release_tag }}
