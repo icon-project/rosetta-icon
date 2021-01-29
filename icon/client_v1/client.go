@@ -93,7 +93,6 @@ func (c *ClientV3) GetBlockReceipts(param *BlockRPCRequest) ([]*TransactionResul
 
 func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*TransactionResult) (*types.Block, error) {
 	zeroBigInt := new(big.Int)
-	fa := SystemScoreAddress
 	for index, tx := range block.Transactions {
 		tx = block.Transactions[index]
 		if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
@@ -113,6 +112,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 			}
 		}
 		if trsArray[index].EventLogs != nil {
+			fa := tx.Operations[0].Account.Address
 			ops := GetOperations(fa, trsArray[index].EventLogs, int64(len(tx.Operations))-1)
 			tx.Operations = append(tx.Operations, ops...)
 		}
@@ -155,7 +155,6 @@ func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*Transact
 
 func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *TransactionResult) (*types.Transaction, error) {
 	zeroBigInt := new(big.Int)
-	fa := SystemScoreAddress
 	if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
 		su := txResult.StepUsed
 		sp := txResult.StepPrice
@@ -173,6 +172,7 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 		}
 	}
 	if txResult.EventLogs != nil {
+		fa := tx.Operations[0].Account.Address
 		ops := GetOperations(fa, txResult.EventLogs, int64(len(tx.Operations))-1)
 		tx.Operations = append(tx.Operations, ops...)
 	}
