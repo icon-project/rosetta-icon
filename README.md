@@ -7,6 +7,8 @@
    Rosetta ICON
 </h3>
 
+ROSETTA-ICON IS CONSIDERED [ALPHA SOFTWARE](https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha) USE AT YOUR OWN RISK.
+
 ## Overview
 `rosetta-icon` provides a reference implementation of the [Rosetta specification](https://github.com/coinbase/rosetta-specifications) for ICON in Golang.
 
