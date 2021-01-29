@@ -92,6 +92,7 @@ const (
 	FeeOpType         = "FEE"
 	BaseOpType        = "BASE"
 	BurnOpType        = "BURN"
+	WithdrawnType     = "WITHDRAWN"
 	ICXTransferOpType = "ICXTRANSFER"
 	ClaimOpType       = "CLAIM"
 	IssueOpType       = "ISSUE"
@@ -463,19 +464,20 @@ type EventLog struct {
 
 type TransactionResult struct {
 	StatusFlag         string
-	Status             json.RawMessage  `json:"status"`
-	BlockHeight        *json.RawMessage `json:"blockHeight"`
-	BlockHash          *json.RawMessage `json:"blockHash"`
-	TxHash             *json.RawMessage `json:"txHash"`
-	TxIndex            *json.RawMessage `json:"txIndex"`
-	To                 *json.RawMessage `json:"to"`
-	ScoreAddress       *json.RawMessage `json:"scoreAddress"`
-	StepUsed           *common.HexInt   `json:"stepUsed"`
-	CumulativeStepUsed *common.HexInt   `json:"cumulativeStepUsed"`
-	StepPrice          *common.HexInt   `json:"stepPrice"`
-	LogsBloom          *json.RawMessage `json:"logsBloom"`
-	EventLogs          []*EventLog      `json:"eventLogs"`
-	Failure            *json.RawMessage `json:"failure"`
+	Status             json.RawMessage           `json:"status"`
+	BlockHeight        *json.RawMessage          `json:"blockHeight"`
+	BlockHash          *json.RawMessage          `json:"blockHash"`
+	TxHash             *json.RawMessage          `json:"txHash"`
+	TxIndex            *json.RawMessage          `json:"txIndex"`
+	To                 *json.RawMessage          `json:"to"`
+	ScoreAddress       *json.RawMessage          `json:"scoreAddress"`
+	StepUsed           *common.HexInt            `json:"stepUsed"`
+	CumulativeStepUsed *common.HexInt            `json:"cumulativeStepUsed"`
+	StepPrice          *common.HexInt            `json:"stepPrice"`
+	LogsBloom          *json.RawMessage          `json:"logsBloom"`
+	EventLogs          []*EventLog               `json:"eventLogs"`
+	Failure            *json.RawMessage          `json:"failure"`
+	StepDetails        map[string]*common.HexInt `json:"stepUsedDetails"`
 }
 
 type BalanceWithBlockId struct {

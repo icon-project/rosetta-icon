@@ -6,13 +6,14 @@ import (
 )
 
 const (
-	icxTransferSig = "ICXTransfer(Address,Address,int)"
-	issueSig       = "ICXIssued(int,int,int,int)"
-	claimSig       = "IScoreClaimed(int,int)"
-	claimSig2      = "IScoreClaimedV2(Address,int,int)"
-	burnSig1       = "ICXBurned"
-	burnSig2       = "ICXBurned(int)"
-	burnSig3       = "ICXBurnedV2(Address,int,int)"
+	icxTransferSig   = "ICXTransfer(Address,Address,int)"
+	issueSig         = "ICXIssued(int,int,int,int)"
+	claimSig         = "IScoreClaimed(int,int)"
+	claimSig2        = "IScoreClaimedV2(Address,int,int)"
+	burnSig1         = "ICXBurned"
+	burnSig2         = "ICXBurned(int)"
+	burnSig3         = "ICXBurnedV2(Address,int,int)"
+	depositWithdrawn = "DepositWithdrawn(bytes,Address,int,int)"
 )
 
 func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error) {
@@ -332,6 +333,10 @@ func GetOperations(fa string, els []*EventLog, lastOpIndex int64) []*types.Opera
 			op := getBurnOps(el, lastOpIndex)
 			ops = append(ops, op)
 			lastOpIndex += 1
+		case depositWithdrawn:
+			op := getDepositWithdrawn(el, lastOpIndex)
+			ops = append(ops, op)
+			lastOpIndex += 1
 		}
 	}
 	return ops
@@ -392,6 +397,27 @@ func getBurnOps(el *EventLog, lastOpIndex int64) *types.Operation {
 		},
 		Amount: &types.Amount{
 			Value:    "-" + value.Text(10),
+			Currency: ICXCurrency,
+		},
+	}
+	return op
+}
+
+func getDepositWithdrawn(el *EventLog, lastOpIndex int64) *types.Operation {
+	value := new(big.Int)
+	value.SetString((*el.Data[0])[2:], 16)
+	fa := *el.Indexed[2]
+	op := &types.Operation{
+		OperationIdentifier: &types.OperationIdentifier{
+			Index: lastOpIndex + 1,
+		},
+		Type:   WithdrawnType,
+		Status: SuccessStatus,
+		Account: &types.AccountIdentifier{
+			Address: fa,
+		},
+		Amount: &types.Amount{
+			Value:    value.Text(10),
 			Currency: ICXCurrency,
 		},
 	}

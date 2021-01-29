@@ -17,6 +17,7 @@ package client_v1
 import (
 	"encoding/json"
 	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/server/jsonrpc"
 	"math/big"
 	"net/http"
@@ -99,11 +100,13 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 		if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
 			su := trsArray[index].StepUsed
 			sp := trsArray[index].StepPrice
+			sd := trsArray[index].StepDetails
 			if su.Cmp(zeroBigInt) != 0 {
 				f := new(big.Int).Mul(&su.Int, &sp.Int)
 				fee := f.Text(10)
-				tx.Operations[2].Amount.Value = "-" + fee
 				tx.Operations[3].Amount.Value = fee
+				userStep := GetUserStep(tx.Operations[2].Account.Address, sd)
+				tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
 			}
 			fa = tx.Operations[0].Account.Address
 		}
@@ -154,11 +157,13 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 	if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
 		su := txResult.StepUsed
 		sp := txResult.StepPrice
+		sd := txResult.StepDetails
 		if su.Cmp(zeroBigInt) != 0 {
 			f := new(big.Int).Mul(&su.Int, &sp.Int)
 			fee := f.Text(10)
-			tx.Operations[2].Amount.Value = "-" + fee
 			tx.Operations[3].Amount.Value = fee
+			userStep := GetUserStep(tx.Operations[2].Account.Address, sd)
+			tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
 		}
 		fa = tx.Operations[0].Account.Address
 	}
@@ -264,4 +269,17 @@ func (c *ClientV3) EstimateStep(req interface{}) (*Response, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+func GetUserStep(from string, stepDetails map[string]*common.HexInt) *big.Int {
+	userUsed := new(big.Int)
+	if len(stepDetails) == 0 {
+		return userUsed
+	}
+	for f, v := range stepDetails {
+		if from == f {
+			userUsed.Set(&v.Int)
+		}
+	}
+	return userUsed
 }
