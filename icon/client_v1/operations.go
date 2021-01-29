@@ -2,6 +2,7 @@ package client_v1
 
 import (
 	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/leeheonseung/rosetta-icon/icon"
 	"math/big"
 )
 
