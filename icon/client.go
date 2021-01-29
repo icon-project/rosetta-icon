@@ -90,6 +90,12 @@ func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*R
 		return nil, fmt.Errorf("%w: could not get transaction", err)
 	}
 
+
+	txR, err := ic.iconV1.GetTransactionResult(reqParams)
+	if err != nil {
+		return nil, fmt.Errorf("%w: could not get transaction resykt", err)
+	}
+	ic.iconV1.MakeTransactionWithReceipt(tx, txR)
 	return tx, nil
 }
 

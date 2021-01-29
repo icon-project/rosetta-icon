@@ -493,6 +493,23 @@ __Note__: The operation type is `base`.
 				},
 				"type": "BASE",
 				"status": "SUCCESS"
+			},
+			{
+				"operation_identifier": {
+					"index": 1
+				},
+				"type": "ISSUE",
+				"status": "SUCCESS",
+				"account": {
+					"address": "hx1000000000000000000000000000000000000000"
+				},
+				"amount": {
+					"value": "3093140432098765383",
+					"currency": {
+						"symbol": "ICX",
+						"decimals": 18
+					}
+				}
 			}
 		],
 		"metadata": {

@@ -132,19 +132,46 @@ func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transact
 	b, _ := json.Marshal(&txRaw)
 	raw := json.RawMessage(b)
 	txRaws = append(txRaws, raw)
-	// TODO Transaction Version에 맞춰서 변환
 	txs, _ := ParseTransactions(txRaws)
 	return txs[0], nil
 }
 
-func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (interface{}, error) {
+func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*TransactionResult, error) {
 	trRaw := map[string]interface{}{}
 
-	_, err := c.Do("icx_getTransactionResult", param, trRaw)
+	_, err := c.Do("icx_getTransactionResult", param, &trRaw)
 	if err != nil {
 		return nil, err
 	}
-	return trRaw, nil
+
+	txRs, _ := ParseTransactionResult(trRaw)
+	return txRs, nil
+}
+
+func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *TransactionResult) (*types.Transaction, error) {
+	zeroBigInt := new(big.Int)
+	fa := SystemScoreAddress
+	if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
+		su := txResult.StepUsed
+		sp := txResult.StepPrice
+		if su.Cmp(zeroBigInt) != 0 {
+			f := new(big.Int).Mul(&su.Int, &sp.Int)
+			fee := f.Text(10)
+			tx.Operations[2].Amount.Value = "-" + fee
+			tx.Operations[3].Amount.Value = fee
+		}
+		fa = tx.Operations[0].Account.Address
+	}
+	if txResult.EventLogs != nil {
+		ops := GetOperations(fa, txResult.EventLogs, int64(len(tx.Operations))-1)
+		tx.Operations = append(tx.Operations, ops...)
+	}
+	for _, op := range tx.Operations {
+		if op.Type == TransferOpType {
+			op.Status = txResult.StatusFlag
+		}
+	}
+	return tx, nil
 }
 
 func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceResponse, error) {
