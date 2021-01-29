@@ -20,12 +20,14 @@ func main() {
 
 	rpcClient := icon.NewClient(cfg.URL, client_v1.ICXCurrency)
 
-	_testGetBlock(rpcClient)
-	_testGetPeer(rpcClient)
+	//sampleGetBlock(rpcClient)
+	//sampleGetPeer(rpcClient)
+	sampleGetTransaction(rpcClient)
 }
 
-func _testGetBlock(client *icon.Client) {
-	// 이렇게 할당해야하는가?s
+
+func sampleGetBlock(client *icon.Client) {
+	// 이렇게 할당해야하는가?
 	index := int64(5977334)
 	params := &types.PartialBlockIdentifier{
 		Index: &index,
@@ -36,7 +38,19 @@ func _testGetBlock(client *icon.Client) {
 	fmt.Print(err)
 }
 
-func _testGetPeer(client *icon.Client) {
+func sampleGetTransaction(client *icon.Client) {
+	// 이렇게 할당해야하는가?
+
+	params := &types.TransactionIdentifier{
+		Hash: "0x2c89b69a75ce737ac61b76a6a86ffa233362ae7b05eabd54d067737e282b75c0",
+	}
+
+	tx, err := client.GetTransaction(params)
+	err = JsonPrettyPrintln(os.Stdout, tx)
+	fmt.Print(err)
+}
+
+func sampleGetPeer(client *icon.Client) {
 	status, err := client.GetPeer()
 	err = JsonPrettyPrintln(os.Stdout, status)
 	fmt.Print(err)

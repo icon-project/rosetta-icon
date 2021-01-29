@@ -15,6 +15,7 @@
 package client_v1
 
 import (
+	"encoding/json"
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/server/jsonrpc"
 	"math/big"
@@ -119,14 +120,21 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 	return block, nil
 }
 
-func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (interface{}, error) {
+func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transaction, error) {
 	txRaw := map[string]interface{}{}
 
-	_, err := c.Do("icx_getTransactionByHash", param, txRaw)
+	_, err := c.Do("icx_getTransactionByHash", param, &txRaw)
 	if err != nil {
 		return nil, err
 	}
-	return txRaw, nil
+
+	var txRaws []json.RawMessage
+	b, _ := json.Marshal(&txRaw)
+	raw := json.RawMessage(b)
+	txRaws = append(txRaws, raw)
+	// TODO Transaction Version에 맞춰서 변환
+	txs, _ := ParseTransactions(txRaws)
+	return txs[0], nil
 }
 
 func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (interface{}, error) {

@@ -59,5 +59,16 @@ func (s *BlockAPIService) BlockTransaction(
 	ctx context.Context,
 	request *types.BlockTransactionRequest,
 ) (*types.BlockTransactionResponse, *types.Error) {
-	return nil, wrapErr(ErrUnimplemented, nil)
+	if s.config.Mode != configuration.Online {
+		return nil, ErrUnavailableOffline
+	}
+
+	tx, err := s.client.GetTransaction(request.TransactionIdentifier)
+	if err != nil {
+		return nil, wrapErr(ErrWrongBlockHash, err)
+	}
+
+	return &types.BlockTransactionResponse{
+		Transaction: tx,
+	}, nil
 }

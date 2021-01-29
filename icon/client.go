@@ -77,6 +77,22 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 	return block, nil
 }
 
+func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*RosettaTypes.Transaction, error) {
+
+	//이렇게 하는 방법밖에 없는가?
+	var reqParams *client_v1.TransactionRPCRequest
+	reqParams = &client_v1.TransactionRPCRequest{
+		Hash: params.Hash,
+	}
+
+	tx, err := ic.iconV1.GetTransaction(reqParams)
+	if err != nil {
+		return nil, fmt.Errorf("%w: could not get transaction", err)
+	}
+
+	return tx, nil
+}
+
 func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 	resp, err := ic.iconV1.GetMainPReps()
 	if err != nil {

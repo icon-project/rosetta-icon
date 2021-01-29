@@ -109,7 +109,7 @@ type BlockRPCRequest struct {
 }
 
 type TransactionRPCRequest struct {
-	Hash string `json:"Hash"`
+	Hash string `json:"txHash"`
 }
 
 type BalanceRPCRequest struct {
