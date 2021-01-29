@@ -2,7 +2,6 @@ version: '3'
 services:
   prep-node:
     image: 'iconloop/prep-node:dev'
-    network_mode: host
     container_name: "prep-node"
     restart: "on-failure"
     environment:
@@ -10,7 +9,7 @@ services:
       ICON_LOG_LEVEL: "DEBUG"
       DEFAULT_PATH: "/data/loopchain"
       LOG_OUTPUT_TYPE: "file"
-      SERVICE: "zicon"
+      SERVICE: "testnet"
       IS_AUTOGEN_CERT: "true"
       FASTEST_START: "yes"
       IS_COMPRESS_LOG: "true"
@@ -26,11 +25,11 @@ services:
       - '9000:9000'
   rosetta:
     image: 'jinyyo/rosetta-test'
-    network_mode: host
     container_name: "rosetta"
     restart: "on-failure"
     environment:
       ENDPOINT: 'http://localhost:9000'
       MODE: 'ONLINE'
       NETWORK: 'TESTNET'
-      PORT: 8080
+    ports:
+      - '8080:8080'
