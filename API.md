@@ -74,11 +74,15 @@ Sample
 			"TRANSFER",
 			"FEE",
 			"BASE",
-			"ISSUE",
-			"BURN",
-			"ICXTRANSFER",
+      "BURN",
+      "ISSUE",
+      "WITHDRAWN",
+      "ICXTRANSFER",
 			"CLAIM",
-			"MESSAGE"
+			"MESSAGE",
+      "DEPLOY",
+      "CALL",
+      "DEPOSIT",
 		],
 		"errors": [
 			{
@@ -455,7 +459,138 @@ Sample
 
 **/block/transaction**
 
-*Get a Block Transaction - Payment*
+*Get a Block Transaction - transfer*
+
+Request:
+
+```json
+{
+	"network_identifier": {
+		"blockchain": "ICON",
+		"network": "ZiconNet"
+	},
+	"block_identifier": {
+		"index": 7261768,
+		"hash": "0xd46e773b23c36a29b05d18f2ff49e7a729511a6a9ff4b84320f0860067bb54ed"
+	},
+	"transaction_identifier": {
+		"hash": "0x9f1b00faf95cce7e99d3616c51cec725b6cd6d870a80e30689fc724ba0f1368a"
+	}
+}
+```
+
+Response:
+
+Sample
+__Note__: The operation type is `base`
+
+```json
+{
+    "transaction": {
+        "transaction_identifier": {
+            "hash": "0x9f1b00faf95cce7e99d3616c51cec725b6cd6d870a80e30689fc724ba0f1368a"
+        },
+        "operations": [
+            {
+                "operation_identifier": {
+                    "index": 0
+                },
+                "type": "TRANSFER",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
+                },
+                "amount": {
+                    "value": "-1000000000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 1
+                },
+                "related_operations": [
+                    {
+                        "index": 0
+                    }
+                ],
+                "type": "TRANSFER",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hxe6080b42dd1c70dc3ce15ff73c19d9256ec2f76c"
+                },
+                "amount": {
+                    "value": "1000000000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 2
+                },
+                "related_operations": [
+                    {
+                        "index": 1
+                    }
+                ],
+                "type": "FEE",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
+                },
+                "amount": {
+                    "value": "-1000000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 3
+                },
+                "related_operations": [
+                    {
+                        "index": 2
+                    }
+                ],
+                "type": "FEE",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hx1000000000000000000000000000000000000000"
+                },
+                "amount": {
+                    "value": "1000000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            }
+        ],
+        "metadata": {
+            "data": null,
+            "dataType": null,
+            "nid": "0x50",
+            "nonce": null,
+            "signature": "/1XKWeEiJVnO6/q2Z3MqdKCpAwcvbbH5eDVMsQmSzjwSzQnXuPBjAtZTbZakCFRJLF9uA6HEJH4F2lP5HxB4VQA=",
+            "timestamp": "0x5ba193198cc5f",
+            "version": "0x3"
+        }
+    }
+}
+```
+
+
+
+*Get a Block Transaction - Base*
 
 Request:
 
@@ -539,8 +674,6 @@ __Note__: The operation type is `base`.
 
 
 
-# TODO
-
 *Get a Block Transaction - Contract Deployment*
 
 Request:
@@ -548,15 +681,15 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "mainnet"
+        "blockchain": "ICON",
+        "network": "Testnet"
     },
     "block_identifier": {
-    	"index": 670379,
-    	"hash": "e71a6d73ec69accb63cb77e67ce6bdde92e6de5a9f1981d8cd9f2f4630031a7b"
+        "index": 12337642,
+        "hash": "0x16c8dc782c5636c98553b5f857933d2d843a90cd5cb311f95d05d2260e02fe26"
     },
     "transaction_identifier": {
-    	"hash": "5a3662d689468b423f050824c93343b790a7295d44a4e0f5ebee119ecc18d065"
+    	"hash": "0x21ef4901281fa3a34533bcfc400a5fa5c25b25fe7a1780022ad15ab729afa8a7"
     }
 }
 ```
@@ -564,218 +697,29 @@ Request:
 Response:
 
 Sample
-__Note__: The operation type is `contract_deployment`.
+__Note__: The operation type is `DEPLOY`.
 
 ```json
 {
     "transaction": {
         "transaction_identifier": {
-            "hash": "5a3662d689468b423f050824c93343b790a7295d44a4e0f5ebee119ecc18d065"
+            "hash": "0x21ef4901281fa3a34533bcfc400a5fa5c25b25fe7a1780022ad15ab729afa8a7"
         },
         "operations": [
             {
                 "operation_identifier": {
                     "index": 0
                 },
-                "type": "contract_deployment",
+                "type": "DEPLOY",
                 "status": "SUCCESS",
                 "account": {
-                    "address": "zil1a35lxvh38y3u8xe7kzxfkgdhmctj387zs92llt",
-                    "metadata": {
-                        "base16": "ec69F332F13923C39B3eB08c9b21B7De17289FC2"
-                    }
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
                 },
                 "amount": {
-                    "value": "0",
+                    "value": "-0",
                     "currency": {
-                        "symbol": "ZIL",
-                        "decimals": 12
-                    }
-                },
-                "metadata": {
-                    "code": "\nscilla_version 0\nimport BoolUtils\nlibrary ResolverLib\ntype RecordKeyValue =\n  | RecordKeyValue of String String\nlet nilMessage = Nil {Message}\nlet oneMsg =\n  fun(msg: Message) =>\n    Cons {Message} msg nilMessage\nlet eOwnerSet =\n  fun(address: ByStr20) =>\n    {_eventname: \"OwnerSet\"; address: address}\n(* @deprecated eRecordsSet is emitted instead (since 0.1.1) *)\nlet eRecordSet =\n  fun(key: String) =>\n  fun(value: String) =>\n    {_eventname: \"RecordSet\"; key: key; value: value}\n(* @deprecated eRecordsSet is emitted instead (since 0.1.1) *)\nlet eRecordUnset =\n  fun(key: String) =>\n    {_eventname: \"RecordUnset\"; key: key}\nlet eRecordsSet =\n  fun(registry: ByStr20) =>\n  fun(node: ByStr32) =>\n    {_eventname: \"RecordsSet\"; registry: registry; node: node}\nlet eError =\n  fun(message: String) =>\n    {_eventname: \"Error\"; message: message}\nlet emptyValue = \"\"\nlet mOnResolverConfigured =\n  fun(registry: ByStr20) =>\n  fun(node: ByStr32) =>\n    let m = {_tag: \"onResolverConfigured\"; _amount: Uint128 0; _recipient: registry; node: node} in\n      oneMsg m\nlet copyRecordsFromList =\n  fun (recordsMap: Map String String) =>\n  fun (recordsList: List RecordKeyValue) =>\n    let foldl = @list_foldl RecordKeyValue Map String String in\n      let iter =\n        fun (recordsMap: Map String String) =>\n        fun (el: RecordKeyValue) =>\n          match el with\n          | RecordKeyValue key val =>\n            let isEmpty = builtin eq val emptyValue in\n              match isEmpty with\n              | True => builtin remove recordsMap key\n              | False => builtin put recordsMap key val\n              end\n          end\n      in\n        foldl iter recordsMap recordsList\ncontract Resolver(\n  initialOwner: ByStr20,\n  registry: ByStr20,\n  node: ByStr32,\n  initialRecords: Map String String\n)\nfield vendor: String = \"UD\"\nfield version: String = \"0.1.1\"\nfield owner: ByStr20 = initialOwner\nfield records: Map String String = initialRecords\n(* Sets owner address *)\n(* @ensures a sender address is an owner of the contract *)\n(* @param address *)\n(* @emits OwnerSet if the operation was successful *)\n(* @emits Error if a sender address has no permission for the operation *)\ntransition setOwner(address: ByStr20)\n  currentOwner <- owner;\n  isOkSender = builtin eq currentOwner _sender;\n  match isOkSender with\n  | True =>\n    owner := address;\n    e = eOwnerSet address;\n    event e\n  | _ =>\n    e = let m = \"Sender not owner\" in eError m;\n    event e\n  end\nend\n(* Sets a key value pair *)\n(* @ensures a sender address is an owner of the contract *)\n(* @param key *)\n(* @param value *)\n(* @emits RecordSet if the operation was successful *)\n(* @emits Error if a sender address has no permission for the operation *)\n(* @sends onResolverConfigured to the registry *)\ntransition set(key: String, value: String)\n  currentOwner <- owner;\n  isOkSender = builtin eq currentOwner _sender;\n  match isOkSender with\n  | True =>\n    records[key] := value;\n    e = eRecordsSet registry node;\n    event e;\n    msgs = mOnResolverConfigured registry node;\n    send msgs\n  | _ =>\n    e = let m = \"Sender not owner\" in eError m;\n    event e\n  end\nend\n(* Remove a key from records map *)\n(* @ensures a sender address is an owner of the contract *)\n(* @param key *)\n(* @emits RecordUnset if the operation was successful *)\n(* @emits Error if a sender address has no permission for the operation *)\n(* @sends onResolverConfigured to the registry *)\ntransition unset(key: String)\n  keyExists <- exists records[key];\n  currentOwner <- owner;\n  isOk =\n    let isOkSender = builtin eq currentOwner _sender in\n      andb isOkSender keyExists;\n  match isOk with\n  | True =>\n    delete records[key];\n    e = eRecordsSet registry node;\n    event e;\n    msgs = mOnResolverConfigured registry node;\n    send msgs\n  | _ =>\n    e = let m = \"Sender not owner or key does not exist\" in\n      eError m;\n    event e\n  end\nend\n(* Set multiple keys to records map *)\n(* Removes records from the map if according passed value is empty *)\n(* @ensures a sender address is an owner of the contract *)\n(* @param newRecords *)\n(* @emits RecordsSet if the operation was successful *)\n(* @emits Error if a sender address has no permission for the operation *)\n(* @sends onResolverConfigured to the registry *)\ntransition setMulti(newRecords: List RecordKeyValue)\n  currentOwner <- owner;\n  isOkSender = builtin eq currentOwner _sender;\n  match isOkSender with\n  | True =>\n    oldRecords <- records;\n    newRecordsMap = copyRecordsFromList oldRecords newRecords;\n    records := newRecordsMap;\n    e = eRecordsSet registry node;\n    event e;\n    msgs = mOnResolverConfigured registry node;\n    send msgs\n  | _ =>\n    e = let m = \"Sender not owner\" in eError m;\n    event e\n  end\nend\n",
-                    "data": "[{\"vname\":\"_scilla_version\",\"type\":\"Uint32\",\"value\":\"0\"},{\"vname\":\"initialOwner\",\"type\":\"ByStr20\",\"value\":\"0x4887fb6920a8ae50886543ee8aa504da6c9f83bf\"},{\"vname\":\"registry\",\"type\":\"ByStr20\",\"value\":\"0x9611c53be6d1b32058b2747bdececed7e1216793\"},{\"vname\":\"node\",\"type\":\"ByStr32\",\"value\":\"0xd72c3c6e1e3b1b1238b5ba82ff7afe688f542b1cdbfee692a912dd88b1d31f76\"},{\"vname\":\"initialRecords\",\"type\":\"Map String String\",\"value\":[{\"key\":\"ZIL\",\"val\":\"0x803637d03997e4c29729e9ce9e4bc41c0c867354\"}]}]",
-                    "gasLimit": "10000",
-                    "gasPrice": "1000000000",
-                    "nonce": "2007",
-                    "receipt": {
-                        "accept": false,
-                        "errors": null,
-                        "exceptions": null,
-                        "success": true,
-                        "cumulative_gas": "6024",
-                        "epoch_num": "670379",
-                        "event_logs": null,
-                        "transitions": null
-                    },
-                    "senderPubKey": "0x032E38FCA06A680FFE1BA40956ADA08CB94236FC985B4F7571D455408A0A27E1A2",
-                    "signature": "0xB665902059A7519F9A8E118B87ACE4EFDC0FB434475617B19B94E38ABAB68AE8DC85650E781C52CBE281FA527E7556EE9BC593531743A3594BF25C4330EC0165",
-                    "version": "65537"
-                }
-            }
-        ]
-    }
-}
-```
-
-### Displaying Contract Calls Information for Block Transactions
-A contract call can be defined in the either one of the following two forms:
-1. An account has invoked a function in a contract
-2. An account has invoked a function in a contract which further invokes another function in a different contract (a.k.a Chain Calling)
-
-Depending on the functions invoked by the contract, a contract call may perform additional smart contract deposits to some accounts.
-These smart contract deposits will be shown under the `operations []` idential to how typical payment transaction is displayed.
-Additional metadata information related to the transaction such as the *contract address* and *gas amount* are displayed only at the __final operation block__ to reduce cluttering of metadata.
-
-*Get a Block Transaction - Contract Call without Smart Contract Deposits*
-
-Request:
-
-```json
-{
-    "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
-    },
-    "block_identifier": {
-    	"index": 1558244,
-    	"hash": "4f00a6059b22ebd73e6a60d77fbc20f65bfa3be3f5ae57712422699e3bb031ac"
-    },
-    "transaction_identifier": {
-    	"hash": "ad8a8aa7c1aff0a59a3d56f9c9a72176c344e8a35bbd66e69b2bc7011b44e637"
-    }
-}
-```
-
-Response:
-
-Sample
-__Note__: The operation type is `contract_call`.
-
-```json
-{
-    "transaction": {
-        "transaction_identifier": {
-            "hash": "ad8a8aa7c1aff0a59a3d56f9c9a72176c344e8a35bbd66e69b2bc7011b44e637"
-        },
-        "operations": [
-            {
-                "operation_identifier": {
-                    "index": 0
-                },
-                "type": "contract_call",
-                "status": "SUCCESS",
-                "account": {
-                    "address": "zil1ha4z3qu69uxr6h2m7v9ggcjt332cjupzp7c2ae",
-                    "metadata": {
-                        "base16": "Bf6a28839a2f0c3d5d5Bf30A84624B8c55897022"
-                    }
-                },
-                "amount": {
-                    "value": "0",
-                    "currency": {
-                        "symbol": "ZIL",
-                        "decimals": 12
-                    }
-                },
-                "metadata": {
-                    "contractAddress": "c36087407e6474e038d7c316a620afe2a752ad0e",
-                    "data": "{\"_tag\":\"SubmitHeaderBlock\",\"params\":[{\"vname\":\"new_hash\",\"type\":\"ByStr32\",\"value\":\"0x62c8b569f485f22878f8b31f6e159981be4ea78bdeb09062fbcdcbc4802deae2\"},{\"vname\":\"block\",\"type\":\"Uint64\",\"value\":\"178656\"}]}",
-                    "gasLimit": "40000",
-                    "gasPrice": "1000000000",
-                    "nonce": "352",
-                    "receipt": {
-                        "accept": false,
-                        "errors": null,
-                        "exceptions": null,
-                        "success": true,
-                        "cumulative_gas": "841",
-                        "epoch_num": "1558244",
-                        "event_logs": [
-                            {
-                                "_eventname": "SubmitHashSuccess",
-                                "address": "0xc36087407e6474e038d7c316a620afe2a752ad0e",
-                                "params": [
-                                    {
-                                        "type": "ByStr32",
-                                        "value": "0x62c8b569f485f22878f8b31f6e159981be4ea78bdeb09062fbcdcbc4802deae2",
-                                        "vname": "hash"
-                                    },
-                                    {
-                                        "type": "Int32",
-                                        "value": "2",
-                                        "vname": "code"
-                                    }
-                                ]
-                            }
-                        ],
-                        "transitions": null
-                    },
-                    "senderPubKey": "0x025A5A6AFBB5797E44F29FEFA81B43EB3600C70F021B78ABCE7CF2D4D01D467AFF",
-                    "signature": "0xA9FA2B79A0927B544528693D51BB7FCAD1E283146310CE3B12167EAA982AF69EB879942A8310D66F4D5E46655C930DFB4664861435F7CCC2E3DACA653A3966FF",
-                    "version": "21823489"
-                }
-            }
-        ]
-    }
-}
-```
-
-*Get a Block Transaction - Contract Call with Smart Contract Deposits (With Chain Calls)*
-
-Request:
-
-```json
-{
-    "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
-    },
-    "block_identifier": {
-    	"index": 1406004,
-    	"hash": "84c14dc0685e01b3c7d06f2f2dd9198880b182a82d16ed62a67752560badc6b7"
-    },
-    "transaction_identifier": {
-    	"hash": "17c46c252569a4f3fc41ae45fc6a898892b3f75dde11d517f8b7a037caf658e3"
-    }
-}
-```
-
-Response:
-
-
-Sample
-__Note__: The operation type is `contract_call`, follow by `contract_call_transfer` for subsequent operations with a smart contract deposits.
-
-
-In the sample, the sequence of operations are as follows:
-- Initiator `zil16ura3fhsf84h60s7w6xjy4u2wxel892n7sq5dp` -> Contract `zil135gsjk2wqxwecn00axm2s40ey6g6ne8668046h` (invokes a contract call to add funds)
-- Contract `zil135gsjk2wqxwecn00axm2s40ey6g6ne8668046h` (`8d1109594e019d9c4defe9b6a855f92691a9e4fa`) -> Recipient `zil12n6h5gqhlpw87gtzlqe5sq5r7pq2spj8x2g8pe` (amount is deducted from contract balance and trasnferred to recipient)
-
-```json
-{
-    "transaction": {
-        "transaction_identifier": {
-            "hash": "17c46c252569a4f3fc41ae45fc6a898892b3f75dde11d517f8b7a037caf658e3"
-        },
-        "operations": [
-            {
-                "operation_identifier": {
-                    "index": 0
-                },
-                "type": "contract_call",
-                "status": "SUCCESS",
-                "account": {
-                    "address": "zil16ura3fhsf84h60s7w6xjy4u2wxel892n7sq5dp",
-                    "metadata": {
-                        "base16": "d707D8a6F049Eb7d3E1e768D22578A71b3f39553"
-                    }
-                },
-                "amount": {
-                    "value": "0",
-                    "currency": {
-                        "symbol": "ZIL",
-                        "decimals": 12
+                        "symbol": "ICX",
+                        "decimals": 18
                     }
                 }
             },
@@ -788,19 +732,16 @@ In the sample, the sequence of operations are as follows:
                         "index": 0
                     }
                 ],
-                "type": "contract_call_transfer",
+                "type": "DEPLOY",
                 "status": "SUCCESS",
                 "account": {
-                    "address": "zil135gsjk2wqxwecn00axm2s40ey6g6ne8668046h",
-                    "metadata": {
-                        "base16": "8D1109594E019D9C4DEFe9b6A855F92691A9E4fA"
-                    }
+                    "address": "cx0000000000000000000000000000000000000000"
                 },
                 "amount": {
-                    "value": "-123073860347289351",
+                    "value": "0",
                     "currency": {
-                        "symbol": "ZIL",
-                        "decimals": 12
+                        "symbol": "ICX",
+                        "decimals": 18
                     }
                 }
             },
@@ -813,73 +754,189 @@ In the sample, the sequence of operations are as follows:
                         "index": 1
                     }
                 ],
-                "type": "contract_call_transfer",
+                "type": "FEE",
                 "status": "SUCCESS",
                 "account": {
-                    "address": "zil12n6h5gqhlpw87gtzlqe5sq5r7pq2spj8x2g8pe",
-                    "metadata": {
-                        "base16": "54F57A2017F85c7F2162f833480283f040a80647"
-                    }
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
                 },
                 "amount": {
-                    "value": "123073860347289351",
+                    "value": "-10227272000000000000",
                     "currency": {
-                        "symbol": "ZIL",
-                        "decimals": 12
+                        "symbol": "ICX",
+                        "decimals": 18
                     }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 3
                 },
-                "metadata": {
-                    "contractAddress": "8d1109594e019d9c4defe9b6a855f92691a9e4fa",
-                    "data": "{\"_tag\": \"AddFunds\", \"params\": []}",
-                    "gasLimit": "10000",
-                    "gasPrice": "1000000000",
-                    "nonce": "8",
-                    "receipt": {
-                        "accept": false,
-                        "errors": null,
-                        "exceptions": null,
-                        "success": true,
-                        "cumulative_gas": "1402",
-                        "epoch_num": "1406004",
-                        "event_logs": [
-                            {
-                                "_eventname": "Verifier add funds",
-                                "address": "0x54f57a2017f85c7f2162f833480283f040a80647",
-                                "params": [
-                                    {
-                                        "type": "ByStr20",
-                                        "value": "0xd707d8a6f049eb7d3e1e768d22578a71b3f39553",
-                                        "vname": "verifier"
-                                    }
-                                ]
-                            }
-                        ],
-                        "transitions": [
-                            {
-                                "accept": false,
-                                "addr": "0x8d1109594e019d9c4defe9b6a855f92691a9e4fa",
-                                "depth": 0,
-                                "msg": {
-                                    "_amount": "123073860347289351",
-                                    "_recipient": "0x54f57a2017f85c7f2162f833480283f040a80647",
-                                    "_tag": "AddFunds",
-                                    "params": [
-                                        {
-                                            "vname": "initiator",
-                                            "type": "ByStr20",
-                                            "value": "0xd707d8a6f049eb7d3e1e768d22578a71b3f39553"
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    "senderPubKey": "0x02BCD59F13A3DF40DE7D6B901B10DA416D2EFDD41E9A3631D6673809D7F5B9C4EF",
-                    "signature": "0xB0B321303D8CABDC3E1AD6B3ECD5CECD90A7D0A839C69C1C23A68CC0AFD283DCC9696EB503EBAE167C3DF3943A54E6EAA1D35D28D9F414FBA44109DAAAEF4F56",
-                    "version": "21823489"
+                "related_operations": [
+                    {
+                        "index": 2
+                    }
+                ],
+                "type": "FEE",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hx1000000000000000000000000000000000000000"
+                },
+                "amount": {
+                    "value": "10227272000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
                 }
             }
-        ]
+        ],
+        "metadata": {
+            "data": {
+                "content": "0x504b0304140000000800957ad0500000000002000000000000001700000073696d706c6553636f72652f5f5f696e69745f5f2e70790300504b0304140000000800957ad05004453b1b3f0000005d0000001800000073696d706c6553636f72652f7061636b6167652e6a736f6eabe6520002a5b2d4a2e2ccfc3c252b0525033d033d43251d88786e62665e7c6e7e4a694e2a48ae3833b72027353839bf28154545315804a820184901572d00504b0304140000000800957ad0509e3c3e9f1b010000c80200001a00000073696d706c6553636f72652f73696d706c6553636f72652e70798d50c16e842010bdfb15134ed06cfd00139b66b387eda5179bbd1a94716bc2820134ddbf2fa041dbd4b6731a98f7e6bd379dd137e85bad2c9aa96f11fadba08d83872ccb5ac9ad85caff48ac5a6d90be7860ec8edc222bb20c7c09eca0ae7bd5bbbaa616657700d11490b027ee7813f0f0f804af5a611169a1ec38a0a12c4f74d1b075e857e51397234209176e4e474ae293048103c4be76f7014beb0c9bcd3ce384ca497da52c99abd05d027631177905044e01838fb8c6d0ca1bb18e4b19b1bf38de20d917fe3808eef01ff405f853dedca2a3640688d92f49f93e1c1ac52535c88556f25ebe9911d7b0ef28a55ee57dca55dda01b8d02720e18f26d61da60f7cfb5e735768bc3344e67df4efff47fddaaef46d8e87b823fe227504b01021403140000000800957ad050000000000200000000000000170000000000000000000000a4810000000073696d706c6553636f72652f5f5f696e69745f5f2e7079504b01021403140000000800957ad05004453b1b3f0000005d000000180000000000000000000000a4813700000073696d706c6553636f72652f7061636b6167652e6a736f6e504b01021403140000000800957ad0509e3c3e9f1b010000c80200001a0000000000000000000000a481ac00000073696d706c6553636f72652f73696d706c6553636f72652e7079504b05060000000003000300d3000000ff0100000000",
+                "contentType": "application/zip"
+            },
+            "dataType": "deploy",
+            "nid": "0x3",
+            "nonce": null,
+            "signature": "fXiCHsxFY/zELt2xvRTCJNNUlAElum+MtD0e/75Rexx4o8CT2DgshS9s5pKRegDXKz4tpJ6i9FeUsj/SaoQ/YQA=",
+            "timestamp": "0x5ba17d2e540f0",
+            "version": "0x3"
+        }
+    }
+}
+```
+
+### Displaying Contract Calls Information for Block Transactions
+*Get a Block Transaction - Contract call*
+
+Request:
+
+```json
+{
+    "network_identifier": {
+        "blockchain": "ICON",
+        "network": "Testnet"
+    },
+    "block_identifier": {
+        "index": 12338456,
+        "hash": "0xe33458479ff9251f3c1e02e01ef74d656a8f3b90e27f6ab4cb46baaacf889453"
+    },
+    "transaction_identifier": {
+    	"hash": "0xafb2049fc951a47659dcc0710fcdcb01caf553d58d3c1ef3da1a7267deeb1a5e"
+    }
+}
+```
+
+Response:
+
+Sample
+__Note__: The operation type is `CALL`.
+
+```json
+{
+    "transaction": {
+        "transaction_identifier": {
+            "hash": "0xafb2049fc951a47659dcc0710fcdcb01caf553d58d3c1ef3da1a7267deeb1a5e"
+        },
+        "operations": [
+            {
+                "operation_identifier": {
+                    "index": 0
+                },
+                "type": "CALL",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
+                },
+                "amount": {
+                    "value": "-0",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 1
+                },
+                "related_operations": [
+                    {
+                        "index": 0
+                    }
+                ],
+                "type": "CALL",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "cx8f010b715aecb8ff7271176984dd2a25530af388"
+                },
+                "amount": {
+                    "value": "0",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 2
+                },
+                "related_operations": [
+                    {
+                        "index": 1
+                    }
+                ],
+                "type": "FEE",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
+                },
+                "amount": {
+                    "value": "-1380000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            },
+            {
+                "operation_identifier": {
+                    "index": 3
+                },
+                "related_operations": [
+                    {
+                        "index": 2
+                    }
+                ],
+                "type": "FEE",
+                "status": "SUCCESS",
+                "account": {
+                    "address": "hx1000000000000000000000000000000000000000"
+                },
+                "amount": {
+                    "value": "1380000000000000",
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
+                }
+            }
+        ],
+        "metadata": {
+            "data": {
+                "method": "setValue",
+                "params": {
+                    "value": "Hello"
+                }
+            },
+            "dataType": "call",
+            "nid": "0x3",
+            "nonce": null,
+            "signature": "JobzyMm/1JPuWNTlJnPNDjo9GkyXNWHoR+jm5A8Xx7xaFBNaAxvJOfiAZ0v9FpXXmExK1uDGjDyepE/SXXSYLAA=",
+            "timestamp": "0x5ba183435a411",
+            "version": "0x3"
+        }
     }
 }
 ```
@@ -902,34 +959,7 @@ The construction flow is always in this sequence:
 
 *Create Network Transaction from Signature*
 
-__Note__: Before calling `/combine`, please call `/payloads` to have the `unsigned_transaction`. Next, use [goZilliqa SDK](https://github.com/Zilliqa/gozilliqa-sdk) or other Zilliqa's SDKs to craft a transaction object and sign the transaction object; print out the __*signature*__ and __*transaction object*__ in __hexadecimals__. 
-
-Refer to the `signRosettaTransaction.js` in the `examples` folder to craft and sign a transaction object.
-
-Use them as request parameters as follows:
-
-```
-{
-    ...,
-    "unsigned_transaction": ... // from /payloads
-    "signatures": [
-        {
-            "signing_payload": {
-                "address": "string", // sender account address
-                "hex_bytes": "string",  // signed transaction object in hexadecimals representation obtained after signing with goZilliqa SDK or other Zilliqa SDK
-                "signature_type": "ecdsa"
-            },
-            "public_key": {
-                "hex_bytes": "string", // sender public key
-                "curve_type": "secp256k1"
-            },
-            "signature_type": "ecdsa",
-            "hex_bytes": "string" // signature of the signed transaction object 
-        }
-    ]
-}
-
-```
+__Note__: Before calling `/combine`, please call `/payloads` to have the `unsigned_transaction`. Next, use [ICON SDK](https://github.com/icon-project/icon-sdk-java) or other ICON's SDKs to craft a transaction object and sign the transaction object; print out the __*signature*__ and __*transaction object*__ in __hexadecimals__. 
 
 
 Request:
@@ -937,28 +967,27 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
-    "unsigned_transaction": "{\"amount\":2000000000000,\"code\":\"\",\"data\":\"\",\"gasLimit\":1,\"gasPrice\":2000000000,\"nonce\":187,\"pubKey\":\"02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e\",\"senderAddr\":\"zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r\",\"toAddr\":\"zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0\",\"version\":21823489}",
+    "unsigned_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\"}",
     "signatures": [
         {
             "signing_payload": {
+                "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
                 "account_identifier": {
-                    "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-                    "metadata": {
-                        "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-                    }
+                    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
+                    "metadata": {}
                 },
-                "hex_bytes": "088180b40a10bb011a144978075dd607933122f4355b220915efa51e84c722230a2102e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e2a120a100000000000000000000001d1a94a200032120a10000000000000000000000000773594003801",
-                "signature_type": "schnorr_1"
+                "hex_bytes": "e7af5fcfd8dfc67530a01a0e403882687528dfcb",
+                "signature_type": "ecdsa"
             },
             "public_key": {
-                "hex_bytes": "02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e",
+                "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
                 "curve_type": "secp256k1"
             },
-            "signature_type": "schnorr_1",
-            "hex_bytes": "fcb93583d963a7c11f52f04b1ecbd129aa3df896e618b47ff163dc18c53b59afc4289851fd2d5a50eaa7d7ae0763eb912797b0b34e1cf1e6d3865a218e1066b7"
+            "signature_type": "ecdsa",
+            "hex_bytes": "42ecd0ea707ac3aa69ac3a21d1676b1fd3cb85adc7279a7e28de86552442e2b763615340f7ae17f5a558f58030fb0cf6fbd84c84ed3544ddfc0d4ee86506d0bb00"
         }
     ]
 }
@@ -970,7 +999,7 @@ Sample
 
 ```json
 {
-    "signed_transaction": "{\"amount\":2000000000000,\"code\":\"\",\"data\":\"\",\"gasLimit\":1,\"gasPrice\":2000000000,\"nonce\":187,\"pubKey\":\"02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e\",\"senderAddr\":\"zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r\",\"signature\":\"fcb93583d963a7c11f52f04b1ecbd129aa3df896e618b47ff163dc18c53b59afc4289851fd2d5a50eaa7d7ae0763eb912797b0b34e1cf1e6d3865a218e1066b7\",\"toAddr\":\"zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0\",\"version\":21823489}"
+    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 
@@ -980,23 +1009,16 @@ Sample
 
 Request:
 
-`options` is from `/construction/preprocess`
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
-    }, 
-    "options": {
-        "amount": "2000000000000",
-        "gasLimit": "1",
-        "gasPrice": "2000000000",
-        "senderAddr": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-        "toAddr": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
+    "options": {},
     "public_keys": [
         {
-            "hex_bytes": "02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e",
+            "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
             "curve_type": "secp256k1"
         }
     ]
@@ -1005,19 +1027,10 @@ Request:
 
 Response:
 
-Sample
-
 ```json
 {
     "metadata": {
-        "amount": "2000000000000",
-        "gasLimit": "1",
-        "gasPrice": "2000000000",
-        "nonce": 187,
-        "pubKey": "02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e",
-        "senderAddr": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-        "toAddr": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0",
-        "version": 21823489
+        "stepPrice": 12500000000
     }
 }
 ```
@@ -1031,16 +1044,14 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "mainnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
     "public_key": {
-        "hex_bytes": "026c7f3b8ac6f615c00c34186cbe4253a2c5acdc524b1cfae544c629d8e3564cfc",
+        "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
         "curve_type": "secp256k1"
     },
-    "metadata": {
-    	"type": "bech32"
-    }
+    "metadata": {}
 }
 ```
 
@@ -1050,12 +1061,9 @@ Sample
 
 ```json
 {
-    "address": "zil1y9qmlzmdygfaf4eqfcka4wfx20wzghzl05xazc",
+    "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
     "account_identifier": {
-        "address": "zil1y9qmlzmdygfaf4eqfcka4wfx20wzghzl05xazc",
-        "metadata": {
-            "base16": "2141BF8B6D2213d4d7204E2DDAB92653dC245c5F"
-        }
+        "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
     }
 }
 ```
@@ -1069,10 +1077,10 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
-	"signed_transaction": "{\"amount\":2000000000000,\"code\":\"\",\"data\":\"\",\"gasLimit\":1,\"gasPrice\":1000000000,\"nonce\":186,\"pubKey\":\"02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e\",\"signature\":\"51c69af638ad7afd39841a7abf937d5df99e20adedc4287f43c8070d497ba78136c951192b3920914feb83b9272ccb2ca7facd835dfad10eff2b848b13616daf\",\"toAddr\":\"zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0\",\"version\":21823489}"
+    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 
@@ -1083,7 +1091,7 @@ Sample
 ```json
 {
     "transaction_identifier": {
-        "hash": "a17367c8bcd83cdc2d9ede4571c8e27ad74278ae195263f13e10ba84f12ab13c"
+        "hash": "0x7a418a0fb98181a1701390163dd03f552a9ed843ab270d7fb53a374373337943"
     }
 }
 ```
@@ -1099,11 +1107,11 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
     "signed": true,
-    "transaction": "{\"amount\":2000000000000,\"code\":\"\",\"data\":\"\",\"gasLimit\":1,\"gasPrice\":1000000000,\"nonce\":186,\"pubKey\":\"02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e\",\"signature\":\"51c69af638ad7afd39841a7abf937d5df99e20adedc4287f43c8070d497ba78136c951192b3920914feb83b9272ccb2ca7facd835dfad10eff2b848b13616daf\",\"toAddr\":\"zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0\",\"version\":21823489}"
+    "transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 
@@ -1114,26 +1122,23 @@ Sample
 ```json
 {
     "signers": [
-        "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r"
+        "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
     ],
     "operations": [
         {
             "operation_identifier": {
                 "index": 0
             },
-            "type": "transfer",
+            "type": "TRANSFER",
             "status": "",
             "account": {
-                "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-                "metadata": {
-                    "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-                }
+                "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
             },
             "amount": {
-                "value": "-2000000000000",
+                "value": "-1000000000000000000",
                 "currency": {
-                    "symbol": "ZIL",
-                    "decimals": 12
+                    "symbol": "ICX",
+                    "decimals": 18
                 }
             }
         },
@@ -1146,29 +1151,23 @@ Sample
                     "index": 0
                 }
             ],
-            "type": "transfer",
+            "type": "TRANSFER",
             "status": "",
             "account": {
-                "address": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0",
-                "metadata": {
-                    "base16": "4978075dd607933122f4355B220915EFa51E84c7"
-                }
+                "address": "hx3a065000ab4183c6bf581dc1e55a605455fc6d61"
             },
             "amount": {
-                "value": "2000000000000",
+                "value": "1000000000000000000",
                 "currency": {
-                    "symbol": "ZIL",
-                    "decimals": 12
+                    "symbol": "ICX",
+                    "decimals": 18
                 }
             }
         }
     ],
     "account_identifier_signers": [
         {
-            "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-            "metadata": {
-                "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-            }
+            "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
         }
     ]
 }
@@ -1181,72 +1180,71 @@ Sample
 Request:
 
 `metadata` for `operation_identifier 1` is from `/construction/metadata`
+
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
-	"operations": [
+    "operations": [
         {
             "operation_identifier": {
-                "index": 0
+                "index": 0,
+                "network_index": 0
             },
-            "type": "transfer",
+            "type": "TRANSFER",
             "status": "",
             "account": {
-                "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-                "metadata": {
-                    "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-                }
+                "address": "hx3a065000ab4183c6bf581dc1e55a605455fc6d61",
+                "metadata": {}
             },
             "amount": {
-                "value": "-2000000000000",
+                "value": "1000000000000000000",
                 "currency": {
-                    "symbol": "ZIL",
-                    "decimals": 12
+                    "symbol": "ICX",
+                    "decimals": 18
+                },
+                "metadata": {
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
                 }
-            }
+            },
+            "metadata": {}
         },
         {
             "operation_identifier": {
-                "index": 1
+                "index": 1,
+                "network_index": 0
             },
-            "related_operations": [
-                {
-                    "index": 0
-                }
-            ],
-            "type": "transfer",
+            "type": "TRANSFER",
             "status": "",
             "account": {
-                "address": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0",
-                "metadata": {
-                    "base16": "4978075dd607933122f4355B220915EFa51E84c7"
-                }
+                "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
+                "metadata": {}
             },
             "amount": {
-                "value": "2000000000000",
+                "value": "-1000000000000000000",
                 "currency": {
-                    "symbol": "ZIL",
-                    "decimals": 12
+                    "symbol": "ICX",
+                    "decimals": 18
+                },
+                "metadata": {
+                    "currency": {
+                        "symbol": "ICX",
+                        "decimals": 18
+                    }
                 }
-            }
+            },
+            "metadata": {}
         }
     ],
-    "metadata": {       // from construction/metadata
-        "amount": "2000000000000",
-        "gasLimit": "1",
-        "gasPrice": "2000000000",
-        "nonce": 187,
-        "pubKey": "02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e",
-        "senderAddr": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-        "toAddr": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0",
-        "version": 21823489
-    },
+    "metadata": {},
     "public_keys": [
         {
-            "hex_bytes": "02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e",
+            "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
             "curve_type": "secp256k1"
         }
     ]
@@ -1259,18 +1257,15 @@ Sample
 
 ```json
 {
-    "unsigned_transaction": "{\"amount\":2000000000000,\"code\":\"\",\"data\":\"\",\"gasLimit\":1,\"gasPrice\":2000000000,\"nonce\":187,\"pubKey\":\"02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e\",\"senderAddr\":\"zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r\",\"toAddr\":\"zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0\",\"version\":21823489}",
+    "unsigned_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\"}",
     "payloads": [
         {
-            "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-            "hex_bytes": "088180b40a10bb011a144978075dd607933122f4355b220915efa51e84c722230a2102e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e2a120a100000000000000000000001d1a94a200032120a10000000000000000000000000773594003801",
+            "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
+            "hex_bytes": "7a418a0fb98181a1701390163dd03f552a9ed843ab270d7fb53a374373337943",
             "account_identifier": {
-                "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-                "metadata": {
-                    "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-                }
+                "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
             },
-            "signature_type": "schnorr_1"
+            "signature_type": "ecdsa_recovery"
         }
     ]
 }
@@ -1285,59 +1280,13 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
-	"operations": [
-        {
-            "operation_identifier": {
-                "index": 0
-            },
-            "type": "transfer",
-            "status": "",
-            "account": {
-                "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-                "metadata": {
-                    "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-                }
-            },
-            "amount": {
-                "value": "-2000000000000",
-                "currency": {
-                    "symbol": "ZIL",
-                    "decimals": 12
-                }
-            }
-        },
-        {
-            "operation_identifier": {
-                "index": 1
-            },
-            "related_operations": [
-                {
-                    "index": 0
-                }
-            ],
-            "type": "transfer",
-            "status": "",
-            "account": {
-                "address": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0",
-                "metadata": {
-                    "base16": "4978075dd607933122f4355B220915EFa51E84c7"
-                }
-            },
-            "amount": {
-                "value": "2000000000000",
-                "currency": {
-                    "symbol": "ZIL",
-                    "decimals": 12
-                }
-            },
-            "metadata": {
-                "senderPubKey": "0x02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e"
-            }
-        }
-    ],
+    "public_key": {
+        "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
+        "curve_type": "secp256k1"
+    },
     "metadata": {}
 }
 ```
@@ -1349,20 +1298,8 @@ Sample
 ```json
 {
     "options": {
-        "amount": "2000000000000",
-        "gasLimit": "1",
-        "gasPrice": "2000000000",
-        "senderAddr": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-        "toAddr": "zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0"
-    },
-    "required_public_keys": [
-        {
-            "address": "zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r",
-            "metadata": {
-                "base16": "99f9d482abbdC5F05272A3C34a77E5933Bb1c615"
-            }
-        }
-    ]
+        "from": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
+    }
 }
 ```
 
@@ -1377,10 +1314,10 @@ Request:
 ```json
 {
     "network_identifier": {
-        "blockchain": "zilliqa",
-        "network": "testnet"
+        "blockchain": "ICON",
+        "network": "ZiconNet"
     },
-    "signed_transaction": "{\"amount\":2000000000000,\"code\":\"\",\"data\":\"\",\"gasLimit\":1,\"gasPrice\":2000000000,\"nonce\":187,\"pubKey\":\"02e44ef2c5c2031386faa6cafdf5f67318cc661871b0112a27458e65f37a35655e\",\"senderAddr\":\"zil1n8uafq4thhzlq5nj50p55al9jvamr3s45hm49r\",\"signature\":\"fcb93583d963a7c11f52f04b1ecbd129aa3df896e618b47ff163dc18c53b59afc4289851fd2d5a50eaa7d7ae0763eb912797b0b34e1cf1e6d3865a218e1066b7\",\"toAddr\":\"zil1f9uqwhwkq7fnzgh5x4djyzg4a7j3apx8dsnnc0\",\"version\":21823489}"
+    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 
@@ -1391,7 +1328,7 @@ Sample
 ```json
 {
     "transaction_identifier": {
-        "hash": "963a984ee255cfd881b337a52caf699d4f05799c45cc0948d8a8ce72a6a12d8e"
+        "hash": "0x7a418a0fb98181a1701390163dd03f552a9ed843ab270d7fb53a374373337943"
     }
 }
 ```
