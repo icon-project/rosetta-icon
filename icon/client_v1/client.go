@@ -116,9 +116,10 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 			ops := GetOperations(fa, trsArray[index].EventLogs, int64(len(tx.Operations))-1)
 			tx.Operations = append(tx.Operations, ops...)
 		}
-		for _, op := range tx.Operations {
-			if op.Type == TransferOpType || op.Type == CallOpType || op.Type == DeployOpType {
-				op.Status = trsArray[index].StatusFlag
+		for i, op := range tx.Operations {
+			op.Status = trsArray[index].StatusFlag
+			if i >= FeeOpFromIndex {
+				op.Status = SuccessStatus
 			}
 		}
 	}
@@ -176,9 +177,10 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 		ops := GetOperations(fa, txResult.EventLogs, int64(len(tx.Operations))-1)
 		tx.Operations = append(tx.Operations, ops...)
 	}
-	for _, op := range tx.Operations {
-		if op.Type == TransferOpType || op.Type == CallOpType || op.Type == DeployOpType {
-			op.Status = txResult.StatusFlag
+	for i, op := range tx.Operations {
+		op.Status = txResult.StatusFlag
+		if i >= FeeOpFromIndex {
+			op.Status = SuccessStatus
 		}
 	}
 	return tx, nil

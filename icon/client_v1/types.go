@@ -97,19 +97,22 @@ const (
 	ClaimOpType       = "CLAIM"
 	IssueOpType       = "ISSUE"
 	MessageOpType     = "MESSAGE"
-	DeployOpType = "DEPLOY"
-	CallOpType = "CALL"
-	DepositOpType = "DEPOSIT"
+	DeployOpType      = "DEPLOY"
+	CallOpType        = "CALL"
+	DepositOpType     = "DEPOSIT"
 
-	BaseDataType = "base"
+	BaseDataType     = "base"
 	TransferDataType = "transfer"
-	MessageDataType = "message"
-	DeployDataType = "deploy"
-	CallDataType = "call"
-	DepositDataType = "deposit"
+	MessageDataType  = "message"
+	DeployDataType   = "deploy"
+	CallDataType     = "call"
+	DepositDataType  = "deposit"
 
 	SuccessStatus = "SUCCESS"
 	FailureStatus = "FAIL"
+
+	FeeOpFromIndex = 2
+	FeeOpToIndex   = 3
 )
 
 type BlockRPCRequest struct {
