@@ -17,9 +17,9 @@ package services
 import (
 	"context"
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/leeheonseung/rosetta-icon/configuration"
-	"github.com/leeheonseung/rosetta-icon/icon"
-	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/icon"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
 type NetworkAPIService struct {

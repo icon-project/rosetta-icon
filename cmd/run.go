@@ -18,14 +18,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/leeheonseung/rosetta-icon/configuration"
-	"github.com/leeheonseung/rosetta-icon/icon"
-	"github.com/leeheonseung/rosetta-icon/services"
+	"github.com/icon-project/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/icon"
+	"github.com/icon-project/rosetta-icon/services"
 
 	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/server"

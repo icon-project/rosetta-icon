@@ -18,7 +18,7 @@ import (
 	"fmt"
 	RosettaTypes "github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
-	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
 // Client is used to fetch blocks from ICON Node and

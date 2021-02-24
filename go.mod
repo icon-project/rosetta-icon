@@ -1,4 +1,4 @@
-module github.com/leeheonseung/rosetta-icon
+module github.com/icon-project/rosetta-icon
 
 go 1.54
 

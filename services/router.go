@@ -15,12 +15,12 @@
 package services
 
 import (
-	"github.com/leeheonseung/rosetta-icon/icon"
+	"github.com/icon-project/rosetta-icon/icon"
 	"net/http"
 
 	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/server"
-	"github.com/leeheonseung/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/configuration"
 )
 
 // NewBlockchainRouter creates a Mux http.Handler from a collection

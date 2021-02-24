@@ -16,7 +16,7 @@ package main
 
 import (
 	"github.com/fatih/color"
-	"github.com/leeheonseung/rosetta-icon/cmd"
+	"github.com/icon-project/rosetta-icon/cmd"
 	"os"
 )
 

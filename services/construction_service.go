@@ -21,11 +21,11 @@ import (
 	"fmt"
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/common/crypto"
-	"github.com/leeheonseung/rosetta-icon/icon"
-	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"time"
 
-	"github.com/leeheonseung/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/configuration"
 
 	"github.com/coinbase/rosetta-sdk-go/parser"
 	"github.com/coinbase/rosetta-sdk-go/types"

@@ -17,8 +17,8 @@ package services
 import (
 	"context"
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/leeheonseung/rosetta-icon/configuration"
-	"github.com/leeheonseung/rosetta-icon/icon"
+	"github.com/icon-project/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/icon"
 )
 
 type BlockAPIService struct {

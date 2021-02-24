@@ -18,7 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/leeheonseung/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"os"
 	"strconv"
 	"strings"
