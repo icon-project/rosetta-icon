@@ -44,32 +44,32 @@ func NewClient(
 }
 
 func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
-
-	//이렇게 하는 방법밖에 없는가?
 	var reqParams *client_v1.BlockRPCRequest
-
+	var err error
+	var block *RosettaTypes.Block
 	if params.Index == nil && params.Hash == nil {
 		reqParams = &client_v1.BlockRPCRequest{}
-		//return nil, errors.New("Invalid Both value")
-	}
-
-	if params.Index != nil {
+		block, err = ic.iconV1.GetLastBlock(reqParams)
+	} else if params.Index != nil {
 		reqParams = &client_v1.BlockRPCRequest{
 			Height: common.HexInt64{Value: *params.Index}.String(),
 		}
+		block, err = ic.iconV1.GetBlockByHeight(reqParams)
 	} else if params.Hash != nil {
 		reqParams = &client_v1.BlockRPCRequest{
 			Hash: *params.Hash,
 		}
+		block, err = ic.iconV1.GetBlockByHash(reqParams)
+	} else {
+		return nil, fmt.Errorf("invalid Params")
 	}
 
-	block, err := ic.iconV1.GetBlock(reqParams)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
 	reqParams = &client_v1.BlockRPCRequest{Hash: block.BlockIdentifier.Hash}
-	trsArray, err := ic.iconV1.GetBlockReceipts(reqParams)
+	trsArray, err := ic.iconV1.GetReceipts(block)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get blockReceipts", err)
 	}
@@ -79,7 +79,6 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 
 func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*RosettaTypes.Transaction, error) {
 
-	//이렇게 하는 방법밖에 없는가?
 	var reqParams *client_v1.TransactionRPCRequest
 	reqParams = &client_v1.TransactionRPCRequest{
 		Hash: params.Hash,
@@ -89,7 +88,6 @@ func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*R
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get transaction", err)
 	}
-
 
 	txR, err := ic.iconV1.GetTransactionResult(reqParams)
 	if err != nil {
@@ -148,7 +146,6 @@ func (ic *Client) EstimateStep(tx client_v1.Transaction) (*client_v1.Response, e
 func (ic *Client) GetBalance(params *RosettaTypes.AccountIdentifier) (*RosettaTypes.AccountBalanceResponse, error) {
 	reqParam := &client_v1.BalanceRPCRequest{
 		Address: params.Address,
-		Filter:  "0x3",
 	}
 
 	result, err := ic.iconV1.GetBalance(reqParam)

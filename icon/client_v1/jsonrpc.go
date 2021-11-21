@@ -18,12 +18,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/icon-project/goloop/server/jsonrpc"
 	"io/ioutil"
 	"mime"
 	"net/http"
-	"time"
-
-	"github.com/icon-project/goloop/server/jsonrpc"
 )
 
 const (
@@ -76,7 +74,7 @@ func NewJsonRpcClient(hc *http.Client, endpoint string) *JsonRpcClient {
 	return &JsonRpcClient{hc: hc, Endpoint: endpoint, CustomHeader: make(map[string]string)}
 }
 
-func (c *JsonRpcClient) _do(req *http.Request) (resp *http.Response, err error) {
+func (c *JsonRpcClient) do(req *http.Request) (resp *http.Response, err error) {
 	if c.Pre != nil {
 		if err = c.Pre(req); err != nil {
 			return nil, err
@@ -93,59 +91,59 @@ func (c *JsonRpcClient) _do(req *http.Request) (resp *http.Response, err error) 
 	return
 }
 
-func (c *JsonRpcClient) Do(method string, reqPtr, respPtr interface{}) (jrResp *Response, err error) {
-	return c.DoURL(c.Endpoint, method, reqPtr, respPtr)
-}
-
-func (c *JsonRpcClient) DoURL(url string, method string, reqPtr, respPtr interface{}) (jrResp *Response, err error) {
-	jrReq := &jsonrpc.Request{
-		ID:      time.Now().UnixNano() / int64(time.Millisecond),
-		Version: jsonrpc.Version,
-		Method:  method,
-	}
-	if reqPtr != nil {
-		b, mErr := json.Marshal(reqPtr)
-		if mErr != nil {
-			err = mErr
-			return
-		}
-		jrReq.Params = json.RawMessage(b)
-	}
-	reqB, err := json.Marshal(jrReq)
+func (c *JsonRpcClient) Request(jrReq *jsonrpc.Request, respPtr interface{}) (*Response, error) {
+	req, err := getHttpRequest(c.Endpoint, jrReq)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", url, bytes.NewReader(reqB))
+	resp, err := c.do(req)
+	response, err := decodeResponse(resp, respPtr)
 	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *JsonRpcClient) RequestBatch(jrReq []*jsonrpc.Request, respPtr []interface{}) ([]*Response, error) {
+	req, err := getHttpRequest(c.Endpoint, jrReq)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.do(req)
+	if _, err := handleErrorResponse(resp, err); err != nil {
+		return nil, err
+	}
+	res, err := decodeBatchResponse(resp, respPtr)
+	return res, nil
+}
+
+func handleErrorResponse(resp *http.Response, jrErr error) (jrResp *Response, err error) {
+	var dErr error
+	if jrErr == nil {
 		return
 	}
-	req.Header.Set(headerContentType, typeApplicationJSON)
-	req.Header.Set(headerAccept, typeApplicationJSON)
-	for k, v := range c.CustomHeader {
-		req.Header.Set(k, v)
-	}
-
-	var dErr error
-	resp, err := c._do(req)
-	if err != nil {
-		if resp != nil {
-			if ct, _, mErr := mime.ParseMediaType(resp.Header.Get(headerContentType)); mErr != nil {
-				err = mErr
-				return
-			} else if ct == typeApplicationJSON {
-				if jrResp, dErr = decodeResponseBody(resp); dErr != nil {
-					err = dErr
-					return
-				}
-			} else {
-				err = NewHttpError(resp)
+	if resp != nil {
+		if ct, _, mErr := mime.ParseMediaType(resp.Header.Get(headerContentType)); mErr != nil {
+			err = mErr
+			return
+		} else if ct == typeApplicationJSON {
+			if jrResp, dErr = decodeResponseBody(resp); dErr != nil {
+				err = dErr
 				return
 			}
 			err = jrResp.Error
 			return
+		} else {
+			err = NewHttpError(resp)
+			return
 		}
-		return
 	}
+	err = jrErr
+	return
+}
+
+func decodeResponse(resp *http.Response, respPtr interface{}) (jrResp *Response, err error) {
+	var dErr error
 
 	if jrResp, dErr = decodeResponseBody(resp); dErr != nil {
 		err = fmt.Errorf("fail to decode response body err:%+v, jsonrpcResp:%+v",
@@ -165,22 +163,72 @@ func (c *JsonRpcClient) DoURL(url string, method string, reqPtr, respPtr interfa
 	return
 }
 
-func (c *JsonRpcClient) Raw(reqB []byte) (resp *http.Response, err error) {
-	req, err := http.NewRequest("POST", c.Endpoint, bytes.NewReader(reqB))
-	if err != nil {
-		return
+func decodeBatchResponse(resp *http.Response, respPtr []interface{}) ([]*Response, error) {
+	var jrResp []*Response
+	var err error
+	if jrResp, err = decodeBatchResponseBody(resp); err != nil {
+		return nil, fmt.Errorf("fail to decode response body err:%+v, jsonrpcResp:%+v",
+			err, resp)
 	}
-	req.Header.Set(headerContentType, typeApplicationJSON)
-	req.Header.Set(headerAccept, typeApplicationJSON)
-	for k, v := range c.CustomHeader {
-		req.Header.Set(k, v)
+	if respPtr != nil {
+		for _, res := range jrResp {
+			bs, err := json.Marshal(res.ID)
+			if err != nil {
+				return nil, err
+			}
+			var id int
+			err = json.Unmarshal(bs, &id)
+			if err != nil {
+				return nil, err
+			}
+			err = json.Unmarshal(res.Result, &respPtr[id])
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
-
-	return c._do(req)
+	return jrResp, nil
 }
 
 func decodeResponseBody(resp *http.Response) (jrResp *Response, err error) {
 	defer resp.Body.Close()
 	err = json.NewDecoder(resp.Body).Decode(&jrResp)
 	return
+}
+
+func decodeBatchResponseBody(resp *http.Response) (jrResp []*Response, err error) {
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&jrResp)
+	return
+}
+
+func GetRpcRequest(method string, reqPtr interface{}, id int64) (*jsonrpc.Request, error) {
+	jrReq := &jsonrpc.Request{
+		ID:      id,
+		Version: jsonrpc.Version,
+		Method:  method,
+	}
+	if reqPtr != nil {
+		b, mErr := json.Marshal(reqPtr)
+		if mErr != nil {
+			err := mErr
+			return nil, err
+		}
+		jrReq.Params = b
+	}
+	return jrReq, nil
+}
+
+func getHttpRequest(url string, jrReq interface{}) (*http.Request, error) {
+	reqB, err := json.Marshal(jrReq)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewReader(reqB))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set(headerContentType, typeApplicationJSON)
+	req.Header.Set(headerAccept, typeApplicationJSON)
+	return req, nil
 }

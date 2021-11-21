@@ -41,20 +41,3 @@ func ParseBlock01a(blk *Block01a) (*types.Block, error) {
 		}, nil
 	}
 }
-
-func ParseBlock03(blk *Block03) (*types.Block, error) {
-	transactions, _ := ParseTransactions(blk.Transactions)
-	return &types.Block{
-		BlockIdentifier: &types.BlockIdentifier{
-			Index: blk.Number(),
-			Hash:  blk.Hash(),
-		},
-		ParentBlockIdentifier: &types.BlockIdentifier{
-			Index: blk.Number() - 1,
-			Hash:  blk.PrevHash(),
-		},
-		Timestamp:    blk.TimestampMilli(),
-		Transactions: transactions,
-		Metadata:     blk.Meta(),
-	}, nil
-}

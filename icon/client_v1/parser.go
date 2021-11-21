@@ -2,28 +2,15 @@ package client_v1
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
 func ParseBlock(raw map[string]interface{}) (*types.Block, error) {
-	version := raw["version"]
-
-	switch version {
-	case "0.1a":
-		blk := &Block01a{}
-		if err := UnmarshalJSONMap(raw, blk); err != nil {
-			return nil, err
-		}
-		return ParseBlock01a(blk)
-	case "0.3", "0.4", "0.5":
-		blk := &Block03{}
-		if err := UnmarshalJSONMap(raw, blk); err != nil {
-			return nil, err
-		}
-		return ParseBlock03(blk)
+	blk := &Block01a{}
+	if err := UnmarshalJSONMap(raw, blk); err != nil {
+		return nil, err
 	}
-	return nil, errors.New("Unsupported Block Version")
+	return ParseBlock01a(blk)
 }
 
 func ParseTransactions(txArray []json.RawMessage) ([]*types.Transaction, error) {

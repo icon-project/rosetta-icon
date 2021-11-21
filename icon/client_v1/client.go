@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type ClientV3 struct {
@@ -61,10 +62,15 @@ func NewClientV3(endpoint string) *ClientV3 {
 	}
 }
 
-func (c *ClientV3) GetBlock(param *BlockRPCRequest) (*types.Block, error) {
+func (c *ClientV3) GetLastBlock(param *BlockRPCRequest) (*types.Block, error) {
 	blockRaw := map[string]interface{}{}
+	id := time.Now().UnixNano() / int64(time.Millisecond)
 
-	_, err := c.Do("icx_getBlock", param, &blockRaw)
+	jrReq, err := GetRpcRequest("icx_getLastBlock", param, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, blockRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -76,15 +82,72 @@ func (c *ClientV3) GetBlock(param *BlockRPCRequest) (*types.Block, error) {
 	return block, nil
 }
 
-func (c *ClientV3) GetBlockReceipts(param *BlockRPCRequest) ([]*TransactionResult, error) {
-	trsRaw := &[]interface{}{}
+func (c *ClientV3) GetBlockByHeight(param *BlockRPCRequest) (*types.Block, error) {
+	blockRaw := map[string]interface{}{}
+	id := time.Now().UnixNano() / int64(time.Millisecond)
 
-	_, err := c.Do("icx_getBlockReceipts", param, trsRaw)
+	jrReq, err := GetRpcRequest("icx_getBlockByHeight", param, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, &blockRaw)
 	if err != nil {
 		return nil, err
 	}
 
-	trsArray, err := ParseTransactionResults(trsRaw)
+	block, err := ParseBlock(blockRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return block, nil
+}
+
+func (c *ClientV3) GetBlockByHash(param *BlockRPCRequest) (*types.Block, error) {
+	blockRaw := map[string]interface{}{}
+
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_getBlockByHash", param, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, &blockRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	block, err := ParseBlock(blockRaw)
+	if err != nil {
+		return nil, err
+	}
+	return block, nil
+}
+
+func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error) {
+	var trsRaw []interface{}
+	reqs := make([]*jsonrpc.Request, 0)
+	for i, tx := range block.Transactions {
+		index := i + 1
+		mod := index % 10
+		txId := tx.TransactionIdentifier
+		reqParams := &TransactionRPCRequest{
+			Hash: txId.Hash,
+		}
+		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(mod - 1))
+		if err != nil {
+			return nil, err
+		}
+		reqs = append(reqs, jrReq)
+		if mod == 0 {
+			trsRaw = make([]interface{}, 10)
+			_, err = c.RequestBatch(reqs, trsRaw)
+			reqs = make([]*jsonrpc.Request, 0)
+		} else if index == len(block.Transactions) {
+			trsRaw = make([]interface{}, mod)
+			_, err = c.RequestBatch(reqs, trsRaw)
+		}
+	}
+	trsArray, err := ParseTransactionResults(&trsRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -128,8 +191,12 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 
 func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transaction, error) {
 	txRaw := map[string]interface{}{}
-
-	_, err := c.Do("icx_getTransactionByHash", param, &txRaw)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_getTransactionByHash", param, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, txRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -144,8 +211,12 @@ func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transact
 
 func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*TransactionResult, error) {
 	trRaw := map[string]interface{}{}
-
-	_, err := c.Do("icx_getTransactionResult", param, &trRaw)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_getTransactionResult", param, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, trRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -187,16 +258,55 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 }
 
 func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceResponse, error) {
-	var debugAccount *DebugAccount
-	var blk BalanceWithBlockId
-
-	if _, blkErr := c.Do("icx_getLastBlock", nil, &blk); blkErr != nil {
-		return nil, blkErr
-	}
-
-	if _, err := c.DoURL(c.DebugEndPoint, "debug_getAccount", param, &debugAccount); err != nil {
+	req := make([]*jsonrpc.Request, 3)
+	jrReq, err := GetRpcRequest("icx_getLastBlock", nil, 0)
+	if err != nil {
 		return nil, err
 	}
+	req[0] = jrReq
+	jrReq, err = GetRpcRequest("icx_getBalance", param, 1)
+	if err != nil {
+		return nil, err
+	}
+	req[1] = jrReq
+	params := map[string]interface{}{
+		"to":       "cx0000000000000000000000000000000000000000",
+		"dataType": "call",
+		"data": map[string]interface{}{
+			"method": "getStake",
+			"params": map[string]interface{}{
+				"address": param.Address,
+			},
+		},
+	}
+	jrReq, err = GetRpcRequest("icx_call", params, 2)
+	if err != nil {
+		return nil, err
+	}
+	req[2] = jrReq
+	resp := make([]interface{}, 3)
+	if _, blkErr := c.RequestBatch(req, resp); blkErr != nil {
+		return nil, blkErr
+	}
+	var blk BalanceWithBlockId
+	var b *common.HexInt
+	var stake StakeInfo
+	bs, _ := json.Marshal(resp[0])
+	if err := json.Unmarshal(bs, &blk); err != nil {
+		return nil, err
+	}
+	bs, _ = json.Marshal(resp[1])
+	if err := json.Unmarshal(bs, &b); err != nil {
+		return nil, err
+	}
+	if b == nil {
+		b = common.NewHexInt(0)
+	}
+	bs, _ = json.Marshal(resp[2])
+	if err := json.Unmarshal(bs, &stake); err != nil {
+		return nil, err
+	}
+	balance := new(big.Int).Add(&b.Int, stake.Total())
 
 	return &types.AccountBalanceResponse{
 		BlockIdentifier: &types.BlockIdentifier{
@@ -205,7 +315,7 @@ func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceRe
 		},
 		Balances: []*types.Amount{
 			{
-				Value:    debugAccount.Balance(),
+				Value:    balance.Text(10),
 				Currency: ICXCurrency,
 			},
 		},
@@ -214,7 +324,12 @@ func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceRe
 
 func (c *ClientV3) GetTotalSupply() (*jsonrpc.HexInt, error) {
 	var result jsonrpc.HexInt
-	_, err := c.Do("icx_getTotalSupply", nil, &result)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_getTotalSupply", nil, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, result)
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +347,12 @@ func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {
 		},
 	}
 
-	_, err := c.Do("icx_call", params, &resp)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_call", params, id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.Request(jrReq, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +373,13 @@ func (c *ClientV3) GetPRep(prep string) (*map[string]interface{}, error) {
 		},
 	}
 
-	_, err := c.Do("icx_call", params, &resp)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_call", params, id)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.Request(jrReq, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +388,12 @@ func (c *ClientV3) GetPRep(prep string) (*map[string]interface{}, error) {
 
 func (c *ClientV3) SendTransaction(req interface{}) error {
 	resp := ""
-	_, err := c.Do("icx_sendTransaction", req, &resp)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("icx_sendTransaction", req, id)
+	if err != nil {
+		return err
+	}
+	_, err = c.Request(jrReq, &resp)
 	if err != nil {
 		return err
 	}
@@ -271,7 +402,12 @@ func (c *ClientV3) SendTransaction(req interface{}) error {
 
 func (c *ClientV3) EstimateStep(req interface{}) (*Response, error) {
 	resp := ""
-	res, err := c.DoURL(c.DebugEndPoint, "debug_estimateStep", req, &resp)
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	jrReq, err := GetRpcRequest("debug_getEstimateStep", req, id)
+	if err != nil {
+		return nil, err
+	}
+	res, err := c.Request(jrReq, &resp)
 	if err != nil {
 		return nil, err
 	}

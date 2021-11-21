@@ -126,7 +126,6 @@ type TransactionRPCRequest struct {
 
 type BalanceRPCRequest struct {
 	Address string `json:"address"`
-	Filter  string `json:"filter"`
 }
 
 type Block01a struct {
@@ -504,31 +503,21 @@ func (info *BalanceWithBlockId) Number() int64 {
 	return info.Height.Value
 }
 
-type coin struct {
-	Balance *common.HexInt `json:"balance"`
-}
-
-type stake struct {
+type StakeInfo struct {
 	Stake   *common.HexInt `json:"stake"`
-	UnStake *common.HexInt `json:"unstake"`
+	UnStake []*common.HexInt `json:"unstakes"`
 }
 
-func (s *stake) TotalStake() *common.HexInt {
-	var ret common.HexInt
-
-	result := HexIntAdd(s.Stake, s.UnStake)
-	ret.SetString(result.Text(10), 10)
-	return &ret
-}
-
-type DebugAccount struct {
-	Coin  coin  `json:"coin"`
-	Stake stake `json:"stake"`
-}
-
-func (da *DebugAccount) Balance() string {
-	totalBalance := HexIntAdd(da.Coin.Balance, da.Stake.TotalStake())
-	return totalBalance.Text(10)
+func (da *StakeInfo) Total() *big.Int {
+	totalStake := new(big.Int)
+	for _, u := range da.UnStake {
+		totalStake.Add(totalStake, &u.Int)
+	}
+	if da.Stake == nil {
+		da.Stake = common.NewHexInt(0)
+	}
+	totalStake.Add(totalStake, &da.Stake.Int)
+	return totalStake
 }
 
 func HexIntAdd(x *common.HexInt, y *common.HexInt) *big.Int {
