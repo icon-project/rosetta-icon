@@ -129,11 +129,14 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 	for i, tx := range block.Transactions {
 		index := i + 1
 		mod := index % 10
-		txId := tx.TransactionIdentifier
-		reqParams := &TransactionRPCRequest{
-			Hash: txId.Hash,
+		txHash := tx.TransactionIdentifier.Hash
+		if txHash == GenesisTxHash {
+			continue
 		}
-		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(mod - 1))
+		reqParams := &TransactionRPCRequest{
+			Hash: txHash,
+		}
+		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(mod-1))
 		if err != nil {
 			return nil, err
 		}
@@ -159,6 +162,9 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 	fa := SystemScoreAddress
 	for index, tx := range block.Transactions {
 		tx = block.Transactions[index]
+		if tx.TransactionIdentifier.Hash == GenesisTxHash {
+			continue
+		}
 		if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
 			su := trsArray[index].StepUsed
 			sp := trsArray[index].StepPrice

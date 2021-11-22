@@ -112,7 +112,7 @@ const (
 	FailureStatus = "FAIL"
 
 	FeeOpFromIndex = 2
-	FeeOpToIndex   = 3
+	GenesisTxHash  = "0x0000000000000000000000000000000000000000000000000000000000000000"
 )
 
 type BlockRPCRequest struct {
@@ -136,7 +136,6 @@ type Block01a struct {
 	Proposer           common.Address    `json:"peer_id"`
 	PrevID             common.HexBytes   `json:"prev_block_hash"`
 	MerkleTreeRootHash common.HexBytes   `json:"merkle_tree_root_hash"`
-	Signature          common.Signature  `json:"signature"`
 	NextLeader         common.Address    `json:"next_leader"`
 	Transactions       []json.RawMessage `json:"confirmed_transaction_list" `
 }
@@ -175,7 +174,6 @@ func (b *Block01a) Meta() map[string]interface{} {
 	return map[string]interface{}{
 		"version":               b.Version,
 		"peer_id":               b.Proposer,
-		"signature":             b.Signature,
 		"next_leader":           b.NextLeader,
 		"merkle_tree_root_hash": b.MerkleTreeRootHash,
 	}
@@ -189,7 +187,6 @@ type Block03 struct {
 	Leader           common.Address    `json:"leader"`
 	PrevID           common.HexBytes   `json:"prevHash"`
 	TransactionsHash common.HexBytes   `json:"transactionsHash"`
-	Signature        *common.Signature `json:"signature,omitempty"`
 	NextLeader       common.Address    `json:"nextLeader"`
 	Transactions     []json.RawMessage `json:"transactions"`
 	StateHash        common.HexBytes   `json:"stateHash"`
@@ -199,8 +196,6 @@ type Block03 struct {
 	LeaderVotesHash  common.HexBytes   `json:"leaderVotesHash"`
 	PrevVotesHash    common.HexBytes   `json:"prevVotesHash"`
 	LogsBloom        common.HexBytes   `json:"logsBloom"`
-	//LeaderVotes          []voteItem	         `json:"leaderVotes"`
-	//PrevVotes			   []voteItem            `json:"prevVotes"`
 }
 
 func (b *Block03) Number() int64 {
@@ -235,7 +230,6 @@ func (b *Block03) Meta() map[string]interface{} {
 		"prevVotesHash":    b.PrevVotesHash,
 		"logsBloom":        b.LogsBloom,
 		"leader":           b.Leader,
-		"signature":        &b.Signature,
 		"nextLeader":       b.NextLeader,
 	}
 }
@@ -504,7 +498,7 @@ func (info *BalanceWithBlockId) Number() int64 {
 }
 
 type StakeInfo struct {
-	Stake   *common.HexInt `json:"stake"`
+	Stake   *common.HexInt   `json:"stake"`
 	UnStake []*common.HexInt `json:"unstakes"`
 }
 
@@ -518,14 +512,4 @@ func (da *StakeInfo) Total() *big.Int {
 	}
 	totalStake.Add(totalStake, &da.Stake.Int)
 	return totalStake
-}
-
-func HexIntAdd(x *common.HexInt, y *common.HexInt) *big.Int {
-	a := big.NewInt(0)
-	b := big.NewInt(0)
-
-	a.SetString(x.Text(10), 10)
-	b.SetString(y.Text(10), 10)
-
-	return a.Add(a, b)
 }

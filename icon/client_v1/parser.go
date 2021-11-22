@@ -25,10 +25,9 @@ func ParseTransactions(txArray []json.RawMessage) ([]*types.Transaction, error) 
 			return nil, err
 		}
 
-		switch transaction.Version.String() {
-		case "0x3":
+		if transaction.Fee == nil {
 			tx, _ = ParseTransactionV3(transaction)
-		default:
+		} else {
 			tx, _ = ParseTransactionV2(transaction)
 		}
 		transactions = append(transactions, tx)

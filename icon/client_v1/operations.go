@@ -79,7 +79,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			Index: lastOpIndex + 1,
 		},
 		RelatedOperations: []*types.OperationIdentifier{
-			&types.OperationIdentifier{
+			{
 				Index: lastOpIndex,
 			},
 		},
@@ -101,7 +101,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			Index: lastOpIndex + 1,
 		},
 		RelatedOperations: []*types.OperationIdentifier{
-			&types.OperationIdentifier{
+			{
 				Index: lastOpIndex,
 			},
 		},
@@ -124,7 +124,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			Index: lastOpIndex + 1,
 		},
 		RelatedOperations: []*types.OperationIdentifier{
-			&types.OperationIdentifier{
+			{
 				Index: lastOpIndex,
 			},
 		},
