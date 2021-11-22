@@ -70,7 +70,7 @@ func (c *ClientV3) GetLastBlock(param *BlockRPCRequest) (*types.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = c.Request(jrReq, blockRaw)
+	_, err = c.Request(jrReq, &blockRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transact
 	if err != nil {
 		return nil, err
 	}
-	_, err = c.Request(jrReq, txRaw)
+	_, err = c.Request(jrReq, &txRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +222,7 @@ func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*Transact
 	if err != nil {
 		return nil, err
 	}
-	_, err = c.Request(jrReq, trRaw)
+	_, err = c.Request(jrReq, &trRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -328,20 +328,6 @@ func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceRe
 	}, nil
 }
 
-func (c *ClientV3) GetTotalSupply() (*jsonrpc.HexInt, error) {
-	var result jsonrpc.HexInt
-	id := time.Now().UnixNano() / int64(time.Millisecond)
-	jrReq, err := GetRpcRequest("icx_getTotalSupply", nil, id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = c.Request(jrReq, result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
 func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {
 	resp := map[string]interface{}{}
 
@@ -358,7 +344,7 @@ func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = c.Request(jrReq, resp)
+	_, err = c.Request(jrReq, &resp)
 	if err != nil {
 		return nil, err
 	}

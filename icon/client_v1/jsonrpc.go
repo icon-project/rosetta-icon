@@ -97,6 +97,9 @@ func (c *JsonRpcClient) Request(jrReq *jsonrpc.Request, respPtr interface{}) (*R
 		return nil, err
 	}
 	resp, err := c.do(req)
+	if _, err := handleErrorResponse(resp, err); err != nil {
+		return nil, err
+	}
 	response, err := decodeResponse(resp, respPtr)
 	if err != nil {
 		return nil, err
@@ -155,7 +158,7 @@ func decodeResponse(resp *http.Response, respPtr interface{}) (jrResp *Response,
 		return
 	}
 	if respPtr != nil {
-		err = json.Unmarshal(jrResp.Result, respPtr)
+		err = json.Unmarshal(jrResp.Result, &respPtr)
 		if err != nil {
 			return
 		}
