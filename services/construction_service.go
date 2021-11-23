@@ -125,9 +125,9 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
-
 	return &types.ConstructionPreprocessResponse{
-		Options: marshaled,
+		Options:            marshaled,
+		RequiredPublicKeys: []*types.AccountIdentifier{{Address: fa}},
 	}, nil
 }
 
@@ -144,8 +144,13 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
+	res, err := s.client.GetDefaultStepCost()
+	if err != nil {
+		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
+	}
+
 	metadata := &metadata{
-		StepPrice: client_v1.StepPrice,
+		res,
 	}
 
 	metadataMap, err := client_v1.MarshalJSONMap(metadata)
@@ -199,6 +204,17 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	ta := tOp.Account.Address
 	nid := client_v1.MapNetwork(s.config.Network.Network)
 
+	// stepLimit
+	bs, err := json.Marshal(request.Metadata)
+	if err != nil {
+		return nil, wrapErr(ErrUnclearIntent, err)
+	}
+	var meta metadata
+	err = json.Unmarshal(bs, &meta)
+	if err != nil {
+		return nil, wrapErr(ErrUnclearIntent, err)
+	}
+
 	// Additional Fields for constructing custom ICON tx struct
 	fOp, _ := m[0].First()
 	fa := fOp.Account.Address
@@ -207,22 +223,11 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 		From:      *common.NewAddressFromString(fa),
 		To:        *common.NewAddressFromString(ta),
 		Value:     &common.HexInt{Int: *amount},
-		StepLimit: *common.NewHexInt(client_v1.TransferStepCost.Int64()),
+		StepLimit: *meta.DefaultStepCost,
 		Timestamp: common.HexInt64{Value: time.Now().UnixNano() / int64(time.Microsecond)},
 		NID:       nid,
 		Nonce:     common.NewHexInt(1),
 	}
-
-
-	res, err := s.client.EstimateStep(*uTx)
-	if err != nil {
-		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
-	}
-	var step common.HexInt
-	if err = json.Unmarshal(res.Result, &step); err != nil {
-		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
-	}
-	uTx.StepLimit = step
 
 	h, err := uTx.CalcHash()
 	if err != nil {

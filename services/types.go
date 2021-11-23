@@ -17,7 +17,7 @@ package services
 import (
 	"context"
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"math/big"
+	"github.com/icon-project/goloop/common"
 )
 
 // Client is used by the servicers to get block
@@ -34,5 +34,5 @@ type options struct {
 }
 
 type metadata struct {
-	StepPrice *big.Int `json:"stepPrice"`
+	DefaultStepCost *common.HexInt `json:"default_step_cost"`
 }

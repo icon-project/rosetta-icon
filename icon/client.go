@@ -129,14 +129,8 @@ func (ic *Client) SendTransaction(tx client_v1.Transaction) error {
 	return nil
 }
 
-func (ic *Client) EstimateStep(tx client_v1.Transaction) (*client_v1.Response, error) {
-	js, err := tx.ToJSON()
-	if err != nil {
-		return nil, err
-	}
-	delete(js, "signature")
-	delete(js, "stepLimit")
-	res, err := ic.iconV1.EstimateStep(js)
+func (ic *Client) GetDefaultStepCost() (*common.HexInt, error) {
+	res, err := ic.iconV1.GetStepDefaultStepCost()
 	if err != nil {
 		return nil, err
 	}

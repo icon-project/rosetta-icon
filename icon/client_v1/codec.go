@@ -28,17 +28,15 @@ func UnmarshalJSONMap(m map[string]interface{}, i interface{}) error {
 	return json.Unmarshal(b, i)
 }
 
-func MapNetwork(n string) *common.HexInt64 {
+func MapNetwork(n string) *common.HexInt {
 	switch n {
 	case MainnetNetwork:
-		return &common.HexInt64{Value: 1}
+		return common.NewHexInt(1)
 	case TestnetNetwork:
-		return &common.HexInt64{Value: 2}
-	case ZiconNetwork:
-		return &common.HexInt64{Value: 80}
+		return common.NewHexInt(2)
 	case DevelopNetwork:
-		return &common.HexInt64{Value: 80}
+		return common.NewHexInt(7)
 	default:
-		return &common.HexInt64{Value: 3}
+		return common.NewHexInt(7)
 	}
 }

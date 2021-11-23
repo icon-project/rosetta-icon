@@ -43,8 +43,6 @@ const (
 	// Testnet is ICON Testnet3.
 	Testnet string = "TESTNET"
 
-	Ziconet string = "ZICON"
-
 	Devnet string = "DEVNET"
 
 	// ModeEnv is the environment variable read
@@ -60,11 +58,10 @@ const (
 	EndpointEnv = "ENDPOINT"
 
 	// DefaultEndPoint is the default endpoint for a running node.
-	DefaultEndPoint = "http://localhost:9000"
+	DefaultEndPoint = "http://localhost:9080"
 
 	EndpointPrefix        = "api"
 	EndpointVersionPrefix = "v3"
-	DebugPrefix           = "debug"
 
 	// PortEnv is the environment variable
 	// read to determine the port for the Rosetta
@@ -110,11 +107,6 @@ func LoadConfiguration() (*Configuration, error) {
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.TestnetNetwork,
 		}
-	case Ziconet:
-		config.Network = &types.NetworkIdentifier{
-			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.ZiconNetwork,
-		}
 	case Devnet:
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
@@ -134,14 +126,6 @@ func LoadConfiguration() (*Configuration, error) {
 			EndpointVersionPrefix,
 		}
 		config.URL = strings.Join(url, "/")
-
-		debugUrl := []string{
-			envEndpoint,
-			EndpointPrefix,
-			DebugPrefix,
-			EndpointVersionPrefix,
-		}
-		config.DebugURL = strings.Join(debugUrl, "/")
 	} else {
 		url := []string{
 			DefaultEndPoint,
@@ -149,14 +133,6 @@ func LoadConfiguration() (*Configuration, error) {
 			EndpointVersionPrefix,
 		}
 		config.URL = strings.Join(url, "/")
-
-		debugUrl := []string{
-			DefaultEndPoint,
-			EndpointPrefix,
-			DebugPrefix,
-			EndpointVersionPrefix,
-		}
-		config.DebugURL = strings.Join(debugUrl, "/")
 	}
 
 	envPort := os.Getenv(PortEnv)

@@ -199,141 +199,7 @@ Sample
 				"website": "https://icon.jinwoo.com"
 			}
 		},
-		{
-			"peer_id": "hxf2152fad2960b17bedf60d4bc249b42d7f2a0ebc",
-			"metadata": {
-				"address": "hxf2152fad2960b17bedf60d4bc249b42d7f2a0ebc",
-				"blockHeight": "0x113",
-				"city": "Seoul",
-				"country": "KOR",
-				"delegated": "0x66172ff51b0118d214000",
-				"details": "https://icon.foundation/prep/details.json",
-				"email": "banana@jinwoo.com",
-				"grade": "0x0",
-				"irep": "0xa968163f0a57b400000",
-				"irepUpdateBlockHeight": "0x113",
-				"lastGenerateBlockHeight": "0xfc04ba",
-				"name": "ajpt-peer01",
-				"nodeAddress": "hxf2152fad2960b17bedf60d4bc249b42d7f2a0ebc",
-				"p2pEndpoint": "13.115.169.117:7100",
-				"penalty": "0x0",
-				"stake": "0x100bd5616bee7d8000",
-				"status": "0x0",
-				"totalBlocks": "0xf8ca1f",
-				"txIndex": "0x0",
-				"unvalidatedSequenceBlocks": "0x0",
-				"validatedBlocks": "0xf8be73",
-				"website": "https://icon.foundation"
-			}
-		},
-		{
-			"peer_id": "hx459af36f56b9140407df21a856fcfd4ff44db648",
-			"metadata": {
-				"address": "hx459af36f56b9140407df21a856fcfd4ff44db648",
-				"blockHeight": "0x121",
-				"city": "Seoul",
-				"country": "KOR",
-				"delegated": "0x5af4d88304f7dfd3f4000",
-				"details": "https://icon.jinwoo.com/json",
-				"email": "banana@jinwoo.com",
-				"grade": "0x0",
-				"irep": "0xa968163f0a57b400000",
-				"irepUpdateBlockHeight": "0x121",
-				"lastGenerateBlockHeight": "0xfc04c4",
-				"name": "aort-peer02",
-				"nodeAddress": "hx459af36f56b9140407df21a856fcfd4ff44db648",
-				"p2pEndpoint": "34.215.104.203:7100",
-				"penalty": "0x0",
-				"stake": "0x0",
-				"status": "0x0",
-				"totalBlocks": "0xfb5b39",
-				"txIndex": "0x0",
-				"unvalidatedSequenceBlocks": "0x0",
-				"validatedBlocks": "0xfb58cf",
-				"website": "https://icon.jinwoo.com"
-			}
-		},
-		{
-			"peer_id": "hxf4347d08be308bfc9f8428e1e536536983695b33",
-			"metadata": {
-				"address": "hxf4347d08be308bfc9f8428e1e536536983695b33",
-				"blockHeight": "0x125",
-				"city": "Seoul",
-				"country": "KOR",
-				"delegated": "0x1d43b90b9bb99ae748000",
-				"details": "https://icon.jinwoo.com/json",
-				"email": "banana@jinwoo.com",
-				"grade": "0x0",
-				"irep": "0xa968163f0a57b400000",
-				"irepUpdateBlockHeight": "0x125",
-				"lastGenerateBlockHeight": "0xfc04ce",
-				"name": "avat-peer02",
-				"nodeAddress": "hxf4347d08be308bfc9f8428e1e536536983695b33",
-				"p2pEndpoint": "52.20.138.241:7100",
-				"penalty": "0x0",
-				"stake": "0x0",
-				"status": "0x0",
-				"totalBlocks": "0x41a9cd",
-				"txIndex": "0x0",
-				"unvalidatedSequenceBlocks": "0x0",
-				"validatedBlocks": "0x41a7ef",
-				"website": "https://icon.jinwoo.com"
-			}
-		},
-		{
-			"peer_id": "hx7f8783d8ca3d4923e0ec1dbe21ba5b6edf301b17",
-			"metadata": {
-				"address": "hx7f8783d8ca3d4923e0ec1dbe21ba5b6edf301b17",
-				"blockHeight": "0x119",
-				"city": "Seoul",
-				"country": "KOR",
-				"delegated": "0x48da18833225534a6c000",
-				"details": "https://icon.jinwoo.com/json",
-				"email": "banana@jinwoo.com",
-				"grade": "0x0",
-				"irep": "0xa968163f0a57b400000",
-				"irepUpdateBlockHeight": "0x119",
-				"lastGenerateBlockHeight": "0xfc0492",
-				"name": "akrt-peer02",
-				"nodeAddress": "hx7f8783d8ca3d4923e0ec1dbe21ba5b6edf301b17",
-				"p2pEndpoint": "52.78.98.154:7100",
-				"penalty": "0x0",
-				"stake": "0x0",
-				"status": "0x0",
-				"totalBlocks": "0xfb5b39",
-				"txIndex": "0x0",
-				"unvalidatedSequenceBlocks": "0x0",
-				"validatedBlocks": "0xfb5a09",
-				"website": "https://icon.jinwoo.com"
-			}
-		},
-		{
-			"peer_id": "hx36ceb073381b7b5ce383ccefc361435e3ec54dc4",
-			"metadata": {
-				"address": "hx36ceb073381b7b5ce383ccefc361435e3ec54dc4",
-				"blockHeight": "0x115",
-				"city": "Seoul",
-				"country": "KOR",
-				"delegated": "0x2baf0c657c5c081c60000",
-				"details": "https://icon.jinwoo.com/json",
-				"email": "banana@jinwoo.com",
-				"grade": "0x0",
-				"irep": "0xa968163f0a57b400000",
-				"irepUpdateBlockHeight": "0x115",
-				"lastGenerateBlockHeight": "0xfc049c",
-				"name": "ajpt-peer02",
-				"nodeAddress": "hx36ceb073381b7b5ce383ccefc361435e3ec54dc4",
-				"p2pEndpoint": "13.230.61.61:7100",
-				"penalty": "0x0",
-				"stake": "0x0",
-				"status": "0x0",
-				"totalBlocks": "0xfb5b39",
-				"txIndex": "0x0",
-				"unvalidatedSequenceBlocks": "0x0",
-				"validatedBlocks": "0xfb599c",
-				"website": "https://icon.jinwoo.com"
-			}
-		}
+      ...
 	]
 }
 ```
@@ -398,10 +264,10 @@ Using Index)
 {
 	"network_identifier": {
 		"blockchain": "ICON",
-		"network": "Testnet"
+		"network": "Mainnet"
 	},
 	"block_identifier": {
-		"index": 1
+		"index": 42589147
 	}
 }
 ```
@@ -428,32 +294,363 @@ Sample
 
 ```json
 {
-	"block": {
-		"block_identifier": {
-			"index": 1,
-			"hash": "0x7a93f6e66063e2399e5fdce9c921bd5214e22e3d145e3523545a1f69a3b8d8c7"
-		},
-		"parent_block_identifier": {
-			"index": 0,
-			"hash": "0xec470d5b046106b86a87eff612af8b1b0279312a4f14a70323828faad47e4364"
-		},
-		"timestamp": 1578533634950,
-		"transactions": null,
-		"metadata": {
-			"leader": "hxf2152fad2960b17bedf60d4bc249b42d7f2a0ebc",
-			"leaderVotesHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-			"logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			"nextLeader": "hxf2152fad2960b17bedf60d4bc249b42d7f2a0ebc",
-			"nextRepsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-			"prevVotesHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-			"receiptsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-			"repsHash": "0x38ec404f0d0d90a9a8586eccf89e3e78de0d3c7580063b20823308e7f722cd12",
-			"signature": "knkcRLajtp6q7DidyCsBSUHND2MMlbtj7HRGPFRi2KcbPp3jU1D6WAikzsKcR/yPs3V2X+h52J4tWBAmTosiXgE=",
-			"stateHash": "0xa7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a",
-			"transactionsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-			"version": "0.3"
-		}
-	}
+  "block": {
+    "block_identifier": {
+      "index": 42589147,
+      "hash": "0x4f54eb994dc9617dc75a7b67ea0762b8ad4ca168d9424fd91313d55320018038"
+    },
+    "parent_block_identifier": {
+      "index": 42589146,
+      "hash": "0x501c6190b95a3d66d76b551c37d94882df19c29c0337991998b89069c538acd7"
+    },
+    "timestamp": 1637680002937,
+    "transactions": [
+      {
+        "transaction_identifier": {
+          "hash": "0x0781ef62ccd47e488deaae84e7341dda2b278cc921f6de4b5428b8ccc92ca18b"
+        },
+        "operations": [
+          {
+            "operation_identifier": {
+              "index": 0
+            },
+            "type": "BASE",
+            "status": "SUCCESS"
+          },
+          {
+            "operation_identifier": {
+              "index": 1
+            },
+            "type": "ISSUE",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hx1000000000000000000000000000000000000000"
+            },
+            "amount": {
+              "value": "3069013237069400562",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          }
+        ],
+        "metadata": {
+          "data": {
+            "prep": {
+              "irep": "0x21e19e0c9bab2400000",
+              "rrep": "0x149",
+              "totalDelegation": "0x152a911f25a3d18549947f8",
+              "value": "0x2a9753475e7e49f2"
+            },
+            "result": {
+              "coveredByFee": "0x0",
+              "coveredByOverIssuedICX": "0x0",
+              "issue": "0x2a9753475e7e49f2"
+            }
+          },
+          "dataType": "base",
+          "nid": null,
+          "nonce": null,
+          "signature": null,
+          "timestamp": "0x5d17616d4b384",
+          "version": "0x3"
+        }
+      },
+      {
+        "transaction_identifier": {
+          "hash": "0xe3f944bcbb6fddd1c7d67ff0d42748b972f93c41eae2d9b46b3fbdfadbf17a4f"
+        },
+        "operations": [
+          {
+            "operation_identifier": {
+              "index": 0
+            },
+            "type": "CALL",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hxdacb2506200292bfe6ab2e3f3771b2d1786eaa77"
+            },
+            "amount": {
+              "value": "-0",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 1
+            },
+            "related_operations": [
+              {
+                "index": 0
+              }
+            ],
+            "type": "CALL",
+            "status": "SUCCESS",
+            "account": {
+              "address": "cx0000000000000000000000000000000000000000"
+            },
+            "amount": {
+              "value": "0",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 2
+            },
+            "related_operations": [
+              {
+                "index": 1
+              }
+            ],
+            "type": "FEE",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hxdacb2506200292bfe6ab2e3f3771b2d1786eaa77"
+            },
+            "amount": {
+              "value": "-1722500000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 3
+            },
+            "related_operations": [
+              {
+                "index": 2
+              }
+            ],
+            "type": "FEE",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hx1000000000000000000000000000000000000000"
+            },
+            "amount": {
+              "value": "1722500000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          }
+        ],
+        "metadata": {
+          "data": {
+            "method": "setStake",
+            "params": {
+              "value": "0x1cf643ffa2f1183554f"
+            }
+          },
+          "dataType": "call",
+          "nid": "0x1",
+          "nonce": null,
+          "signature": "OyXkRB8oYE0GlyyYoxqiktOHdD4dOBrA3X6mugI15f0N0ktAFLR3NtJ+cpXgqaEjuPzjw1XT6vD84oIoBz6++AA=",
+          "timestamp": "0x5d17616e685dc",
+          "version": "0x3"
+        }
+      },
+      {
+        "transaction_identifier": {
+          "hash": "0xd117502b236496ba580467481228524abd34b7ef393a5801a7f2ef9dc4e45ae7"
+        },
+        "operations": [
+          {
+            "operation_identifier": {
+              "index": 0
+            },
+            "type": "CALL",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hxd48ab6a11220369368e8847fee7be4625f304b19"
+            },
+            "amount": {
+              "value": "-5000000000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 1
+            },
+            "related_operations": [
+              {
+                "index": 0
+              }
+            ],
+            "type": "CALL",
+            "status": "SUCCESS",
+            "account": {
+              "address": "cx299d88908ab371d586c8dfe0ed42899a899e6e5b"
+            },
+            "amount": {
+              "value": "5000000000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 2
+            },
+            "related_operations": [
+              {
+                "index": 1
+              }
+            ],
+            "type": "FEE",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hxd48ab6a11220369368e8847fee7be4625f304b19"
+            },
+            "amount": {
+              "value": "-7769000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 3
+            },
+            "related_operations": [
+              {
+                "index": 2
+              }
+            ],
+            "type": "FEE",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hx1000000000000000000000000000000000000000"
+            },
+            "amount": {
+              "value": "7769000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 4
+            },
+            "type": "ICXTRANSFER",
+            "status": "SUCCESS",
+            "account": {
+              "address": "cx299d88908ab371d586c8dfe0ed42899a899e6e5b"
+            },
+            "amount": {
+              "value": "-5000000000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 5
+            },
+            "related_operations": [
+              {
+                "index": 4
+              }
+            ],
+            "type": "ICXTRANSFER",
+            "status": "SUCCESS",
+            "account": {
+              "address": "cx1b97c1abfd001d5cd0b5a3f93f22cccfea77e34e"
+            },
+            "amount": {
+              "value": "5000000000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 6
+            },
+            "type": "ICXTRANSFER",
+            "status": "SUCCESS",
+            "account": {
+              "address": "cx1b97c1abfd001d5cd0b5a3f93f22cccfea77e34e"
+            },
+            "amount": {
+              "value": "-5139000000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          },
+          {
+            "operation_identifier": {
+              "index": 7
+            },
+            "related_operations": [
+              {
+                "index": 6
+              }
+            ],
+            "type": "ICXTRANSFER",
+            "status": "SUCCESS",
+            "account": {
+              "address": "hxd48ab6a11220369368e8847fee7be4625f304b19"
+            },
+            "amount": {
+              "value": "5139000000000000000",
+              "currency": {
+                "symbol": "ICX",
+                "decimals": 18
+              }
+            }
+          }
+        ],
+        "metadata": {
+          "data": {
+            "method": "action",
+            "params": {
+              "model": "{\"name\":\"custom_bet\",\"params\":{\"number_of_tiles\":24,\"square_id\":1,\"user_seed\":\"\"}}"
+            }
+          },
+          "dataType": "call",
+          "nid": "0x1",
+          "nonce": "0x1",
+          "signature": "YP18Fa0efyVh//dUeH/MaG3B5jL5jN2YNdPADBydkOBSSTKOIoNsalA52/xK8GmYUmO8KOhu2gqL99LpFirjegA=",
+          "timestamp": "0x5d176174e0ef8",
+          "version": "0x3"
+        }
+      }
+    ],
+    "metadata": {
+      "merkle_tree_root_hash": "0xda53bbbbb6cdb3a9250aabaf0a49151cd923053fbf59bd8429070f2785633238",
+      "next_leader": "hx0000000000000000000000000000000000000000",
+      "peer_id": "hx3d5c3ce7554f4d762f6396e53b2c5de07074ec39",
+      "version": "2.0"
+    }
+  }
 }
 ```
 
@@ -467,7 +664,7 @@ Request:
 {
 	"network_identifier": {
 		"blockchain": "ICON",
-		"network": "ZiconNet"
+		"network": "Mainnet"
 	},
 	"block_identifier": {
 		"index": 7261768,
@@ -968,9 +1165,9 @@ Request:
 {
     "network_identifier": {
         "blockchain": "ICON",
-        "network": "ZiconNet"
+        "network": "Mainnet"
     },
-    "unsigned_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\"}",
+    "unsigned_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x1\",\"nonce\":\"0x1\"}",
     "signatures": [
         {
             "signing_payload": {
@@ -999,7 +1196,7 @@ Sample
 
 ```json
 {
-    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
+    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x1\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 
@@ -1011,17 +1208,17 @@ Request:
 
 ```json
 {
-    "network_identifier": {
-        "blockchain": "ICON",
-        "network": "ZiconNet"
-    },
-    "options": {},
-    "public_keys": [
-        {
-            "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
-            "curve_type": "secp256k1"
-        }
-    ]
+  "network_identifier": {
+    "blockchain": "ICON",
+    "network": "Mainnet"
+  },
+  "options": {},
+  "public_keys": [
+    {
+      "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
+      "curve_type": "secp256k1"
+    }
+  ]
 }
 ```
 
@@ -1029,9 +1226,9 @@ Response:
 
 ```json
 {
-    "metadata": {
-        "stepPrice": 12500000000
-    }
+  "metadata": {
+    "default_step_cost": "0x186a0"
+  }
 }
 ```
 
@@ -1045,7 +1242,7 @@ Request:
 {
     "network_identifier": {
         "blockchain": "ICON",
-        "network": "ZiconNet"
+        "network": "Mainnet"
     },
     "public_key": {
         "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
@@ -1078,9 +1275,9 @@ Request:
 {
     "network_identifier": {
         "blockchain": "ICON",
-        "network": "ZiconNet"
+        "network": "Mainnet"
     },
-    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
+    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x1\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 
@@ -1108,7 +1305,7 @@ Request:
 {
     "network_identifier": {
         "blockchain": "ICON",
-        "network": "ZiconNet"
+        "network": "Mainnet"
     },
     "signed": true,
     "transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
@@ -1185,7 +1382,7 @@ Request:
 {
     "network_identifier": {
         "blockchain": "ICON",
-        "network": "ZiconNet"
+        "network": "Mainnet"
     },
     "operations": [
         {
@@ -1257,7 +1454,7 @@ Sample
 
 ```json
 {
-    "unsigned_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\"}",
+    "unsigned_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x7\",\"nonce\":\"0x1\"}",
     "payloads": [
         {
             "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
@@ -1279,15 +1476,64 @@ Request:
 
 ```json
 {
-    "network_identifier": {
-        "blockchain": "ICON",
-        "network": "ZiconNet"
+  "network_identifier": {
+    "blockchain": "ICON",
+    "network": "Mainnet"
+  },
+  "operations": [
+    {
+      "operation_identifier": {
+        "index": 0,
+        "network_index": 0
+      },
+      "type": "TRANSFER",
+      "status": "",
+      "account": {
+        "address": "hx3a065000ab4183c6bf581dc1e55a605455fc6d61",
+        "metadata": {}
+      },
+      "amount": {
+        "value": "1000000000000000000",
+        "currency": {
+          "symbol": "ICX",
+          "decimals": 18
+        },
+        "metadata": {
+          "currency": {
+            "symbol": "ICX",
+            "decimals": 18
+          }
+        }
+      },
+      "metadata": {}
     },
-    "public_key": {
-        "hex_bytes": "04855312cefe3b6c7e86bbaec089f79376e9bb3c19c84b73492d0d5e4d2dbdd4bec1c8c9ddc55715b70ed920d08d1621f20ffaf0d09e5afc97fb1d327ea7070084",
-        "curve_type": "secp256k1"
-    },
-    "metadata": {}
+    {
+      "operation_identifier": {
+        "index": 1,
+        "network_index": 0
+      },
+      "type": "TRANSFER",
+      "status": "",
+      "account": {
+        "address": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
+        "metadata": {}
+      },
+      "amount": {
+        "value": "-1000000000000000000",
+        "currency": {
+          "symbol": "ICX",
+          "decimals": 18
+        },
+        "metadata": {
+          "currency": {
+            "symbol": "ICX",
+            "decimals": 18
+          }
+        }
+      },
+      "metadata": {}
+    }
+  ]
 }
 ```
 
@@ -1315,9 +1561,9 @@ Request:
 {
     "network_identifier": {
         "blockchain": "ICON",
-        "network": "ZiconNet"
+        "network": "Mainnet"
     },
-    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x50\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
+    "signed_transaction": "{\"version\":\"0x3\",\"from\":\"hxe7af5fcfd8dfc67530a01a0e403882687528dfcb\",\"to\":\"hx3a065000ab4183c6bf581dc1e55a605455fc6d61\",\"value\":\"0xde0b6b3a7640000\",\"stepLimit\":\"0x186a0\",\"timestamp\":\"0x5ba18a5764ee6\",\"nid\":\"0x1\",\"nonce\":\"0x1\",\"signature\":\"QuzQ6nB6w6pprDoh0WdrH9PLha3HJ5p+KN6GVSRC4rdjYVNA964X9aVY9YAw+wz2+9hMhO01RN38DU7oZQbQuwA=\"}"
 }
 ```
 

@@ -21,35 +21,11 @@ import (
 	"github.com/icon-project/goloop/server/jsonrpc"
 	"math/big"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
 )
 
 type ClientV3 struct {
 	*JsonRpcClient
-	DebugEndPoint string
-}
-
-func guessDebugEndpoint(endpoint string) string {
-	uo, err := url.Parse(endpoint)
-	if err != nil {
-		return ""
-	}
-	ps := strings.Split(uo.Path, "/")
-
-	for i, v := range ps {
-		if v == "api" {
-			if len(ps) > i+1 && ps[i+1] == "v3" {
-				ps[i+1] = "debug"
-				ps = append(ps, "v3")
-				uo.Path = strings.Join(ps, "/")
-				return uo.String()
-			}
-			break
-		}
-	}
-	return ""
 }
 
 func NewClientV3(endpoint string) *ClientV3 {
@@ -58,7 +34,6 @@ func NewClientV3(endpoint string) *ClientV3 {
 
 	return &ClientV3{
 		JsonRpcClient: apiClient,
-		DebugEndPoint: guessDebugEndpoint(endpoint),
 	}
 }
 
@@ -371,7 +346,7 @@ func (c *ClientV3) GetPRep(prep string) (*map[string]interface{}, error) {
 		return nil, err
 	}
 
-	_, err = c.Request(jrReq, resp)
+	_, err = c.Request(jrReq, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -392,18 +367,25 @@ func (c *ClientV3) SendTransaction(req interface{}) error {
 	return nil
 }
 
-func (c *ClientV3) EstimateStep(req interface{}) (*Response, error) {
-	resp := ""
+func (c *ClientV3) GetStepDefaultStepCost() (*common.HexInt, error) {
+	resp := map[string]*common.HexInt{}
 	id := time.Now().UnixNano() / int64(time.Millisecond)
-	jrReq, err := GetRpcRequest("debug_getEstimateStep", req, id)
+	params := map[string]interface{}{
+		"to":       "cx0000000000000000000000000000000000000000",
+		"dataType": "call",
+		"data": map[string]interface{}{
+			"method": "getStepCosts",
+		},
+	}
+	jrReq, err := GetRpcRequest("icx_call", params, id)
 	if err != nil {
 		return nil, err
 	}
-	res, err := c.Request(jrReq, &resp)
+	_, err = c.Request(jrReq, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	return resp["default"], nil
 }
 
 func GetUserStep(from string, stepDetails map[string]*common.HexInt) *big.Int {

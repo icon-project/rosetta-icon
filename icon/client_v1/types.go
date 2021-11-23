@@ -57,8 +57,6 @@ var (
 	MiddlewareVersion = "0.0.1"
 	RosettaVersion    = "1.4.0"
 	NodeVersion       = "1.8.0"
-	StepPrice         = big.NewInt(12500000000)
-	TransferStepCost  = big.NewInt(100000)
 )
 
 const (
@@ -72,8 +70,6 @@ const (
 	// TestnetNetwork is the value of the network
 	// in TestnetNetworkIdentifier.
 	TestnetNetwork string = "Testnet"
-
-	ZiconNetwork string = "ZiconNet"
 
 	// for develop
 	DevelopNetwork string = "Devnet"
@@ -260,7 +256,7 @@ type Transaction struct {
 	Value     *common.HexInt    `json:"value,omitempty"`
 	StepLimit common.HexInt     `json:"stepLimit"`
 	Timestamp common.HexInt64   `json:"timestamp"`
-	NID       *common.HexInt64  `json:"nid"`
+	NID       *common.HexInt    `json:"nid"`
 	Nonce     *common.HexInt    `json:"nonce,omitempty"`
 	Signature *common.Signature `json:"signature,omitempty"`
 	DataType  *string           `json:"dataType,omitempty"`
@@ -498,14 +494,20 @@ func (info *BalanceWithBlockId) Number() int64 {
 }
 
 type StakeInfo struct {
-	Stake   *common.HexInt   `json:"stake"`
-	UnStake []*common.HexInt `json:"unstakes"`
+	Stake    *common.HexInt `json:"stake"`
+	UnStakes []*Unstake     `json:"unstakes,omitempty"`
+}
+
+type Unstake struct {
+	Value  *common.HexInt `json:"unstake"`
+	Expire int64          `json:"unstakeBlockHeight"`
+	Remain int64          `json:"remainingBlocks"`
 }
 
 func (da *StakeInfo) Total() *big.Int {
 	totalStake := new(big.Int)
-	for _, u := range da.UnStake {
-		totalStake.Add(totalStake, &u.Int)
+	for _, u := range da.UnStakes {
+		totalStake.Add(totalStake, &u.Value.Int)
 	}
 	if da.Stake == nil {
 		da.Stake = common.NewHexInt(0)
