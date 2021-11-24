@@ -111,7 +111,7 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 		reqParams := &TransactionRPCRequest{
 			Hash: txHash,
 		}
-		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(mod-1))
+		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(index-1))
 		if err != nil {
 			return nil, err
 		}
