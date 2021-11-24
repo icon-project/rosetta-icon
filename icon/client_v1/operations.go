@@ -19,6 +19,9 @@ const (
 func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error) {
 	var ops []*types.Operation
 	for _, account := range tx.Accounts {
+		if account.Balance == nil {
+			continue
+		}
 		accountOp := &types.Operation{
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: int64(len(ops)),
@@ -366,7 +369,7 @@ func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation 
 			Index: lastOpIndex + 1,
 		},
 		RelatedOperations: []*types.OperationIdentifier{
-			&types.OperationIdentifier{
+			{
 				Index: lastOpIndex,
 			},
 		},

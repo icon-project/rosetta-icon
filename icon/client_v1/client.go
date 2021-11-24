@@ -99,7 +99,7 @@ func (c *ClientV3) GetBlockByHash(param *BlockRPCRequest) (*types.Block, error) 
 }
 
 func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error) {
-	var trsRaw []interface{}
+	trsRaw := make([]interface{}, len(block.Transactions))
 	reqs := make([]*jsonrpc.Request, 0)
 	for i, tx := range block.Transactions {
 		index := i + 1
@@ -111,17 +111,15 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 		reqParams := &TransactionRPCRequest{
 			Hash: txHash,
 		}
-		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(mod-1))
+		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(i))
 		if err != nil {
 			return nil, err
 		}
 		reqs = append(reqs, jrReq)
 		if mod == 0 {
-			trsRaw = make([]interface{}, 10)
 			_, err = c.RequestBatch(reqs, trsRaw)
 			reqs = make([]*jsonrpc.Request, 0)
 		} else if index == len(block.Transactions) {
-			trsRaw = make([]interface{}, mod)
 			_, err = c.RequestBatch(reqs, trsRaw)
 		}
 	}
