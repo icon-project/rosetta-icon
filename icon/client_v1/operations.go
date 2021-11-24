@@ -19,13 +19,22 @@ const (
 func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error) {
 	var ops []*types.Operation
 	status := SuccessStatus
-	for _, account := range tx.Accounts {
+	for i, account := range tx.Accounts {
 		if account.Balance == nil {
 			continue
+		}
+		index := int64(0)
+		if i != 0 {
+			index = int64(i - 1)
 		}
 		accountOp := &types.Operation{
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: int64(len(ops)),
+			},
+			RelatedOperations: []*types.OperationIdentifier{
+				{
+					Index: index,
+				},
 			},
 			Type:   GenesisOpType,
 			Status: &status,

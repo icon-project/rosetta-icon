@@ -16,7 +16,6 @@ package client_v1
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/coinbase/rosetta-sdk-go/types"
 	sdkUtils "github.com/coinbase/rosetta-sdk-go/utils"
@@ -42,7 +41,7 @@ func NewClientV3(endpoint string, gbi *types.BlockIdentifier) *ClientV3 {
 	apiClient := NewJsonRpcClient(client, endpoint)
 
 	return &ClientV3{
-		JsonRpcClient: apiClient,
+		JsonRpcClient:          apiClient,
 		genesisBlockIdentifier: gbi,
 	}
 }
@@ -111,7 +110,7 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 			continue
 		}
 		reqParams := &TransactionRPCRequest{
-			Hash: txHash,
+			Hash: "0x" + txHash,
 		}
 		jrReq, err := GetRpcRequest("icx_getTransactionResult", reqParams, int64(index-1))
 		if err != nil {
@@ -127,7 +126,7 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 			_, err = c.RequestBatch(reqs, trsRaw)
 		}
 	}
-	trsArray, err := ParseTransactionResults(&trsRaw)
+	trsArray, err := ParseTransactionResults(trsRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -171,75 +170,6 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 		}
 	}
 	return block
-}
-
-func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transaction, error) {
-	txRaw := map[string]interface{}{}
-	id := time.Now().UnixNano() / int64(time.Millisecond)
-	jrReq, err := GetRpcRequest("icx_getTransactionByHash", param, id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = c.Request(jrReq, &txRaw)
-	if err != nil {
-		return nil, err
-	}
-
-	var txRaws []json.RawMessage
-	b, _ := json.Marshal(&txRaw)
-	raw := json.RawMessage(b)
-	txRaws = append(txRaws, raw)
-	txs, _ := ParseTransactions(txRaws)
-	return txs[0], nil
-}
-
-func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*TransactionResult, error) {
-	trRaw := map[string]interface{}{}
-	id := time.Now().UnixNano() / int64(time.Millisecond)
-	jrReq, err := GetRpcRequest("icx_getTransactionResult", param, id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = c.Request(jrReq, &trRaw)
-	if err != nil {
-		return nil, err
-	}
-
-	txRs, _ := ParseTransactionResult(trRaw)
-	return txRs, nil
-}
-
-func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *TransactionResult) (*types.Transaction, error) {
-	zeroBigInt := new(big.Int)
-	fa := SystemScoreAddress
-	success := SuccessStatus
-	if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
-		su := txResult.StepUsed
-		sp := txResult.StepPrice
-		sd := txResult.StepDetails
-		if su.Cmp(zeroBigInt) != 0 {
-			f := new(big.Int).Mul(&su.Int, &sp.Int)
-			fee := f.Text(10)
-			tx.Operations[3].Amount.Value = fee
-			userStep := &su.Int
-			if len(sd) != 0 {
-				userStep = GetUserStep(tx.Operations[2].Account.Address, sd)
-			}
-			tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
-			fa = tx.Operations[0].Account.Address
-		}
-	}
-	if txResult.EventLogs != nil {
-		ops := GetOperations(fa, txResult.EventLogs, int64(len(tx.Operations))-1)
-		tx.Operations = append(tx.Operations, ops...)
-	}
-	for i, op := range tx.Operations {
-		op.Status = &txResult.StatusFlag
-		if i >= FeeOpFromIndex {
-			op.Status = &success
-		}
-	}
-	return tx, nil
 }
 
 func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {

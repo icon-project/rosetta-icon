@@ -78,7 +78,7 @@ const (
 	ICXDecimals = 18
 
 	GenesisBlockIndex          = int64(0)
-	HistoricalBalanceSupported = false
+	HistoricalBalanceSupported = true
 
 	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
 	SystemScoreAddress = "cx0000000000000000000000000000000000000000"
@@ -108,7 +108,7 @@ const (
 	FailureStatus = "FAIL"
 
 	FeeOpFromIndex = 2
-	GenesisTxHash  = "0x0000000000000000000000000000000000000000000000000000000000000000"
+	GenesisTxHash  = "0000000000000000000000000000000000000000000000000000000000000000"
 )
 
 type BlockRPCRequest struct {

@@ -35,10 +35,10 @@ func ParseTransactions(txArray []json.RawMessage) ([]*types.Transaction, error) 
 	return transactions, nil
 }
 
-func ParseTransactionResults(trsRaws *[]interface{}) ([]*TransactionResult, error) {
+func ParseTransactionResults(trsRaws []interface{}) ([]*TransactionResult, error) {
 	var trsArray []*TransactionResult
 
-	for _, raw := range *trsRaws {
+	for _, raw := range trsRaws {
 		txResult, _ := ParseTransactionResult(raw)
 		trsArray = append(trsArray, txResult)
 	}
