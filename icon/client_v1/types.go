@@ -96,6 +96,7 @@ const (
 	DeployOpType      = "DEPLOY"
 	CallOpType        = "CALL"
 	DepositOpType     = "DEPOSIT"
+	BugOpType         = "BUG"
 
 	BaseDataType     = "base"
 	TransferDataType = "transfer"
