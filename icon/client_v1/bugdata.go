@@ -812,7 +812,7 @@ func HandleBugTransaction(transaction *types.Transaction, address string) {
 				Address: address,
 			},
 			Amount: &types.Amount{
-				Value:    "-" + v.Text(10),
+				Value:    v.Text(10),
 				Currency: ICXCurrency,
 			},
 		}
