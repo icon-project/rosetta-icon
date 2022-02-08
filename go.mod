@@ -1,6 +1,6 @@
 module github.com/icon-project/rosetta-icon
 
-go 1.54
+go 1.15
 
 require (
 	github.com/coinbase/rosetta-sdk-go v0.5.5
