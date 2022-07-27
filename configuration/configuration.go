@@ -17,11 +17,12 @@ package configuration
 import (
 	"errors"
 	"fmt"
-	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
 // Mode is the setting that determines if
@@ -67,6 +68,9 @@ const (
 	// read to determine the port for the Rosetta
 	// implementation.
 	PortEnv = "PORT"
+
+	// MiddlewareVersion is the version of rosetta-icon
+	MiddlewareVersion = "0.0.4"
 )
 
 // Configuration determines how

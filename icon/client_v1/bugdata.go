@@ -1,8 +1,9 @@
 package client_v1
 
 import (
-	"github.com/coinbase/rosetta-sdk-go/types"
 	"math/big"
+
+	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
 var bugData = map[string]string{
@@ -807,7 +808,7 @@ func HandleBugTransaction(transaction *types.Transaction, address string) {
 				Index: 5,
 			},
 			Type:   BugOpType,
-			Status: SuccessStatus,
+			Status: types.String(SuccessStatus),
 			Account: &types.AccountIdentifier{
 				Address: address,
 			},

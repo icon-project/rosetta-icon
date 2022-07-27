@@ -17,11 +17,12 @@ package client_v1
 import (
 	"bytes"
 	"encoding/json"
+	"math/big"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/icon-project/goloop/service/transaction"
-	"math/big"
 )
 
 var (
@@ -53,13 +54,12 @@ var (
 			Successful: false,
 		},
 	}
-
-	MiddlewareVersion = "0.0.1"
-	RosettaVersion    = "1.4.0"
-	NodeVersion       = "1.8.0"
 )
 
 const (
+	// NodeVersion is the version of goloop we are using.
+	NodeVersion = "1.2.10"
+
 	// Blockchain is ICON.
 	Blockchain string = "ICON"
 
@@ -79,6 +79,7 @@ const (
 
 	GenesisBlockIndex          = int64(0)
 	HistoricalBalanceSupported = false
+	IncludeMempoolCoins        = false
 
 	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
 	SystemScoreAddress = "cx0000000000000000000000000000000000000000"
@@ -464,7 +465,7 @@ type EventLog struct {
 }
 
 type TransactionResult struct {
-	StatusFlag         string
+	StatusFlag         *string
 	Status             json.RawMessage           `json:"status"`
 	BlockHeight        *json.RawMessage          `json:"blockHeight"`
 	BlockHash          *json.RawMessage          `json:"blockHash"`

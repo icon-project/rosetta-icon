@@ -16,6 +16,7 @@ package services
 
 import (
 	"context"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
 	"github.com/icon-project/rosetta-icon/icon"
@@ -51,4 +52,12 @@ func (s *AccountAPIService) AccountBalance(
 		return nil, wrapErr(ErrInvalidAddress, err)
 	}
 	return balance, nil
+}
+
+// AccountCoins implements /account/coins.
+func (s *AccountAPIService) AccountCoins(
+	ctx context.Context,
+	request *types.AccountCoinsRequest,
+) (*types.AccountCoinsResponse, *types.Error) {
+	return nil, wrapErr(ErrUnimplemented, nil)
 }

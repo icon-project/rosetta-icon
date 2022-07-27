@@ -16,12 +16,13 @@ package client_v1
 
 import (
 	"encoding/json"
-	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/icon-project/goloop/common"
-	"github.com/icon-project/goloop/server/jsonrpc"
 	"math/big"
 	"net/http"
 	"time"
+
+	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/goloop/common"
+	"github.com/icon-project/goloop/server/jsonrpc"
 )
 
 type ClientV3 struct {
@@ -162,7 +163,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 		for i, op := range tx.Operations {
 			op.Status = trsArray[index].StatusFlag
 			if i >= FeeOpFromIndex {
-				op.Status = SuccessStatus
+				op.Status = types.String(SuccessStatus)
 			}
 		}
 	}
@@ -231,7 +232,7 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 	for i, op := range tx.Operations {
 		op.Status = txResult.StatusFlag
 		if i >= FeeOpFromIndex {
-			op.Status = SuccessStatus
+			op.Status = types.String(SuccessStatus)
 		}
 	}
 	return tx, nil

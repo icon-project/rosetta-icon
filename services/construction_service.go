@@ -220,8 +220,8 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	fa := fOp.Account.Address
 	uTx := &client_v1.Transaction{
 		Version:   common.HexUint16{Value: 3},
-		From:      *common.NewAddressFromString(fa),
-		To:        *common.NewAddressFromString(ta),
+		From:      *common.MustNewAddressFromString(fa),
+		To:        *common.MustNewAddressFromString(ta),
 		Value:     &common.HexInt{Int: *amount},
 		StepLimit: *meta.DefaultStepCost,
 		Timestamp: common.HexInt64{Value: time.Now().UnixNano() / int64(time.Microsecond)},

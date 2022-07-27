@@ -209,7 +209,7 @@ func GetRpcRequest(method string, reqPtr interface{}, id int64) (*jsonrpc.Reques
 	jrReq := &jsonrpc.Request{
 		ID:      id,
 		Version: jsonrpc.Version,
-		Method:  method,
+		Method:  &method,
 	}
 	if reqPtr != nil {
 		b, mErr := json.Marshal(reqPtr)

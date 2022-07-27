@@ -2,6 +2,7 @@ package client_v1
 
 import (
 	"encoding/json"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
@@ -57,9 +58,9 @@ func ParseTransactionResult(tx interface{}) (*TransactionResult, error) {
 		return nil, err
 	}
 	if status == "0x1" {
-		txResult.StatusFlag = SuccessStatus
+		txResult.StatusFlag = types.String(SuccessStatus)
 	} else {
-		txResult.StatusFlag = FailureStatus
+		txResult.StatusFlag = types.String(FailureStatus)
 	}
 	return &txResult, nil
 }
