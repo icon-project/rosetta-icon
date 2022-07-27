@@ -1,9 +1,9 @@
 {
   "network": {
     "blockchain": "ICON",
-    "network": "Testnet"
+    "network": "Localnet"
   },
-  "data_directory": "cli-data",
+  "data_directory": "",
   "http_timeout": 300,
   "max_retries": 15,
   "max_online_connections": 500,
@@ -11,15 +11,16 @@
   "tip_delay": 120,
   "compression_disabled": true,
   "memory_limit_disabled": true,
+  "coin_supported": false,
   "construction": {
     "stale_depth": 10,
     "broadcast_limit": 5,
-    "constructor_dsl_file": "testnet.ros",
+    "constructor_dsl_file": "localnet.ros",
     "prefunded_accounts": [
       {
-        "privkey": "e9aae7d17c4033fc5156d6579815e0729c39e8a3cf8e511dd29f7ad49940b885",
+        "privkey": "573b555367d6734ea0fecd0653ba02659fa19f7dc6ee5b93ec781350bda27376",
         "account_identifier": {
-          "address": "hxd209c7d4ca9dde0099f5510b6d04b8859c39bdc1"
+          "address": "hxb6b5791be0b5ef67063b3c10b840fb81514db2fd"
         },
         "curve_type": "secp256k1",
         "currency": {

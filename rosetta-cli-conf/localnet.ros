@@ -26,7 +26,7 @@ request_funds(1){
 
 create_account(1){
   create{
-    network = {"network":"Testnet", "blockchain":"ICON"};
+    network = {"network":"Localnet", "blockchain":"ICON"};
     key = generate_key({"curve_type": "secp256k1"});
     account = derive({
       "network_identifier": {{network}},
@@ -43,7 +43,7 @@ create_account(1){
 
 transfer(10){
   transfer{
-    transfer.network = {"network":"Testnet", "blockchain":"ICON"};
+    transfer.network = {"network":"Localnet", "blockchain":"ICON"};
     currency = {"symbol":"ICX", "decimals":18};
     sender = find_balance({
       "minimum_balance":{

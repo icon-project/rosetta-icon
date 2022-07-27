@@ -1,8 +1,9 @@
 package client_v1
 
 import (
-	"github.com/coinbase/rosetta-sdk-go/types"
 	"math/big"
+
+	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
 const (
@@ -27,7 +28,7 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 				Index: int64(len(ops)),
 			},
 			Type:   GenesisOpType,
-			Status: SuccessStatus,
+			Status: types.String(SuccessStatus),
 			Account: &types.AccountIdentifier{
 				Address: account.Addr(),
 			},
@@ -47,7 +48,7 @@ func ParseGenesisOperationsV2(tx GenesisTransaction) ([]*types.Operation, error)
 			Index: int64(len(ops)),
 		},
 		Type:   MessageOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Metadata: map[string]interface{}{
 			"message": tx.Message,
 		},
@@ -65,7 +66,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			Index: 0,
 		},
 		Type:   opType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
@@ -87,7 +88,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			},
 		},
 		Type:   opType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: transaction.ToAddr(),
 		},
@@ -109,7 +110,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			},
 		},
 		Type:   FeeOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
@@ -132,7 +133,7 @@ func ParseOperationsV2(transaction Transaction) ([]*types.Operation, error) {
 			},
 		},
 		Type:   FeeOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: TreasuryAddress,
 		},
@@ -162,7 +163,7 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 			Index: 0,
 		},
 		Type:   opType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
@@ -185,7 +186,7 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 			},
 		},
 		Type:   opType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: transaction.ToAddr(),
 		},
@@ -208,7 +209,7 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 			},
 		},
 		Type:   FeeOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: transaction.FromAddr(),
 		},
@@ -231,7 +232,7 @@ func ParseOperationsV3(transaction Transaction) ([]*types.Operation, error) {
 			},
 		},
 		Type:   FeeOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: TreasuryAddress,
 		},
@@ -251,7 +252,7 @@ func MakeBaseOperations() (*types.Operation, error) {
 			Index: 0,
 		},
 		Type:   BaseOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 	}
 	return baseOp, nil
 }
@@ -268,7 +269,7 @@ func GetOperations(fa string, els []*EventLog, lastOpIndex int64) []*types.Opera
 					Index: lastOpIndex + 1,
 				},
 				Type:   ICXTransferOpType,
-				Status: SuccessStatus,
+				Status: types.String(SuccessStatus),
 				Account: &types.AccountIdentifier{
 					Address: *el.Indexed[1],
 				},
@@ -288,7 +289,7 @@ func GetOperations(fa string, els []*EventLog, lastOpIndex int64) []*types.Opera
 					},
 				},
 				Type:   ICXTransferOpType,
-				Status: SuccessStatus,
+				Status: types.String(SuccessStatus),
 				Account: &types.AccountIdentifier{
 					Address: *el.Indexed[2],
 				},
@@ -306,7 +307,7 @@ func GetOperations(fa string, els []*EventLog, lastOpIndex int64) []*types.Opera
 					Index: lastOpIndex + 1,
 				},
 				Type:   IssueOpType,
-				Status: SuccessStatus,
+				Status: types.String(SuccessStatus),
 				Account: &types.AccountIdentifier{
 					Address: TreasuryAddress,
 				},
@@ -354,7 +355,7 @@ func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation 
 			Index: lastOpIndex + 1,
 		},
 		Type:   ClaimOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: TreasuryAddress,
 		},
@@ -374,7 +375,7 @@ func getClaimOps(fa string, el *EventLog, lastOpIndex int64) []*types.Operation 
 			},
 		},
 		Type:   ClaimOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: fa,
 		},
@@ -394,7 +395,7 @@ func getBurnOps(el *EventLog, lastOpIndex int64) *types.Operation {
 			Index: lastOpIndex + 1,
 		},
 		Type:   BurnOpType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: SystemScoreAddress,
 		},
@@ -415,7 +416,7 @@ func getDepositWithdrawn(el *EventLog, lastOpIndex int64) *types.Operation {
 			Index: lastOpIndex + 1,
 		},
 		Type:   WithdrawnType,
-		Status: SuccessStatus,
+		Status: types.String(SuccessStatus),
 		Account: &types.AccountIdentifier{
 			Address: fa,
 		},

@@ -16,6 +16,7 @@ package services
 
 import (
 	"context"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
 	"github.com/icon-project/rosetta-icon/icon"
@@ -45,6 +46,26 @@ func (s *NetworkAPIService) NetworkList(
 	return &types.NetworkListResponse{
 		NetworkIdentifiers: []*types.NetworkIdentifier{
 			s.config.Network,
+		},
+	}, nil
+}
+
+// NetworkOptions implements the /network/options endpoint.
+func (s *NetworkAPIService) NetworkOptions(
+	ctx context.Context,
+	request *types.NetworkRequest,
+) (*types.NetworkOptionsResponse, *types.Error) {
+	return &types.NetworkOptionsResponse{
+		Version: &types.Version{
+			NodeVersion:       client_v1.NodeVersion,
+			RosettaVersion:    types.RosettaAPIVersion,
+			MiddlewareVersion: types.String(configuration.MiddlewareVersion),
+		},
+		Allow: &types.Allow{
+			Errors:                  Errors,
+			OperationTypes:          client_v1.OperationTypes,
+			OperationStatuses:       client_v1.OperationStatuses,
+			HistoricalBalanceLookup: client_v1.HistoricalBalanceSupported,
 		},
 	}, nil
 }
@@ -80,25 +101,5 @@ func (s *NetworkAPIService) NetworkStatus(
 		GenesisBlockIdentifier: genesisBlock.BlockIdentifier,
 		SyncStatus:             nil,
 		Peers:                  peers,
-	}, nil
-}
-
-// NetworkOptions implements the /network/options endpoint.
-func (s *NetworkAPIService) NetworkOptions(
-	ctx context.Context,
-	request *types.NetworkRequest,
-) (*types.NetworkOptionsResponse, *types.Error) {
-	return &types.NetworkOptionsResponse{
-		Version: &types.Version{
-			RosettaVersion:    client_v1.RosettaVersion,
-			NodeVersion:       client_v1.NodeVersion,
-			MiddlewareVersion: &client_v1.MiddlewareVersion,
-		},
-		Allow: &types.Allow{
-			Errors:                  Errors,
-			OperationTypes:          client_v1.OperationTypes,
-			OperationStatuses:       client_v1.OperationStatuses,
-			HistoricalBalanceLookup: client_v1.HistoricalBalanceSupported,
-		},
 	}, nil
 }

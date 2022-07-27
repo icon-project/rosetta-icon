@@ -17,11 +17,12 @@ package client_v1
 import (
 	"bytes"
 	"encoding/json"
+	"math/big"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/icon-project/goloop/service/transaction"
-	"math/big"
 )
 
 var (
@@ -53,13 +54,12 @@ var (
 			Successful: false,
 		},
 	}
-
-	MiddlewareVersion = "0.0.1"
-	RosettaVersion    = "1.4.0"
-	NodeVersion       = "1.8.0"
 )
 
 const (
+	// NodeVersion is the version of goloop we are using.
+	NodeVersion = "1.2.10"
+
 	// Blockchain is ICON.
 	Blockchain string = "ICON"
 
@@ -67,18 +67,24 @@ const (
 	// in MainnetNetworkIdentifier.
 	MainnetNetwork string = "Mainnet"
 
-	// TestnetNetwork is the value of the network
-	// in TestnetNetworkIdentifier.
-	TestnetNetwork string = "Testnet"
+	// LisbonNetwork is the value of the network
+	// in LisbonNetworkIdentifier.
+	LisbonNetwork string = "Lisbon"
 
-	// for develop
-	DevelopNetwork string = "Devnet"
+	// BerlinNetwork is the value of the network
+	// in BerlinNetworkIdentifier.
+	BerlinNetwork string = "Berlin"
+
+	// LocalNetwork is the value of the network
+	// in LocalNetworkIdentifier.
+	LocalNetwork string = "Localnet"
 
 	ICXSymbol   = "ICX"
 	ICXDecimals = 18
 
 	GenesisBlockIndex          = int64(0)
 	HistoricalBalanceSupported = false
+	IncludeMempoolCoins        = false
 
 	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
 	SystemScoreAddress = "cx0000000000000000000000000000000000000000"
@@ -96,6 +102,7 @@ const (
 	DeployOpType      = "DEPLOY"
 	CallOpType        = "CALL"
 	DepositOpType     = "DEPOSIT"
+	BugOpType         = "BUG"
 
 	BaseDataType     = "base"
 	TransferDataType = "transfer"
@@ -463,7 +470,7 @@ type EventLog struct {
 }
 
 type TransactionResult struct {
-	StatusFlag         string
+	StatusFlag         *string
 	Status             json.RawMessage           `json:"status"`
 	BlockHeight        *json.RawMessage          `json:"blockHeight"`
 	BlockHash          *json.RawMessage          `json:"blockHash"`

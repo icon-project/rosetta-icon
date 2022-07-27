@@ -18,18 +18,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon"
-	"github.com/icon-project/rosetta-icon/services"
-
 	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/server"
 	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/icon"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/services"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )
@@ -70,6 +69,8 @@ func runRunCmd(cmd *cobra.Command, args []string) error {
 		client_v1.HistoricalBalanceSupported,
 		[]*types.NetworkIdentifier{cfg.Network},
 		nil,
+		client_v1.IncludeMempoolCoins,
+		"",
 	)
 	if err != nil {
 		return fmt.Errorf("%w: could not initialize server asserter", err)

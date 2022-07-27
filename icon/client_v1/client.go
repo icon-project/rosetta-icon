@@ -16,12 +16,13 @@ package client_v1
 
 import (
 	"encoding/json"
-	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/icon-project/goloop/common"
-	"github.com/icon-project/goloop/server/jsonrpc"
 	"math/big"
 	"net/http"
 	"time"
+
+	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/goloop/common"
+	"github.com/icon-project/goloop/server/jsonrpc"
 )
 
 type ClientV3 struct {
@@ -142,6 +143,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 			su := trsArray[index].StepUsed
 			sp := trsArray[index].StepPrice
 			sd := trsArray[index].StepDetails
+			fa = tx.Operations[0].Account.Address
 			if su.Cmp(zeroBigInt) != 0 {
 				f := new(big.Int).Mul(&su.Int, &sp.Int)
 				fee := f.Text(10)
@@ -151,8 +153,8 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 					userStep = GetUserStep(tx.Operations[2].Account.Address, sd)
 				}
 				tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
-				fa = tx.Operations[0].Account.Address
 			}
+			HandleBugTransaction(tx, fa)
 		}
 		if trsArray[index].EventLogs != nil {
 			ops := GetOperations(fa, trsArray[index].EventLogs, int64(len(tx.Operations))-1)
@@ -161,7 +163,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 		for i, op := range tx.Operations {
 			op.Status = trsArray[index].StatusFlag
 			if i >= FeeOpFromIndex {
-				op.Status = SuccessStatus
+				op.Status = types.String(SuccessStatus)
 			}
 		}
 	}
@@ -230,7 +232,7 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 	for i, op := range tx.Operations {
 		op.Status = txResult.StatusFlag
 		if i >= FeeOpFromIndex {
-			op.Status = SuccessStatus
+			op.Status = types.String(SuccessStatus)
 		}
 	}
 	return tx, nil
