@@ -2,6 +2,7 @@ package client_v1
 
 import (
 	"encoding/json"
+
 	"github.com/icon-project/goloop/common"
 )
 
@@ -32,11 +33,13 @@ func MapNetwork(n string) *common.HexInt {
 	switch n {
 	case MainnetNetwork:
 		return common.NewHexInt(1)
-	case TestnetNetwork:
+	case LisbonNetwork:
 		return common.NewHexInt(2)
-	case DevelopNetwork:
+	case BerlinNetwork:
 		return common.NewHexInt(7)
+	case LocalNetwork:
+		return common.NewHexInt(3)
 	default:
-		return common.NewHexInt(7)
+		return common.NewHexInt(3)
 	}
 }

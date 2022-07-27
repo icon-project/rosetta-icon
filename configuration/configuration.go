@@ -41,10 +41,14 @@ const (
 	// Mainnet is the ICON Mainnet.
 	Mainnet string = "MAINNET"
 
-	// Testnet is ICON Testnet3.
-	Testnet string = "TESTNET"
+	// Lisbon is the ICON Lisbon testnet.
+	Lisbon string = "LISBON"
 
-	Devnet string = "DEVNET"
+	// Berlin is the ICON Berlin testnet.
+	Berlin string = "BERLIN"
+
+	// Localnet is the ICON local testnet.
+	Localnet string = "LOCALNET"
 
 	// ModeEnv is the environment variable read
 	// to determine mode.
@@ -106,15 +110,20 @@ func LoadConfiguration() (*Configuration, error) {
 			Blockchain: client_v1.Blockchain,
 			Network:    client_v1.MainnetNetwork,
 		}
-	case Testnet:
+	case Lisbon:
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.TestnetNetwork,
+			Network:    client_v1.LisbonNetwork,
 		}
-	case Devnet:
+	case Berlin:
 		config.Network = &types.NetworkIdentifier{
 			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.DevelopNetwork,
+			Network:    client_v1.BerlinNetwork,
+		}
+	case Localnet:
+		config.Network = &types.NetworkIdentifier{
+			Blockchain: client_v1.Blockchain,
+			Network:    client_v1.LocalNetwork,
 		}
 	case "":
 		return nil, errors.New("NETWORK must be populated")

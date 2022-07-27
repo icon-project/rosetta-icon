@@ -67,12 +67,17 @@ const (
 	// in MainnetNetworkIdentifier.
 	MainnetNetwork string = "Mainnet"
 
-	// TestnetNetwork is the value of the network
-	// in TestnetNetworkIdentifier.
-	TestnetNetwork string = "Testnet"
+	// LisbonNetwork is the value of the network
+	// in LisbonNetworkIdentifier.
+	LisbonNetwork string = "Lisbon"
 
-	// for develop
-	DevelopNetwork string = "Devnet"
+	// BerlinNetwork is the value of the network
+	// in BerlinNetworkIdentifier.
+	BerlinNetwork string = "Berlin"
+
+	// LocalNetwork is the value of the network
+	// in LocalNetworkIdentifier.
+	LocalNetwork string = "Localnet"
 
 	ICXSymbol   = "ICX"
 	ICXDecimals = 18
