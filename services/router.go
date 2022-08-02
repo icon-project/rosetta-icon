@@ -15,7 +15,6 @@
 package services
 
 import (
-	"github.com/icon-project/rosetta-icon/icon"
 	"net/http"
 
 	"github.com/coinbase/rosetta-sdk-go/asserter"
@@ -27,10 +26,9 @@ import (
 // of server controllers.
 func NewBlockchainRouter(
 	config *configuration.Configuration,
-	client *icon.Client,
+	client Client,
 	asserter *asserter.Asserter,
 ) http.Handler {
-
 	networkAPIService := NewNetworkAPIService(config, client)
 	networkAPIController := server.NewNetworkAPIController(
 		networkAPIService,

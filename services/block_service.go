@@ -16,22 +16,24 @@ package services
 
 import (
 	"context"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon"
 )
 
+// BlockAPIService implements the server.BlockAPIServicer interface.
 type BlockAPIService struct {
 	config *configuration.Configuration
-	client *icon.Client
+	client Client
 }
 
+// NewBlockAPIService creates a new instance of a BlockAPIService.
 func NewBlockAPIService(
-	config *configuration.Configuration,
-	client *icon.Client,
+	cfg *configuration.Configuration,
+	client Client,
 ) *BlockAPIService {
 	return &BlockAPIService{
-		config: config,
+		config: cfg,
 		client: client,
 	}
 }

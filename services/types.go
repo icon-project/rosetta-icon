@@ -15,18 +15,33 @@
 package services
 
 import (
-	"context"
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
-// Client is used by the servicers to get block
+// Client is used by the services to get block
 // data and to submit transactions.
 type Client interface {
 	GetBlock(
-		context.Context,
-		*types.PartialBlockIdentifier,
+		identifier *types.PartialBlockIdentifier,
 	) (*types.Block, error)
+
+	GetTransaction(
+		identifier *types.TransactionIdentifier,
+	) (*types.Transaction, error)
+
+	GetBalance(
+		identifier *types.AccountIdentifier,
+	) (*types.AccountBalanceResponse, error)
+
+	GetPeer() ([]*types.Peer, error)
+
+	GetDefaultStepCost() (*common.HexInt, error)
+
+	SendTransaction(
+		tx client_v1.Transaction,
+	) error
 }
 
 type options struct {

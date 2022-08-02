@@ -19,21 +19,22 @@ import (
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon"
 	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
+// NetworkAPIService implements the server.NetworkAPIServicer interface.
 type NetworkAPIService struct {
 	config *configuration.Configuration
-	client *icon.Client
+	client Client
 }
 
+// NewNetworkAPIService creates a new instance of a NetworkAPIService.
 func NewNetworkAPIService(
-	config *configuration.Configuration,
-	client *icon.Client,
+	cfg *configuration.Configuration,
+	client Client,
 ) *NetworkAPIService {
 	return &NetworkAPIService{
-		config: config,
+		config: cfg,
 		client: client,
 	}
 }

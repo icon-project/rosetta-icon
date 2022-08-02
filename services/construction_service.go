@@ -19,26 +19,26 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/icon-project/goloop/common"
-	"github.com/icon-project/goloop/common/crypto"
-	"github.com/icon-project/rosetta-icon/icon"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"time"
-
-	"github.com/icon-project/rosetta-icon/configuration"
 
 	"github.com/coinbase/rosetta-sdk-go/parser"
 	"github.com/coinbase/rosetta-sdk-go/types"
+	"github.com/icon-project/goloop/common"
+	"github.com/icon-project/goloop/common/crypto"
+	"github.com/icon-project/rosetta-icon/configuration"
+	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
+// ConstructionAPIService implements the server.ConstructionAPIServicer interface.
 type ConstructionAPIService struct {
 	config *configuration.Configuration
-	client *icon.Client
+	client Client
 }
 
+// NewConstructionAPIService creates a new instance of a ConstructionAPIService.
 func NewConstructionAPIService(
 	cfg *configuration.Configuration,
-	client *icon.Client,
+	client Client,
 ) *ConstructionAPIService {
 	return &ConstructionAPIService{
 		config: cfg,
@@ -46,6 +46,7 @@ func NewConstructionAPIService(
 	}
 }
 
+// ConstructionDerive implements the /construction/derive endpoint.
 func (s *ConstructionAPIService) ConstructionDerive(
 	ctx context.Context,
 	request *types.ConstructionDeriveRequest,
@@ -63,6 +64,8 @@ func (s *ConstructionAPIService) ConstructionDerive(
 	}, nil
 }
 
+// ConstructionPreprocess implements the /construction/preprocess
+// endpoint.
 func (s *ConstructionAPIService) ConstructionPreprocess(
 	ctx context.Context,
 	request *types.ConstructionPreprocessRequest,
@@ -131,6 +134,7 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 	}, nil
 }
 
+// ConstructionMetadata implements the /construction/metadata endpoint.
 func (s *ConstructionAPIService) ConstructionMetadata(
 	ctx context.Context,
 	request *types.ConstructionMetadataRequest,
@@ -163,6 +167,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 	}, nil
 }
 
+// ConstructionPayloads implements the /construction/payloads endpoint.
 func (s *ConstructionAPIService) ConstructionPayloads(
 	ctx context.Context,
 	request *types.ConstructionPayloadsRequest,
@@ -251,6 +256,8 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	}, nil
 }
 
+// ConstructionCombine implements the /construction/combine
+// endpoint.
 func (s *ConstructionAPIService) ConstructionCombine(
 	ctx context.Context,
 	request *types.ConstructionCombineRequest,
@@ -285,6 +292,7 @@ func (s *ConstructionAPIService) ConstructionCombine(
 	}, nil
 }
 
+// ConstructionHash implements the /construction/hash endpoint.
 func (s *ConstructionAPIService) ConstructionHash(
 	ctx context.Context,
 	request *types.ConstructionHashRequest,
@@ -384,6 +392,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 	return resp, nil
 }
 
+// ConstructionSubmit implements the /construction/submit endpoint.
 func (s *ConstructionAPIService) ConstructionSubmit(
 	ctx context.Context,
 	request *types.ConstructionSubmitRequest,

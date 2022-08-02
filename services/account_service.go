@@ -19,20 +19,21 @@ import (
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon"
 )
 
+// AccountAPIService implements the server.AccountAPIServicer interface.
 type AccountAPIService struct {
 	config *configuration.Configuration
-	client *icon.Client
+	client Client
 }
 
+// NewAccountAPIService returns a new *AccountAPIService.
 func NewAccountAPIService(
-	config *configuration.Configuration,
-	client *icon.Client,
+	cfg *configuration.Configuration,
+	client Client,
 ) *AccountAPIService {
 	return &AccountAPIService{
-		config: config,
+		config: cfg,
 		client: client,
 	}
 }
