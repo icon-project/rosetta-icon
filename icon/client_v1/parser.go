@@ -40,7 +40,10 @@ func ParseTransactionResults(trsRaws *[]interface{}) ([]*TransactionResult, erro
 	var trsArray []*TransactionResult
 
 	for _, raw := range *trsRaws {
-		txResult, _ := ParseTransactionResult(raw)
+		txResult, err := ParseTransactionResult(raw)
+		if err != nil {
+			return nil, err
+		}
 		trsArray = append(trsArray, txResult)
 	}
 	return trsArray, nil

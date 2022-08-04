@@ -18,10 +18,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/icon-project/goloop/server/jsonrpc"
 	"io/ioutil"
 	"mime"
 	"net/http"
+
+	"github.com/icon-project/goloop/server/jsonrpc"
 )
 
 const (
@@ -117,6 +118,9 @@ func (c *JsonRpcClient) RequestBatch(jrReq []*jsonrpc.Request, respPtr []interfa
 		return nil, err
 	}
 	res, err := decodeBatchResponse(resp, respPtr)
+	if err != nil {
+		return nil, err
+	}
 	return res, nil
 }
 
@@ -174,17 +178,11 @@ func decodeBatchResponse(resp *http.Response, respPtr []interface{}) ([]*Respons
 			err, resp)
 	}
 	if respPtr != nil {
-		for _, res := range jrResp {
-			bs, err := json.Marshal(res.ID)
-			if err != nil {
-				return nil, err
+		for i, res := range jrResp {
+			if res.Error != nil {
+				return nil, res.Error
 			}
-			var id int
-			err = json.Unmarshal(bs, &id)
-			if err != nil {
-				return nil, err
-			}
-			err = json.Unmarshal(res.Result, &respPtr[id])
+			err = json.Unmarshal(res.Result, &respPtr[i])
 			if err != nil {
 				return nil, err
 			}

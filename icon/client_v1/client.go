@@ -123,6 +123,9 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 		} else if index == len(block.Transactions) {
 			_, err = c.RequestBatch(reqs, trsRaw)
 		}
+		if err != nil {
+			return nil, err
+		}
 	}
 	trsArray, err := ParseTransactionResults(&trsRaw)
 	if err != nil {

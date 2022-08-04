@@ -16,6 +16,7 @@ package icon
 
 import (
 	"fmt"
+
 	RosettaTypes "github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/rosetta-icon/icon/client_v1"
@@ -68,7 +69,6 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
-	reqParams = &client_v1.BlockRPCRequest{Hash: block.BlockIdentifier.Hash}
 	trsArray, err := ic.iconV1.GetReceipts(block)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get blockReceipts", err)
@@ -91,7 +91,7 @@ func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*R
 
 	txR, err := ic.iconV1.GetTransactionResult(reqParams)
 	if err != nil {
-		return nil, fmt.Errorf("%w: could not get transaction resykt", err)
+		return nil, fmt.Errorf("%w: could not get transaction result", err)
 	}
 	ic.iconV1.MakeTransactionWithReceipt(tx, txR)
 	return tx, nil
