@@ -79,11 +79,12 @@ const (
 
 // Configuration determines how
 type Configuration struct {
-	Mode     Mode
-	Network  *types.NetworkIdentifier
-	URL      string
-	DebugURL string
-	Port     int
+	Mode         Mode
+	Network      *types.NetworkIdentifier
+	GenesisBlock *types.BlockIdentifier
+	URL          string
+	DebugURL     string
+	Port         int
 }
 
 // LoadConfiguration attempts to create a new Configuration

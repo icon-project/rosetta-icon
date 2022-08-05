@@ -24,7 +24,7 @@ var (
 	Errors = []*types.Error{
 		ErrUnimplemented,
 		ErrUnavailableOffline,
-		ErrNotReady,
+		ErrUnableToGetStatus,
 		ErrWrongBlockHash,
 	}
 
@@ -42,12 +42,11 @@ var (
 		Message: "Endpoint unavailable offline",
 	}
 
-	// ErrNotReady is returned when ICON Node is not
-	// yet ready to serve queries.
-	ErrNotReady = &types.Error{
-		Code:      2, //nolint
-		Message:   "ICON Node is not ready",
-		Retriable: true,
+	// ErrUnableToGetStatus is returned when failing to get
+	// current network status
+	ErrUnableToGetStatus = &types.Error{
+		Code:    2,
+		Message: "Unable to get network status",
 	}
 
 	// ErrUnableToDecompressPubkey is returned when

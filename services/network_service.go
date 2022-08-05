@@ -77,29 +77,30 @@ func (s *NetworkAPIService) NetworkStatus(
 	request *types.NetworkRequest,
 ) (*types.NetworkStatusResponse, *types.Error) {
 	if s.config.Mode != configuration.Online {
-		return nil, wrapErr(ErrUnavailableOffline, nil)
+		return nil, ErrUnavailableOffline
 	}
 
-	gh := int64(0)
-	params := &types.PartialBlockIdentifier{
-		Index: &gh,
+	if s.config.GenesisBlock == nil {
+		gh := int64(0)
+		params := &types.PartialBlockIdentifier{
+			Index: &gh,
+		}
+		genesisBlock, err := s.client.GetBlock(params)
+		if err != nil {
+			return nil, wrapErr(ErrWrongBlockHash, err)
+		}
+		s.config.GenesisBlock = genesisBlock.BlockIdentifier
 	}
-	genesisBlock, err := s.client.GetBlock(params)
+
+	currentBlock, currentTime, peers, err := s.client.Status()
 	if err != nil {
-		return nil, wrapErr(ErrWrongBlockHash, err)
+		return nil, wrapErr(ErrUnableToGetStatus, err)
 	}
 
-	params = &types.PartialBlockIdentifier{}
-	lastBlock, err := s.client.GetBlock(params)
-	if err != nil {
-		return nil, wrapErr(ErrWrongBlockHash, err)
-	}
-
-	peers, err := s.client.GetPeer()
 	return &types.NetworkStatusResponse{
-		CurrentBlockIdentifier: lastBlock.BlockIdentifier,
-		CurrentBlockTimestamp:  lastBlock.Timestamp,
-		GenesisBlockIdentifier: genesisBlock.BlockIdentifier,
+		CurrentBlockIdentifier: currentBlock,
+		CurrentBlockTimestamp:  currentTime,
+		GenesisBlockIdentifier: s.config.GenesisBlock,
 		SyncStatus:             nil,
 		Peers:                  peers,
 	}, nil

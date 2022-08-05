@@ -23,6 +23,8 @@ import (
 // Client is used by the services to get block
 // data and to submit transactions.
 type Client interface {
+	Status() (*types.BlockIdentifier, int64, []*types.Peer, error)
+
 	GetBlock(
 		identifier *types.PartialBlockIdentifier,
 	) (*types.Block, error)
@@ -34,8 +36,6 @@ type Client interface {
 	GetBalance(
 		identifier *types.AccountIdentifier,
 	) (*types.AccountBalanceResponse, error)
-
-	GetPeer() ([]*types.Peer, error)
 
 	GetDefaultStepCost() (*common.HexInt, error)
 

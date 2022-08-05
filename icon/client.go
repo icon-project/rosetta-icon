@@ -44,6 +44,20 @@ func NewClient(
 	}
 }
 
+func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaTypes.Peer, error) {
+	block, err := ic.iconV1.GetLastBlock(nil)
+	if err != nil {
+		return nil, -1, nil, err
+	}
+
+	peers, err := ic.GetPeer()
+	if err != nil {
+		return nil, -1, nil, err
+	}
+
+	return block.BlockIdentifier, block.Timestamp, peers, nil
+}
+
 func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
 	var reqParams *client_v1.BlockRPCRequest
 	var err error
