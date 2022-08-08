@@ -241,69 +241,17 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 	return tx, nil
 }
 
-func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*types.AccountBalanceResponse, error) {
-	req := make([]*jsonrpc.Request, 3)
-	jrReq, err := GetRpcRequest("icx_getLastBlock", nil, 0)
+func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*common.HexInt, error) {
+	id := time.Now().UnixNano() / int64(time.Millisecond)
+	req, err := GetRpcRequest("icx_getBalance", param, id)
 	if err != nil {
 		return nil, err
 	}
-	req[0] = jrReq
-	jrReq, err = GetRpcRequest("icx_getBalance", param, 1)
-	if err != nil {
+	balance := &common.HexInt{}
+	if _, err := c.Request(req, &balance); err != nil {
 		return nil, err
 	}
-	req[1] = jrReq
-	params := map[string]interface{}{
-		"to":       "cx0000000000000000000000000000000000000000",
-		"dataType": "call",
-		"data": map[string]interface{}{
-			"method": "getStake",
-			"params": map[string]interface{}{
-				"address": param.Address,
-			},
-		},
-	}
-	jrReq, err = GetRpcRequest("icx_call", params, 2)
-	if err != nil {
-		return nil, err
-	}
-	req[2] = jrReq
-	resp := make([]interface{}, 3)
-	if _, blkErr := c.RequestBatch(req, resp); blkErr != nil {
-		return nil, blkErr
-	}
-	var blk BalanceWithBlockId
-	var b *common.HexInt
-	var stake StakeInfo
-	bs, _ := json.Marshal(resp[0])
-	if err := json.Unmarshal(bs, &blk); err != nil {
-		return nil, err
-	}
-	bs, _ = json.Marshal(resp[1])
-	if err := json.Unmarshal(bs, &b); err != nil {
-		return nil, err
-	}
-	if b == nil {
-		b = common.NewHexInt(0)
-	}
-	bs, _ = json.Marshal(resp[2])
-	if err := json.Unmarshal(bs, &stake); err != nil {
-		return nil, err
-	}
-	balance := new(big.Int).Add(&b.Int, stake.Total())
-
-	return &types.AccountBalanceResponse{
-		BlockIdentifier: &types.BlockIdentifier{
-			Index: blk.Number(),
-			Hash:  blk.Hash(),
-		},
-		Balances: []*types.Amount{
-			{
-				Value:    balance.Text(10),
-				Currency: ICXCurrency,
-			},
-		},
-	}, nil
+	return balance, nil
 }
 
 func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {

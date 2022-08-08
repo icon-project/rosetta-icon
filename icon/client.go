@@ -151,14 +151,50 @@ func (ic *Client) GetDefaultStepCost() (*common.HexInt, error) {
 	return res, nil
 }
 
-func (ic *Client) GetBalance(params *RosettaTypes.AccountIdentifier) (*RosettaTypes.AccountBalanceResponse, error) {
-	reqParam := &client_v1.BalanceRPCRequest{
-		Address: params.Address,
+func (ic *Client) GetBalance(
+	account *RosettaTypes.AccountIdentifier,
+	block *RosettaTypes.PartialBlockIdentifier,
+) (*RosettaTypes.AccountBalanceResponse, error) {
+	balReq := &client_v1.BalanceRPCRequest{
+		Address: account.Address,
 	}
-
-	result, err := ic.iconV1.GetBalance(reqParam)
+	if block != nil && block.Index != nil {
+		// result resides in the next block
+		balReq.Height = common.HexInt64{Value: *block.Index + 1}.String()
+	}
+	balance, err := ic.iconV1.GetBalance(balReq)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+
+	var blockId *RosettaTypes.BlockIdentifier
+	if block != nil && block.Index != nil {
+		blockReq := &client_v1.BlockRPCRequest{
+			Height: common.HexInt64{Value: *block.Index}.String(),
+		}
+		blockByHeight, err := ic.iconV1.GetBlockByHeight(blockReq)
+		if err != nil {
+			return nil, fmt.Errorf("%w: could not get block", err)
+		}
+		blockId = blockByHeight.BlockIdentifier
+	} else {
+		lastBlock, err := ic.iconV1.GetLastBlock(nil)
+		if err != nil {
+			return nil, fmt.Errorf("%w: could not get last block", err)
+		}
+		blockId = lastBlock.ParentBlockIdentifier
+	}
+
+	return &RosettaTypes.AccountBalanceResponse{
+		BlockIdentifier: &RosettaTypes.BlockIdentifier{
+			Index: blockId.Index,
+			Hash:  blockId.Hash,
+		},
+		Balances: []*RosettaTypes.Amount{
+			{
+				Value:    balance.Text(10),
+				Currency: client_v1.ICXCurrency,
+			},
+		},
+	}, nil
 }

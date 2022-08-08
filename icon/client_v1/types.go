@@ -83,7 +83,7 @@ const (
 	ICXDecimals = 18
 
 	GenesisBlockIndex          = int64(0)
-	HistoricalBalanceSupported = false
+	HistoricalBalanceSupported = true
 	IncludeMempoolCoins        = false
 
 	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
@@ -129,6 +129,7 @@ type TransactionRPCRequest struct {
 
 type BalanceRPCRequest struct {
 	Address string `json:"address"`
+	Height  string `json:"height,omitempty"`
 }
 
 type Block01a struct {

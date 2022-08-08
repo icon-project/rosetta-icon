@@ -34,7 +34,8 @@ type Client interface {
 	) (*types.Transaction, error)
 
 	GetBalance(
-		identifier *types.AccountIdentifier,
+		account *types.AccountIdentifier,
+		block *types.PartialBlockIdentifier,
 	) (*types.AccountBalanceResponse, error)
 
 	GetDefaultStepCost() (*common.HexInt, error)
