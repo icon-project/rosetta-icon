@@ -41,6 +41,11 @@ var (
 		ICXTransferOpType,
 		ClaimOpType,
 		MessageOpType,
+		DeployOpType,
+		CallOpType,
+		DepositOpType,
+		WithdrawnType,
+		BugOpType,
 	}
 
 	// OperationStatuses are all supported operation statuses.
