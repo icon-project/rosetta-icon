@@ -87,7 +87,7 @@ func (s *NetworkAPIService) NetworkStatus(
 		}
 		genesisBlock, err := s.client.GetBlock(params)
 		if err != nil {
-			return nil, wrapErr(ErrWrongBlockHash, err)
+			return nil, wrapErr(ErrWrongHashOrIndex, err)
 		}
 		s.config.GenesisBlock = genesisBlock.BlockIdentifier
 	}

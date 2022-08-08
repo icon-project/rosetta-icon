@@ -49,7 +49,7 @@ func (s *BlockAPIService) Block(
 
 	block, err := s.client.GetBlock(request.BlockIdentifier)
 	if err != nil {
-		return nil, wrapErr(ErrWrongBlockHash, err)
+		return nil, wrapErr(ErrWrongHashOrIndex, err)
 	}
 	return &types.BlockResponse{
 		Block: block,
@@ -67,7 +67,7 @@ func (s *BlockAPIService) BlockTransaction(
 
 	tx, err := s.client.GetTransaction(request.TransactionIdentifier)
 	if err != nil {
-		return nil, wrapErr(ErrWrongBlockHash, err)
+		return nil, wrapErr(ErrWrongHashOrIndex, err)
 	}
 
 	return &types.BlockTransactionResponse{

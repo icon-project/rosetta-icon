@@ -25,7 +25,14 @@ var (
 		ErrUnimplemented,
 		ErrUnavailableOffline,
 		ErrUnableToGetStatus,
-		ErrWrongBlockHash,
+		ErrUnableToDecompressPubkey,
+		ErrUnclearIntent,
+		ErrUnableToParseIntermediateResult,
+		ErrSignatureInvalid,
+		ErrBroadcastFailed,
+		ErrInvalidAddress,
+		ErrWrongHashOrIndex,
+		ErrUnableToGetBalance,
 	}
 
 	// ErrUnimplemented is returned when an endpoint
@@ -94,17 +101,24 @@ var (
 		Message: "Invalid address",
 	}
 
-	// ErrNotReady is returned when ICON Node is not
-	// yet ready to serve queries.
-	ErrWrongBlockHash = &types.Error{
+	// ErrWrongHashOrIndex is returned when ICON Node cannot
+	// process with the given data
+	ErrWrongHashOrIndex = &types.Error{
 		Code:      13,
-		Message:   "Wrong Block Hash",
+		Message:   "Wrong hash or index",
 		Retriable: true,
+	}
+
+	// ErrUnableToGetBalance is returned when it is not possible
+	// to get the balance of a *types.AccountIdentifier.
+	ErrUnableToGetBalance = &types.Error{
+		Code:    14,
+		Message: "Unable to get balance",
 	}
 )
 
 // wrapErr adds details to the types.Error provided. We use a function
-// to do this so that we don't accidentially overrwrite the standard
+// to do this so that we don't accidentally overwrite the standard
 // errors.
 func wrapErr(rErr *types.Error, err error) *types.Error {
 	newErr := &types.Error{
