@@ -83,7 +83,7 @@ func runRunCmd(cmd *cobra.Command, args []string) error {
 
 	g, ctx := errgroup.WithContext(ctx)
 
-	client := icon.NewClient(cfg.URL, client_v1.ICXCurrency)
+	client := icon.NewClient(cfg.URL)
 	router := services.NewBlockchainRouter(cfg, client, asserter)
 
 	loggedRouter := server.LoggerMiddleware(router)

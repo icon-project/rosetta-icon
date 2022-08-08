@@ -30,16 +30,13 @@ import (
 // in each request.
 
 type Client struct {
-	currency *RosettaTypes.Currency
-	iconV1   *client_v1.ClientV3
+	iconV1 *client_v1.ClientV3
 }
 
 func NewClient(
 	endpoint string,
-	currency *RosettaTypes.Currency,
 ) *Client {
 	return &Client{
-		currency,
 		client_v1.NewClientV3(endpoint),
 	}
 }
