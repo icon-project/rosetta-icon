@@ -1,6 +1,7 @@
 package client_v1
 
 import (
+	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
@@ -26,6 +27,10 @@ func ParseBlock01a(blk *Block01a) (*types.Block, error) {
 		return ParseGenesisBlock(blk)
 	} else {
 		transactions, _ := ParseTransactions(blk.Transactions)
+		timestamp := blk.TimestampMilli()
+		if timestamp == 0 {
+			timestamp = asserter.MinUnixEpoch
+		}
 		return &types.Block{
 			BlockIdentifier: &types.BlockIdentifier{
 				Index: blk.Number(),
@@ -35,7 +40,7 @@ func ParseBlock01a(blk *Block01a) (*types.Block, error) {
 				Index: blk.Number() - 1,
 				Hash:  blk.PrevHash(),
 			},
-			Timestamp:    blk.TimestampMilli(),
+			Timestamp:    timestamp,
 			Transactions: transactions,
 			Metadata:     blk.Meta(),
 		}, nil
