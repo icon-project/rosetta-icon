@@ -33,3 +33,16 @@ build:
 
 clean:
 	@$(RM) -r $(BIN_DIR)
+
+# Run Rosetta CLI
+ROSETTA_CLI := rosetta-cli
+ROSETTA_CLI_CONF ?= rosetta-cli-conf
+NETWORK ?= local
+check_spec:
+	$(ROSETTA_CLI) check:spec --configuration-file $(ROSETTA_CLI_CONF)/config_$(NETWORK).json --all
+
+check_construction:
+	$(ROSETTA_CLI) check:construction --configuration-file $(ROSETTA_CLI_CONF)/config_$(NETWORK).json
+
+check_data:
+	$(ROSETTA_CLI) check:data --configuration-file $(ROSETTA_CLI_CONF)/config_$(NETWORK).json
