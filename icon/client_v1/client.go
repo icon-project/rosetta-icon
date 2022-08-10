@@ -77,11 +77,13 @@ func (c *ClientV3) GetBlockByHash(param *BlockRPCRequest) (*Block, error) {
 }
 
 func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error) {
+	batchSize := 10
 	trsRaw := make([]interface{}, len(block.Transactions))
 	reqs := make([]*jsonrpc.Request, 0)
+	resp := make([]interface{}, batchSize)
+	destIdx := 0
 	for i, tx := range block.Transactions {
-		index := i + 1
-		mod := index % 10
+		mod := (i + 1) % batchSize
 		txHash := tx.TransactionIdentifier.Hash
 		if txHash == GenesisTxHash {
 			continue
@@ -95,10 +97,13 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 		}
 		reqs = append(reqs, jrReq)
 		if mod == 0 {
-			_, err = c.RequestBatch(reqs, trsRaw)
+			_, err = c.RequestBatch(reqs, resp)
+			copy(trsRaw[destIdx:], resp)
+			destIdx += batchSize
 			reqs = make([]*jsonrpc.Request, 0)
-		} else if index == len(block.Transactions) {
-			_, err = c.RequestBatch(reqs, trsRaw)
+		} else if (i + 1) == len(block.Transactions) {
+			_, err = c.RequestBatch(reqs, resp)
+			copy(trsRaw[destIdx:], resp[:mod])
 		}
 		if err != nil {
 			return nil, err
