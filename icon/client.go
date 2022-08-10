@@ -24,11 +24,6 @@ import (
 
 // Client is used to fetch blocks from ICON Node and
 // to parser ICON block data into Rosetta types.
-//
-// We opted not to use existing ICON RPC libraries
-// because they don't allow providing context
-// in each request.
-
 type Client struct {
 	iconV1 *client_v1.ClientV3
 }
@@ -42,9 +37,14 @@ func NewClient(
 }
 
 func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaTypes.Peer, error) {
-	block, err := ic.iconV1.GetLastBlock(nil)
+	block, err := ic.iconV1.GetLastBlock()
 	if err != nil {
 		return nil, -1, nil, err
+	}
+
+	blockIdentifier := &RosettaTypes.BlockIdentifier{
+		Index: block.Height,
+		Hash:  block.BlockHash.String(),
 	}
 
 	peers, err := ic.GetPeer()
@@ -52,16 +52,15 @@ func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaType
 		return nil, -1, nil, err
 	}
 
-	return block.BlockIdentifier, block.Timestamp, peers, nil
+	return blockIdentifier, block.Timestamp / 1000, peers, nil
 }
 
 func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
 	var reqParams *client_v1.BlockRPCRequest
 	var err error
-	var block *RosettaTypes.Block
+	var block *client_v1.Block
 	if params.Index == nil && params.Hash == nil {
-		reqParams = &client_v1.BlockRPCRequest{}
-		block, err = ic.iconV1.GetLastBlock(reqParams)
+		block, err = ic.iconV1.GetLastBlock()
 	} else if params.Index != nil {
 		reqParams = &client_v1.BlockRPCRequest{
 			Height: common.HexInt64{Value: *params.Index}.String(),
@@ -75,21 +74,24 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 	} else {
 		return nil, fmt.Errorf("invalid Params")
 	}
-
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
-	trsArray, err := ic.iconV1.GetReceipts(block)
+	rtBlock, err := client_v1.ParseBlock(block)
+	if err != nil {
+		return nil, err
+	}
+
+	trsArray, err := ic.iconV1.GetReceipts(rtBlock)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get blockReceipts", err)
 	}
-	ic.iconV1.MakeBlockWithReceipts(block, trsArray)
-	return block, nil
+	ic.iconV1.MakeBlockWithReceipts(rtBlock, trsArray)
+	return rtBlock, nil
 }
 
 func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*RosettaTypes.Transaction, error) {
-
 	var reqParams *client_v1.TransactionRPCRequest
 	reqParams = &client_v1.TransactionRPCRequest{
 		Hash: params.Hash,
@@ -164,28 +166,26 @@ func (ic *Client) GetBalance(
 		return nil, err
 	}
 
-	var blockId *RosettaTypes.BlockIdentifier
+	var blockResp *client_v1.Block
 	if block != nil && block.Index != nil {
 		blockReq := &client_v1.BlockRPCRequest{
 			Height: common.HexInt64{Value: *block.Index}.String(),
 		}
-		blockByHeight, err := ic.iconV1.GetBlockByHeight(blockReq)
+		blockResp, err = ic.iconV1.GetBlockByHeight(blockReq)
 		if err != nil {
 			return nil, fmt.Errorf("%w: could not get block", err)
 		}
-		blockId = blockByHeight.BlockIdentifier
 	} else {
-		lastBlock, err := ic.iconV1.GetLastBlock(nil)
+		blockResp, err = ic.iconV1.GetLastBlock()
 		if err != nil {
 			return nil, fmt.Errorf("%w: could not get last block", err)
 		}
-		blockId = lastBlock.ParentBlockIdentifier
 	}
 
 	return &RosettaTypes.AccountBalanceResponse{
 		BlockIdentifier: &RosettaTypes.BlockIdentifier{
-			Index: blockId.Index,
-			Hash:  blockId.Hash,
+			Index: blockResp.Height,
+			Hash:  blockResp.BlockHash.String(),
 		},
 		Balances: []*RosettaTypes.Amount{
 			{

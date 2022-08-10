@@ -5,7 +5,7 @@ import (
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
-func ParseGenesisBlock(blk *Block01a) (*types.Block, error) {
+func ParseGenesisBlock(blk *Block) (*types.Block, error) {
 	transactions, _ := ParseGenesisTransaction(blk.Transactions)
 	return &types.Block{
 		BlockIdentifier: &types.BlockIdentifier{
@@ -16,18 +16,18 @@ func ParseGenesisBlock(blk *Block01a) (*types.Block, error) {
 			Index: blk.Number(),
 			Hash:  blk.Hash(),
 		},
-		Timestamp:    blk.TimestampMilli(),
+		Timestamp:    blk.TimestampInMillis(),
 		Transactions: transactions,
 		Metadata:     blk.GenesisMeta(),
 	}, nil
 }
 
-func ParseBlock01a(blk *Block01a) (*types.Block, error) {
+func ParseBlock(blk *Block) (*types.Block, error) {
 	if blk.Number() == GenesisBlockIndex {
 		return ParseGenesisBlock(blk)
 	} else {
 		transactions, _ := ParseTransactions(blk.Transactions)
-		timestamp := blk.TimestampMilli()
+		timestamp := blk.TimestampInMillis()
 		if timestamp == 0 {
 			timestamp = asserter.MinUnixEpoch
 		}

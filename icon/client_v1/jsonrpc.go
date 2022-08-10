@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"mime"
 	"net/http"
+	"time"
 
 	"github.com/icon-project/goloop/server/jsonrpc"
 )
@@ -98,7 +99,8 @@ func (c *JsonRpcClient) Request(jrReq *jsonrpc.Request, respPtr interface{}) (*R
 		return nil, err
 	}
 	resp, err := c.do(req)
-	if _, err := handleErrorResponse(resp, err); err != nil {
+	if err != nil {
+		_, err = handleErrorResponse(resp, err)
 		return nil, err
 	}
 	response, err := decodeResponse(resp, respPtr)
@@ -114,7 +116,8 @@ func (c *JsonRpcClient) RequestBatch(jrReq []*jsonrpc.Request, respPtr []interfa
 		return nil, err
 	}
 	resp, err := c.do(req)
-	if _, err := handleErrorResponse(resp, err); err != nil {
+	if err != nil {
+		_, err = handleErrorResponse(resp, err)
 		return nil, err
 	}
 	res, err := decodeBatchResponse(resp, respPtr)
@@ -126,9 +129,6 @@ func (c *JsonRpcClient) RequestBatch(jrReq []*jsonrpc.Request, respPtr []interfa
 
 func handleErrorResponse(resp *http.Response, jrErr error) (jrResp *Response, err error) {
 	var dErr error
-	if jrErr == nil {
-		return
-	}
 	if resp != nil {
 		if ct, _, mErr := mime.ParseMediaType(resp.Header.Get(headerContentType)); mErr != nil {
 			err = mErr
@@ -204,6 +204,9 @@ func decodeBatchResponseBody(resp *http.Response) (jrResp []*Response, err error
 }
 
 func GetRpcRequest(method string, reqPtr interface{}, id int64) (*jsonrpc.Request, error) {
+	if id == -1 {
+		id = time.Now().UnixNano() / int64(time.Millisecond)
+	}
 	jrReq := &jsonrpc.Request{
 		ID:      id,
 		Version: jsonrpc.Version,

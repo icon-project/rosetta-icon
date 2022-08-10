@@ -136,109 +136,47 @@ type BalanceRPCRequest struct {
 	Height  string `json:"height,omitempty"`
 }
 
-type Block01a struct {
-	ID                 common.HexBytes   `json:"block_hash"`
+type Block struct {
+	BlockHash          common.HexBytes   `json:"block_hash"`
 	Version            string            `json:"version"`
-	Height             common.HexInt64   `json:"height"`
-	Timestamp          common.HexInt64   `json:"time_stamp"`
+	Height             int64             `json:"height"`
+	Timestamp          int64             `json:"time_stamp"`
 	Proposer           common.Address    `json:"peer_id"`
-	PrevID             common.HexBytes   `json:"prev_block_hash"`
+	PrevBlockHash      common.HexBytes   `json:"prev_block_hash"`
 	MerkleTreeRootHash common.HexBytes   `json:"merkle_tree_root_hash"`
-	NextLeader         common.Address    `json:"next_leader"`
-	Transactions       []json.RawMessage `json:"confirmed_transaction_list" `
+	Signature          common.HexBytes   `json:"signature"`
+	Transactions       []json.RawMessage `json:"confirmed_transaction_list"`
 }
 
-func (b *Block01a) Number() int64 {
-	return b.Height.Value
+func (b Block) Number() int64 {
+	return b.Height
 }
 
-func (b *Block01a) Hash() string {
-	return b.ID.String()
+func (b Block) Hash() string {
+	return b.BlockHash.String()
 }
 
-func (b *Block01a) PrevHash() string {
-	return b.PrevID.String()
+func (b Block) TimestampInMillis() int64 {
+	return b.Timestamp / 1000
 }
 
-func (b *Block01a) Time() int64 {
-	return b.Timestamp.Value
+func (b Block) PrevHash() string {
+	return b.PrevBlockHash.String()
 }
 
-func (b *Block01a) TimestampMilli() int64 {
-	return b.Timestamp.Value / 1000
-}
-
-func (b *Block01a) GenesisMeta() map[string]interface{} {
+func (b Block) GenesisMeta() map[string]interface{} {
 	return map[string]interface{}{
 		"version":               b.Version,
-		"peer_id":               b.Proposer,
-		"signature":             "",
-		"next_leader":           b.NextLeader,
+		"peer_id":               b.Proposer.String(),
 		"merkle_tree_root_hash": b.MerkleTreeRootHash,
 	}
 }
 
-func (b *Block01a) Meta() map[string]interface{} {
+func (b Block) Meta() map[string]interface{} {
 	return map[string]interface{}{
 		"version":               b.Version,
-		"peer_id":               b.Proposer,
-		"next_leader":           b.NextLeader,
+		"peer_id":               b.Proposer.String(),
 		"merkle_tree_root_hash": b.MerkleTreeRootHash,
-	}
-}
-
-type Block03 struct {
-	ID               common.HexBytes   `json:"hash"`
-	Version          string            `json:"version"`
-	Height           common.HexInt64   `json:"height"`
-	Timestamp        common.HexInt64   `json:"timestamp"`
-	Leader           common.Address    `json:"leader"`
-	PrevID           common.HexBytes   `json:"prevHash"`
-	TransactionsHash common.HexBytes   `json:"transactionsHash"`
-	NextLeader       common.Address    `json:"nextLeader"`
-	Transactions     []json.RawMessage `json:"transactions"`
-	StateHash        common.HexBytes   `json:"stateHash"`
-	ReceiptsHash     common.HexBytes   `json:"receiptsHash"`
-	RepsHash         common.HexBytes   `json:"repsHash"`
-	NextRepsHash     common.HexBytes   `json:"nextRepsHash"`
-	LeaderVotesHash  common.HexBytes   `json:"leaderVotesHash"`
-	PrevVotesHash    common.HexBytes   `json:"prevVotesHash"`
-	LogsBloom        common.HexBytes   `json:"logsBloom"`
-}
-
-func (b *Block03) Number() int64 {
-	return b.Height.Value
-}
-
-func (b *Block03) Hash() string {
-	return b.ID.String()
-}
-
-func (b *Block03) Time() int64 {
-	return b.Timestamp.Value
-}
-
-func (b *Block03) TimestampMilli() int64 {
-	return b.Timestamp.Value / 1000
-}
-
-func (b *Block03) PrevHash() string {
-	return b.PrevID.String()
-}
-
-func (b *Block03) Meta() map[string]interface{} {
-	return map[string]interface{}{
-		"version":          b.Version,
-		"transactionsHash": b.TransactionsHash,
-		"stateHash":        b.StateHash,
-		"receiptsHash":     b.ReceiptsHash,
-		"repsHash":         b.RepsHash,
-		"nextRepsHash":     b.NextRepsHash,
-		"leaderVotesHash":  b.LeaderVotesHash,
-		"prevVotesHash":    b.PrevVotesHash,
-		"logsBloom":        b.LogsBloom,
-		"leader":           b.Leader,
-		"nextLeader":       b.NextLeader,
 	}
 }
 
@@ -366,9 +304,7 @@ func (tx *Transaction) ToJSON() (map[string]interface{}, error) {
 	if tx.Data != nil {
 		jso["data"] = tx.Data
 	}
-
 	return jso, nil
-
 }
 
 func (tx *Transaction) CalcHash() ([]byte, error) {
