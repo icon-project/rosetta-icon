@@ -17,7 +17,6 @@ package client_v1
 import (
 	"bytes"
 	"encoding/json"
-	"math/big"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
@@ -426,40 +425,4 @@ type TransactionResult struct {
 	EventLogs          []*EventLog               `json:"eventLogs"`
 	Failure            *json.RawMessage          `json:"failure"`
 	StepDetails        map[string]*common.HexInt `json:"stepUsedDetails"`
-}
-
-type BalanceWithBlockId struct {
-	ID     common.HexBytes `json:"block_hash"`
-	Height common.HexInt64 `json:"height"`
-}
-
-func (info *BalanceWithBlockId) Hash() string {
-	return info.ID.String()
-}
-
-func (info *BalanceWithBlockId) Number() int64 {
-	return info.Height.Value
-}
-
-type StakeInfo struct {
-	Stake    *common.HexInt `json:"stake"`
-	UnStakes []*Unstake     `json:"unstakes,omitempty"`
-}
-
-type Unstake struct {
-	Value  *common.HexInt `json:"unstake"`
-	Expire int64          `json:"unstakeBlockHeight"`
-	Remain int64          `json:"remainingBlocks"`
-}
-
-func (da *StakeInfo) Total() *big.Int {
-	totalStake := new(big.Int)
-	for _, u := range da.UnStakes {
-		totalStake.Add(totalStake, &u.Value.Int)
-	}
-	if da.Stake == nil {
-		da.Stake = common.NewHexInt(0)
-	}
-	totalStake.Add(totalStake, &da.Stake.Int)
-	return totalStake
 }
