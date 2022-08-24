@@ -27,7 +27,6 @@ import (
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
 	"github.com/icon-project/rosetta-icon/icon"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
 	"github.com/icon-project/rosetta-icon/services"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
@@ -65,11 +64,11 @@ func runRunCmd(cmd *cobra.Command, args []string) error {
 	// The asserter automatically rejects incorrectly formatted
 	// requests.
 	asserter, err := asserter.NewServer(
-		client_v1.OperationTypes,
-		client_v1.HistoricalBalanceSupported,
+		icon.OperationTypes,
+		icon.HistoricalBalanceSupported,
 		[]*types.NetworkIdentifier{cfg.Network},
 		nil,
-		client_v1.IncludeMempoolCoins,
+		icon.IncludeMempoolCoins,
 		"",
 	)
 	if err != nil {

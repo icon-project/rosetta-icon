@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon"
 )
 
 // Mode is the setting that determines if
@@ -108,23 +108,23 @@ func LoadConfiguration() (*Configuration, error) {
 	switch networkValue {
 	case Mainnet:
 		config.Network = &types.NetworkIdentifier{
-			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.MainnetNetwork,
+			Blockchain: icon.Blockchain,
+			Network:    icon.MainnetNetwork,
 		}
 	case Lisbon:
 		config.Network = &types.NetworkIdentifier{
-			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.LisbonNetwork,
+			Blockchain: icon.Blockchain,
+			Network:    icon.LisbonNetwork,
 		}
 	case Berlin:
 		config.Network = &types.NetworkIdentifier{
-			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.BerlinNetwork,
+			Blockchain: icon.Blockchain,
+			Network:    icon.BerlinNetwork,
 		}
 	case Localnet:
 		config.Network = &types.NetworkIdentifier{
-			Blockchain: client_v1.Blockchain,
-			Network:    client_v1.LocalNetwork,
+			Blockchain: icon.Blockchain,
+			Network:    icon.LocalNetwork,
 		}
 	case "":
 		return nil, errors.New("NETWORK must be populated")

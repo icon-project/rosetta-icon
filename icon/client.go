@@ -19,20 +19,19 @@ import (
 
 	RosettaTypes "github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
 )
 
 // Client is used to fetch blocks from ICON Node and
 // to parser ICON block data into Rosetta types.
 type Client struct {
-	iconV1 *client_v1.ClientV3
+	iconV1 *ClientV3
 }
 
 func NewClient(
 	endpoint string,
 ) *Client {
 	return &Client{
-		client_v1.NewClientV3(endpoint),
+		iconV1: NewClientV3(endpoint),
 	}
 }
 
@@ -56,18 +55,18 @@ func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaType
 }
 
 func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
-	var reqParams *client_v1.BlockRPCRequest
+	var reqParams *BlockRPCRequest
 	var err error
-	var block *client_v1.Block
+	var block *Block
 	if params.Index == nil && params.Hash == nil {
 		block, err = ic.iconV1.GetLastBlock()
 	} else if params.Index != nil {
-		reqParams = &client_v1.BlockRPCRequest{
+		reqParams = &BlockRPCRequest{
 			Height: common.HexInt64{Value: *params.Index}.String(),
 		}
 		block, err = ic.iconV1.GetBlockByHeight(reqParams)
 	} else if params.Hash != nil {
-		reqParams = &client_v1.BlockRPCRequest{
+		reqParams = &BlockRPCRequest{
 			Hash: *params.Hash,
 		}
 		block, err = ic.iconV1.GetBlockByHash(reqParams)
@@ -78,7 +77,7 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		return nil, fmt.Errorf("%w: could not get block", err)
 	}
 
-	rtBlock, err := client_v1.ParseBlock(block)
+	rtBlock, err := ParseBlock(block)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +91,8 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 }
 
 func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*RosettaTypes.Transaction, error) {
-	var reqParams *client_v1.TransactionRPCRequest
-	reqParams = &client_v1.TransactionRPCRequest{
+	var reqParams *TransactionRPCRequest
+	reqParams = &TransactionRPCRequest{
 		Hash: params.Hash,
 	}
 
@@ -131,7 +130,7 @@ func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 	return peers, nil
 }
 
-func (ic *Client) SendTransaction(tx client_v1.Transaction) error {
+func (ic *Client) SendTransaction(tx Transaction) error {
 	js, err := tx.ToJSON()
 	if err != nil {
 		return err
@@ -154,7 +153,7 @@ func (ic *Client) GetBalance(
 	account *RosettaTypes.AccountIdentifier,
 	block *RosettaTypes.PartialBlockIdentifier,
 ) (*RosettaTypes.AccountBalanceResponse, error) {
-	balReq := &client_v1.BalanceRPCRequest{
+	balReq := &BalanceRPCRequest{
 		Address: account.Address,
 	}
 	if block != nil && block.Index != nil {
@@ -166,9 +165,9 @@ func (ic *Client) GetBalance(
 		return nil, err
 	}
 
-	var blockResp *client_v1.Block
+	var blockResp *Block
 	if block != nil && block.Index != nil {
-		blockReq := &client_v1.BlockRPCRequest{
+		blockReq := &BlockRPCRequest{
 			Height: common.HexInt64{Value: *block.Index}.String(),
 		}
 		blockResp, err = ic.iconV1.GetBlockByHeight(blockReq)
@@ -190,7 +189,7 @@ func (ic *Client) GetBalance(
 		Balances: []*RosettaTypes.Amount{
 			{
 				Value:    balance.Text(10),
-				Currency: client_v1.ICXCurrency,
+				Currency: ICXCurrency,
 			},
 		},
 	}, nil

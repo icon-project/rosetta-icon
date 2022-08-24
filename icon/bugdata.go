@@ -1,4 +1,4 @@
-package client_v1
+package icon
 
 import (
 	"math/big"

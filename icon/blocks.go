@@ -1,4 +1,4 @@
-package client_v1
+package icon
 
 import (
 	"github.com/coinbase/rosetta-sdk-go/asserter"

@@ -1,7 +1,8 @@
-package client_v1
+package icon
 
 import (
 	"fmt"
+
 	"github.com/icon-project/goloop/common"
 )
 

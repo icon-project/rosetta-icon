@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package client_v1
+package icon
 
 import (
 	"bytes"
@@ -162,7 +162,7 @@ func decodeResponse(resp *http.Response, respPtr interface{}) (jrResp *Response,
 		return
 	}
 	if respPtr != nil {
-		err = json.Unmarshal(jrResp.Result, &respPtr)
+		err = json.Unmarshal(jrResp.Result, respPtr)
 		if err != nil {
 			return
 		}

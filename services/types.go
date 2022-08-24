@@ -17,7 +17,7 @@ package services
 import (
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon"
 )
 
 // Client is used by the services to get block
@@ -41,7 +41,7 @@ type Client interface {
 	GetDefaultStepCost() (*common.HexInt, error)
 
 	SendTransaction(
-		tx client_v1.Transaction,
+		tx icon.Transaction,
 	) error
 }
 

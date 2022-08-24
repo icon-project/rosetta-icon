@@ -26,7 +26,7 @@ import (
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/common/crypto"
 	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon"
 )
 
 // ConstructionAPIService implements the server.ConstructionAPIServicer interface.
@@ -73,25 +73,25 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 	descriptions := &parser.Descriptions{
 		OperationDescriptions: []*parser.OperationDescription{
 			{
-				Type: client_v1.TransferOpType,
+				Type: icon.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
 				Amount: &parser.AmountDescription{
 					Exists:   true,
 					Sign:     parser.NegativeAmountSign,
-					Currency: client_v1.ICXCurrency,
+					Currency: icon.ICXCurrency,
 				},
 			},
 			{
-				Type: client_v1.TransferOpType,
+				Type: icon.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
 				Amount: &parser.AmountDescription{
 					Exists:   true,
 					Sign:     parser.PositiveAmountSign,
-					Currency: client_v1.ICXCurrency,
+					Currency: icon.ICXCurrency,
 				},
 			},
 		},
@@ -109,13 +109,13 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 	ta := t.Account.Address
 
 	// Ensure valid from address
-	e := client_v1.CheckAddress(fa)
+	e := icon.CheckAddress(fa)
 	if e != nil {
 		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", fa))
 	}
 
 	// Ensure valid to address
-	e = client_v1.CheckAddress(ta)
+	e = icon.CheckAddress(ta)
 	if e != nil {
 		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", ta))
 	}
@@ -124,7 +124,7 @@ func (s *ConstructionAPIService) ConstructionPreprocess(
 		From: fa,
 	}
 
-	marshaled, err := client_v1.MarshalJSONMap(preprocessOutput)
+	marshaled, err := icon.MarshalJSONMap(preprocessOutput)
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -144,7 +144,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 	}
 
 	var input options
-	if err := client_v1.UnmarshalJSONMap(request.Options, &input); err != nil {
+	if err := icon.UnmarshalJSONMap(request.Options, &input); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
 
@@ -157,7 +157,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 		res,
 	}
 
-	metadataMap, err := client_v1.MarshalJSONMap(metadata)
+	metadataMap, err := icon.MarshalJSONMap(metadata)
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -175,25 +175,25 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	d := &parser.Descriptions{
 		OperationDescriptions: []*parser.OperationDescription{
 			{
-				Type: client_v1.TransferOpType,
+				Type: icon.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
 				Amount: &parser.AmountDescription{
 					Exists:   true,
 					Sign:     parser.NegativeAmountSign,
-					Currency: client_v1.ICXCurrency,
+					Currency: icon.ICXCurrency,
 				},
 			},
 			{
-				Type: client_v1.TransferOpType,
+				Type: icon.TransferOpType,
 				Account: &parser.AccountDescription{
 					Exists: true,
 				},
 				Amount: &parser.AmountDescription{
 					Exists:   true,
 					Sign:     parser.PositiveAmountSign,
-					Currency: client_v1.ICXCurrency,
+					Currency: icon.ICXCurrency,
 				},
 			},
 		},
@@ -207,7 +207,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	// Required Fields for constructing a ICON transaction
 	tOp, amount := m[1].First()
 	ta := tOp.Account.Address
-	nid := client_v1.MapNetwork(s.config.Network.Network)
+	nid := icon.MapNetwork(s.config.Network.Network)
 
 	// stepLimit
 	bs, err := json.Marshal(request.Metadata)
@@ -223,7 +223,7 @@ func (s *ConstructionAPIService) ConstructionPayloads(
 	// Additional Fields for constructing custom ICON tx struct
 	fOp, _ := m[0].First()
 	fa := fOp.Account.Address
-	uTx := &client_v1.Transaction{
+	uTx := &icon.Transaction{
 		Version:   common.HexUint16{Value: 3},
 		From:      *common.MustNewAddressFromString(fa),
 		To:        *common.MustNewAddressFromString(ta),
@@ -262,7 +262,7 @@ func (s *ConstructionAPIService) ConstructionCombine(
 	ctx context.Context,
 	request *types.ConstructionCombineRequest,
 ) (*types.ConstructionCombineResponse, *types.Error) {
-	var unsignedTx client_v1.Transaction
+	var unsignedTx icon.Transaction
 	var err error
 	if err = json.Unmarshal([]byte(request.UnsignedTransaction), &unsignedTx); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
@@ -297,7 +297,7 @@ func (s *ConstructionAPIService) ConstructionHash(
 	ctx context.Context,
 	request *types.ConstructionHashRequest,
 ) (*types.TransactionIdentifierResponse, *types.Error) {
-	signedTx := &client_v1.Transaction{}
+	signedTx := &icon.Transaction{}
 	if err := json.Unmarshal([]byte(request.SignedTransaction), signedTx); err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}
@@ -315,7 +315,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 	ctx context.Context,
 	request *types.ConstructionParseRequest,
 ) (*types.ConstructionParseResponse, *types.Error) {
-	var tx client_v1.Transaction
+	var tx icon.Transaction
 	if !request.Signed {
 		err := json.Unmarshal([]byte(request.Transaction), &tx)
 		if err != nil {
@@ -329,19 +329,19 @@ func (s *ConstructionAPIService) ConstructionParse(
 
 	}
 
-	err := client_v1.CheckAddress(tx.From.String())
+	err := icon.CheckAddress(tx.From.String())
 	if err != nil {
 		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", tx.From.String()))
 	}
 
-	err = client_v1.CheckAddress(tx.From.String())
+	err = icon.CheckAddress(tx.From.String())
 	if err != nil {
 		return nil, wrapErr(ErrInvalidAddress, fmt.Errorf("%s is not a valid address", tx.To))
 	}
 
 	ops := []*types.Operation{
 		{
-			Type: client_v1.TransferOpType,
+			Type: icon.TransferOpType,
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: 0,
 			},
@@ -350,11 +350,11 @@ func (s *ConstructionAPIService) ConstructionParse(
 			},
 			Amount: &types.Amount{
 				Value:    "-" + tx.Values(),
-				Currency: client_v1.ICXCurrency,
+				Currency: icon.ICXCurrency,
 			},
 		},
 		{
-			Type: client_v1.TransferOpType,
+			Type: icon.TransferOpType,
 			OperationIdentifier: &types.OperationIdentifier{
 				Index: 1,
 			},
@@ -368,7 +368,7 @@ func (s *ConstructionAPIService) ConstructionParse(
 			},
 			Amount: &types.Amount{
 				Value:    tx.Values(),
-				Currency: client_v1.ICXCurrency,
+				Currency: icon.ICXCurrency,
 			},
 		},
 	}
@@ -401,7 +401,7 @@ func (s *ConstructionAPIService) ConstructionSubmit(
 		return nil, ErrUnavailableOffline
 	}
 
-	signedTx, err := client_v1.ParseV3JSON([]byte(request.SignedTransaction))
+	signedTx, err := icon.ParseV3JSON([]byte(request.SignedTransaction))
 	if err != nil {
 		return nil, wrapErr(ErrUnableToParseIntermediateResult, err)
 	}

@@ -19,7 +19,7 @@ import (
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/configuration"
-	"github.com/icon-project/rosetta-icon/icon/client_v1"
+	"github.com/icon-project/rosetta-icon/icon"
 )
 
 // NetworkAPIService implements the server.NetworkAPIServicer interface.
@@ -58,15 +58,15 @@ func (s *NetworkAPIService) NetworkOptions(
 ) (*types.NetworkOptionsResponse, *types.Error) {
 	return &types.NetworkOptionsResponse{
 		Version: &types.Version{
-			NodeVersion:       client_v1.NodeVersion,
+			NodeVersion:       icon.NodeVersion,
 			RosettaVersion:    types.RosettaAPIVersion,
 			MiddlewareVersion: types.String(configuration.MiddlewareVersion),
 		},
 		Allow: &types.Allow{
 			Errors:                  Errors,
-			OperationTypes:          client_v1.OperationTypes,
-			OperationStatuses:       client_v1.OperationStatuses,
-			HistoricalBalanceLookup: client_v1.HistoricalBalanceSupported,
+			OperationTypes:          icon.OperationTypes,
+			OperationStatuses:       icon.OperationStatuses,
+			HistoricalBalanceLookup: icon.HistoricalBalanceSupported,
 		},
 	}, nil
 }
