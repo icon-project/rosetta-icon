@@ -16,6 +16,8 @@ package icon
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
 
 	RosettaTypes "github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
@@ -24,19 +26,25 @@ import (
 // Client is used to fetch blocks from ICON Node and
 // to parser ICON block data into Rosetta types.
 type Client struct {
-	iconV1 *ClientV3
+	v3 *ClientV3
+	rc *JsonRpcClient
 }
 
-func NewClient(
-	endpoint string,
-) *Client {
+func NewClient(endpoint string) *Client {
+	client := new(http.Client)
+	url := []string{
+		endpoint,
+		EndpointPrefix,
+		EndpointRosetta,
+	}
 	return &Client{
-		iconV1: NewClientV3(endpoint),
+		v3: NewClientV3(endpoint),
+		rc: NewJsonRpcClient(client, strings.Join(url, "/")),
 	}
 }
 
 func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaTypes.Peer, error) {
-	block, err := ic.iconV1.GetLastBlock()
+	block, err := ic.v3.GetLastBlock()
 	if err != nil {
 		return nil, -1, nil, err
 	}
@@ -59,17 +67,17 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 	var err error
 	var block *Block
 	if params.Index == nil && params.Hash == nil {
-		block, err = ic.iconV1.GetLastBlock()
+		block, err = ic.v3.GetLastBlock()
 	} else if params.Index != nil {
 		reqParams = &BlockRPCRequest{
 			Height: common.HexInt64{Value: *params.Index}.String(),
 		}
-		block, err = ic.iconV1.GetBlockByHeight(reqParams)
+		block, err = ic.v3.GetBlockByHeight(reqParams)
 	} else if params.Hash != nil {
 		reqParams = &BlockRPCRequest{
 			Hash: *params.Hash,
 		}
-		block, err = ic.iconV1.GetBlockByHash(reqParams)
+		block, err = ic.v3.GetBlockByHash(reqParams)
 	} else {
 		return nil, fmt.Errorf("invalid Params")
 	}
@@ -82,11 +90,11 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		return nil, err
 	}
 
-	trsArray, err := ic.iconV1.GetReceipts(rtBlock)
+	trsArray, err := ic.v3.GetReceipts(rtBlock)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get blockReceipts", err)
 	}
-	ic.iconV1.MakeBlockWithReceipts(rtBlock, trsArray)
+	ic.v3.MakeBlockWithReceipts(rtBlock, trsArray)
 	return rtBlock, nil
 }
 
@@ -96,21 +104,21 @@ func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*R
 		Hash: params.Hash,
 	}
 
-	tx, err := ic.iconV1.GetTransaction(reqParams)
+	tx, err := ic.v3.GetTransaction(reqParams)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get transaction", err)
 	}
 
-	txR, err := ic.iconV1.GetTransactionResult(reqParams)
+	txR, err := ic.v3.GetTransactionResult(reqParams)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get transaction result", err)
 	}
-	ic.iconV1.MakeTransactionWithReceipt(tx, txR)
+	ic.v3.MakeTransactionWithReceipt(tx, txR)
 	return tx, nil
 }
 
 func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
-	resp, err := ic.iconV1.GetMainPReps()
+	resp, err := ic.v3.GetMainPReps()
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get peer", err)
 	}
@@ -120,7 +128,7 @@ func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 
 	for _, element := range preps.([]interface{}) {
 		address := element.(map[string]interface{})["address"]
-		resp, _ := ic.iconV1.GetPRep(address.(string))
+		resp, _ := ic.v3.GetPRep(address.(string))
 		peers = append(peers, &RosettaTypes.Peer{
 			PeerID:   address.(string),
 			Metadata: *resp,
@@ -135,14 +143,14 @@ func (ic *Client) SendTransaction(tx Transaction) error {
 	if err != nil {
 		return err
 	}
-	if err := ic.iconV1.SendTransaction(js); err != nil {
+	if err := ic.v3.SendTransaction(js); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (ic *Client) GetDefaultStepCost() (*common.HexInt, error) {
-	res, err := ic.iconV1.GetStepDefaultStepCost()
+	res, err := ic.v3.GetStepDefaultStepCost()
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +168,7 @@ func (ic *Client) GetBalance(
 		// result resides in the next block
 		balReq.Height = common.HexInt64{Value: *block.Index + 1}.String()
 	}
-	balance, err := ic.iconV1.GetBalance(balReq)
+	balance, err := ic.v3.GetBalance(balReq)
 	if err != nil {
 		return nil, err
 	}
@@ -170,12 +178,12 @@ func (ic *Client) GetBalance(
 		blockReq := &BlockRPCRequest{
 			Height: common.HexInt64{Value: *block.Index}.String(),
 		}
-		blockResp, err = ic.iconV1.GetBlockByHeight(blockReq)
+		blockResp, err = ic.v3.GetBlockByHeight(blockReq)
 		if err != nil {
 			return nil, fmt.Errorf("%w: could not get block", err)
 		}
 	} else {
-		blockResp, err = ic.iconV1.GetLastBlock()
+		blockResp, err = ic.v3.GetLastBlock()
 		if err != nil {
 			return nil, fmt.Errorf("%w: could not get last block", err)
 		}

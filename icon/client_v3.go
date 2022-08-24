@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"math/big"
 	"net/http"
+	"strings"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
@@ -30,10 +31,13 @@ type ClientV3 struct {
 
 func NewClientV3(endpoint string) *ClientV3 {
 	client := new(http.Client)
-	apiClient := NewJsonRpcClient(client, endpoint)
-
+	url := []string{
+		endpoint,
+		EndpointPrefix,
+		EndpointVersion,
+	}
 	return &ClientV3{
-		JsonRpcClient: apiClient,
+		JsonRpcClient: NewJsonRpcClient(client, strings.Join(url, "/")),
 	}
 }
 

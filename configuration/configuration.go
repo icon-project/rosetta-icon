@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/rosetta-icon/icon"
@@ -65,9 +64,6 @@ const (
 	// DefaultEndPoint is the default endpoint for a running node.
 	DefaultEndPoint = "http://localhost:9080"
 
-	EndpointPrefix        = "api"
-	EndpointVersionPrefix = "v3"
-
 	// PortEnv is the environment variable
 	// read to determine the port for the Rosetta
 	// implementation.
@@ -82,8 +78,7 @@ type Configuration struct {
 	Mode         Mode
 	Network      *types.NetworkIdentifier
 	GenesisBlock *types.BlockIdentifier
-	URL          string
-	DebugURL     string
+	Endpoint     string
 	Port         int
 }
 
@@ -134,19 +129,9 @@ func LoadConfiguration() (*Configuration, error) {
 
 	envEndpoint := os.Getenv(EndpointEnv)
 	if len(envEndpoint) > 0 {
-		url := []string{
-			envEndpoint,
-			EndpointPrefix,
-			EndpointVersionPrefix,
-		}
-		config.URL = strings.Join(url, "/")
+		config.Endpoint = envEndpoint
 	} else {
-		url := []string{
-			DefaultEndPoint,
-			EndpointPrefix,
-			EndpointVersionPrefix,
-		}
-		config.URL = strings.Join(url, "/")
+		config.Endpoint = DefaultEndPoint
 	}
 
 	envPort := os.Getenv(PortEnv)

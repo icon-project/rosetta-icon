@@ -83,6 +83,10 @@ const (
 	// in LocalNetworkIdentifier.
 	LocalNetwork string = "Localnet"
 
+	EndpointPrefix  = "api"
+	EndpointVersion = "v3"
+	EndpointRosetta = "rosetta"
+
 	ICXSymbol   = "ICX"
 	ICXDecimals = 18
 
