@@ -63,6 +63,118 @@ func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaType
 }
 
 func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
+	reqParams := &RosettaTraceParam{}
+	if params.Hash != nil {
+		reqParams.Block = *params.Hash
+	} else if params.Index != nil {
+		if *params.Index == 0 {
+			return ic.getBlockV3(params)
+		}
+		reqParams.Height = common.HexInt64{Value: *params.Index}.String()
+	}
+	trace, err := ic.getRosettaTrace(reqParams)
+	if err != nil {
+		return nil, err
+	}
+	transactions, err := ic.populateTransactions(trace.BalanceChanges)
+	if err != nil {
+		return nil, err
+	}
+	return &RosettaTypes.Block{
+		BlockIdentifier: &RosettaTypes.BlockIdentifier{
+			Index: trace.Index(),
+			Hash:  trace.BlockHash,
+		},
+		ParentBlockIdentifier: &RosettaTypes.BlockIdentifier{
+			Index: trace.Index() - 1,
+			Hash:  trace.PrevBlockHash,
+		},
+		Timestamp:    trace.TimestampInMillis(),
+		Transactions: transactions,
+	}, nil
+}
+
+func (ic *Client) getRosettaTrace(param *RosettaTraceParam) (*RosettaTraceResponse, error) {
+	req, err := GetRpcRequest("rosetta_getTrace", param, -1)
+	if err != nil {
+		return nil, err
+	}
+	trace := &RosettaTraceResponse{}
+	_, err = ic.rc.Request(req, trace)
+	if err != nil {
+		return nil, err
+	}
+	return trace, nil
+}
+
+func (ic *Client) populateTransactions(balChanges []*BalanceChange) ([]*RosettaTypes.Transaction, error) {
+	transactions := make([]*RosettaTypes.Transaction, len(balChanges))
+	for i, bc := range balChanges {
+		tx, err := ic.populateTransaction(bc)
+		if err != nil {
+			return nil, fmt.Errorf("%w: cannot parse %s", err, bc.TxHash)
+		}
+		transactions[i] = tx
+	}
+	return transactions, nil
+}
+
+func (ic *Client) populateTransaction(bc *BalanceChange) (*RosettaTypes.Transaction, error) {
+	var ops []*RosettaTypes.Operation
+	for _, op := range bc.Ops {
+		lastIndex := int64(len(ops))
+		fromOp := &RosettaTypes.Operation{
+			OperationIdentifier: &RosettaTypes.OperationIdentifier{
+				Index: lastIndex,
+			},
+			Type:   op.OpType,
+			Status: RosettaTypes.String(SuccessStatus),
+			Account: &RosettaTypes.AccountIdentifier{
+				Address: op.From,
+			},
+			Amount: &RosettaTypes.Amount{
+				Value:    "-" + op.IntValue(),
+				Currency: ICXCurrency,
+			},
+		}
+		ops = append(ops, fromOp)
+
+		toOp := &RosettaTypes.Operation{
+			OperationIdentifier: &RosettaTypes.OperationIdentifier{
+				Index: lastIndex + 1,
+			},
+			RelatedOperations: []*RosettaTypes.OperationIdentifier{
+				{
+					Index: lastIndex,
+				},
+			},
+			Type:   op.OpType,
+			Status: RosettaTypes.String(SuccessStatus),
+			Account: &RosettaTypes.AccountIdentifier{
+				Address: op.To,
+			},
+			Amount: &RosettaTypes.Amount{
+				Value:    op.IntValue(),
+				Currency: ICXCurrency,
+			},
+		}
+		ops = append(ops, toOp)
+
+		// some assertion check
+		if op.OpType == FeeOpType && op.To != TreasuryAddress {
+			return nil, fmt.Errorf("invalid fee operation")
+		}
+	}
+
+	return &RosettaTypes.Transaction{
+		TransactionIdentifier: &RosettaTypes.TransactionIdentifier{
+			Hash: bc.TxHash,
+		},
+		Operations: ops,
+	}, nil
+}
+
+func (ic *Client) getBlockV3(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
 	var reqParams *BlockRPCRequest
 	var err error
 	var block *Block

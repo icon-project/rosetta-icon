@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 
+	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/icon-project/goloop/common"
 	"github.com/icon-project/goloop/common/crypto"
@@ -429,4 +430,46 @@ type TransactionResult struct {
 	EventLogs          []*EventLog               `json:"eventLogs"`
 	Failure            *json.RawMessage          `json:"failure"`
 	StepDetails        map[string]*common.HexInt `json:"stepUsedDetails"`
+}
+
+type RosettaTraceParam struct {
+	Tx     string `json:"tx,omitempty"`
+	Block  string `json:"block,omitempty"`
+	Height string `json:"height,omitempty"`
+}
+
+type RosettaTraceResponse struct {
+	BlockHash      string           `json:"blockHash"`
+	PrevBlockHash  string           `json:"prevBlockHash"`
+	BlockHeight    common.HexInt64  `json:"blockHeight"`
+	Timestamp      common.HexInt64  `json:"timestamp"`
+	BalanceChanges []*BalanceChange `json:"balanceChanges"`
+}
+
+type BalanceChange struct {
+	TxHash  string       `json:"txHash"`
+	TxIndex string       `json:"txIndex"`
+	Ops     []*Operation `json:"ops"`
+}
+
+type Operation struct {
+	OpType string        `json:"opType"`
+	From   string        `json:"from"`
+	To     string        `json:"to"`
+	Amount common.HexInt `json:"amount"`
+}
+
+func (rt RosettaTraceResponse) TimestampInMillis() int64 {
+	if rt.Timestamp.Value == 0 {
+		return asserter.MinUnixEpoch
+	}
+	return rt.Timestamp.Value / 1000
+}
+
+func (rt RosettaTraceResponse) Index() int64 {
+	return rt.BlockHeight.Value
+}
+
+func (op Operation) IntValue() string {
+	return op.Amount.Text(10)
 }
