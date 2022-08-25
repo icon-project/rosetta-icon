@@ -16,6 +16,7 @@ package icon
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"net/http"
 	"strings"
@@ -41,7 +42,43 @@ func NewClientV3(endpoint string) *ClientV3 {
 	}
 }
 
-func (c *ClientV3) GetLastBlock() (*Block, error) {
+func (c *ClientV3) getBlock(params *types.PartialBlockIdentifier) (*types.Block, error) {
+	var reqParams *BlockRPCRequest
+	var err error
+	var block *Block
+	if params.Index == nil && params.Hash == nil {
+		block, err = c.getLastBlock()
+	} else if params.Index != nil {
+		reqParams = &BlockRPCRequest{
+			Height: common.HexInt64{Value: *params.Index}.String(),
+		}
+		block, err = c.getBlockByHeight(reqParams)
+	} else if params.Hash != nil {
+		reqParams = &BlockRPCRequest{
+			Hash: *params.Hash,
+		}
+		block, err = c.getBlockByHash(reqParams)
+	} else {
+		return nil, fmt.Errorf("invalid Params")
+	}
+	if err != nil {
+		return nil, fmt.Errorf("%w: could not get block", err)
+	}
+
+	rtBlock, err := ParseBlock(block)
+	if err != nil {
+		return nil, err
+	}
+
+	trsArray, err := c.getReceipts(rtBlock)
+	if err != nil {
+		return nil, fmt.Errorf("%w: could not get blockReceipts", err)
+	}
+	c.makeBlockWithReceipts(rtBlock, trsArray)
+	return rtBlock, nil
+}
+
+func (c *ClientV3) getLastBlock() (*Block, error) {
 	block := &Block{}
 	jrReq, err := GetRpcRequest("icx_getLastBlock", nil, -1)
 	if err != nil {
@@ -54,7 +91,7 @@ func (c *ClientV3) GetLastBlock() (*Block, error) {
 	return block, nil
 }
 
-func (c *ClientV3) GetBlockByHeight(param *BlockRPCRequest) (*Block, error) {
+func (c *ClientV3) getBlockByHeight(param *BlockRPCRequest) (*Block, error) {
 	block := &Block{}
 	jrReq, err := GetRpcRequest("icx_getBlockByHeight", param, -1)
 	if err != nil {
@@ -67,7 +104,7 @@ func (c *ClientV3) GetBlockByHeight(param *BlockRPCRequest) (*Block, error) {
 	return block, nil
 }
 
-func (c *ClientV3) GetBlockByHash(param *BlockRPCRequest) (*Block, error) {
+func (c *ClientV3) getBlockByHash(param *BlockRPCRequest) (*Block, error) {
 	block := &Block{}
 	jrReq, err := GetRpcRequest("icx_getBlockByHash", param, -1)
 	if err != nil {
@@ -80,7 +117,7 @@ func (c *ClientV3) GetBlockByHash(param *BlockRPCRequest) (*Block, error) {
 	return block, nil
 }
 
-func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error) {
+func (c *ClientV3) getReceipts(block *types.Block) ([]*TransactionResult, error) {
 	batchSize := 10
 	trsRaw := make([]interface{}, len(block.Transactions))
 	reqs := make([]*jsonrpc.Request, 0)
@@ -120,7 +157,7 @@ func (c *ClientV3) GetReceipts(block *types.Block) ([]*TransactionResult, error)
 	return trsArray, nil
 }
 
-func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*TransactionResult) (*types.Block, error) {
+func (c *ClientV3) makeBlockWithReceipts(block *types.Block, trsArray []*TransactionResult) (*types.Block, error) {
 	zeroBigInt := new(big.Int)
 	fa := SystemScoreAddress
 	for index, tx := range block.Transactions {
@@ -139,7 +176,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 				tx.Operations[3].Amount.Value = fee
 				userStep := &su.Int
 				if len(sd) != 0 {
-					userStep = GetUserStep(tx.Operations[2].Account.Address, sd)
+					userStep = getUserStep(tx.Operations[2].Account.Address, sd)
 				}
 				tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
 			}
@@ -158,7 +195,7 @@ func (c *ClientV3) MakeBlockWithReceipts(block *types.Block, trsArray []*Transac
 	return block, nil
 }
 
-func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transaction, error) {
+func (c *ClientV3) getTransaction(param *TransactionRPCRequest) (*types.Transaction, error) {
 	txRaw := map[string]interface{}{}
 	jrReq, err := GetRpcRequest("icx_getTransactionByHash", param, -1)
 	if err != nil {
@@ -177,7 +214,7 @@ func (c *ClientV3) GetTransaction(param *TransactionRPCRequest) (*types.Transact
 	return txs[0], nil
 }
 
-func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*TransactionResult, error) {
+func (c *ClientV3) getTransactionResult(param *TransactionRPCRequest) (*TransactionResult, error) {
 	trRaw := map[string]interface{}{}
 	jrReq, err := GetRpcRequest("icx_getTransactionResult", param, -1)
 	if err != nil {
@@ -192,7 +229,7 @@ func (c *ClientV3) GetTransactionResult(param *TransactionRPCRequest) (*Transact
 	return txRs, nil
 }
 
-func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *TransactionResult) (*types.Transaction, error) {
+func (c *ClientV3) makeTransactionWithReceipt(tx *types.Transaction, txResult *TransactionResult) (*types.Transaction, error) {
 	zeroBigInt := new(big.Int)
 	fa := SystemScoreAddress
 	if len(tx.Operations) >= 4 { //general tx(transfer, call, deploy...)
@@ -205,7 +242,7 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 			tx.Operations[3].Amount.Value = fee
 			userStep := &su.Int
 			if len(sd) != 0 {
-				userStep = GetUserStep(tx.Operations[2].Account.Address, sd)
+				userStep = getUserStep(tx.Operations[2].Account.Address, sd)
 			}
 			tx.Operations[2].Amount.Value = "-" + userStep.Mul(userStep, &sp.Int).Text(10)
 			fa = tx.Operations[0].Account.Address
@@ -223,7 +260,7 @@ func (c *ClientV3) MakeTransactionWithReceipt(tx *types.Transaction, txResult *T
 	return tx, nil
 }
 
-func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*common.HexInt, error) {
+func (c *ClientV3) getBalance(param *BalanceRPCRequest) (*common.HexInt, error) {
 	req, err := GetRpcRequest("icx_getBalance", param, -1)
 	if err != nil {
 		return nil, err
@@ -235,7 +272,7 @@ func (c *ClientV3) GetBalance(param *BalanceRPCRequest) (*common.HexInt, error) 
 	return balance, nil
 }
 
-func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {
+func (c *ClientV3) getMainPReps() (*map[string]interface{}, error) {
 	resp := map[string]interface{}{}
 
 	params := map[string]interface{}{
@@ -257,7 +294,7 @@ func (c *ClientV3) GetMainPReps() (*map[string]interface{}, error) {
 	return &resp, nil
 }
 
-func (c *ClientV3) GetPRep(prep string) (*map[string]interface{}, error) {
+func (c *ClientV3) getPRep(prep string) (*map[string]interface{}, error) {
 	resp := map[string]interface{}{}
 
 	params := map[string]interface{}{
@@ -283,7 +320,7 @@ func (c *ClientV3) GetPRep(prep string) (*map[string]interface{}, error) {
 	return &resp, nil
 }
 
-func (c *ClientV3) SendTransaction(req interface{}) error {
+func (c *ClientV3) sendTransaction(req interface{}) error {
 	resp := ""
 	jrReq, err := GetRpcRequest("icx_sendTransaction", req, -1)
 	if err != nil {
@@ -296,7 +333,7 @@ func (c *ClientV3) SendTransaction(req interface{}) error {
 	return nil
 }
 
-func (c *ClientV3) GetStepDefaultStepCost() (*common.HexInt, error) {
+func (c *ClientV3) getStepDefaultStepCost() (*common.HexInt, error) {
 	resp := map[string]*common.HexInt{}
 	params := map[string]interface{}{
 		"to":       "cx0000000000000000000000000000000000000000",
@@ -316,7 +353,7 @@ func (c *ClientV3) GetStepDefaultStepCost() (*common.HexInt, error) {
 	return resp["default"], nil
 }
 
-func GetUserStep(from string, stepDetails map[string]*common.HexInt) *big.Int {
+func getUserStep(from string, stepDetails map[string]*common.HexInt) *big.Int {
 	userUsed := new(big.Int)
 	for f, v := range stepDetails {
 		if from == f {

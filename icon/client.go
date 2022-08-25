@@ -44,7 +44,7 @@ func NewClient(endpoint string) *Client {
 }
 
 func (ic *Client) Status() (*RosettaTypes.BlockIdentifier, int64, []*RosettaTypes.Peer, error) {
-	block, err := ic.v3.GetLastBlock()
+	block, err := ic.v3.getLastBlock()
 	if err != nil {
 		return nil, -1, nil, err
 	}
@@ -68,7 +68,7 @@ func (ic *Client) GetBlock(params *RosettaTypes.PartialBlockIdentifier) (*Rosett
 		reqParams.Block = *params.Hash
 	} else if params.Index != nil {
 		if *params.Index == 0 {
-			return ic.getBlockV3(params)
+			return ic.v3.getBlock(params)
 		}
 		reqParams.Height = common.HexInt64{Value: *params.Index}.String()
 	}
@@ -174,63 +174,27 @@ func (ic *Client) populateTransaction(bc *BalanceChange) (*RosettaTypes.Transact
 	}, nil
 }
 
-func (ic *Client) getBlockV3(params *RosettaTypes.PartialBlockIdentifier) (*RosettaTypes.Block, error) {
-	var reqParams *BlockRPCRequest
-	var err error
-	var block *Block
-	if params.Index == nil && params.Hash == nil {
-		block, err = ic.v3.GetLastBlock()
-	} else if params.Index != nil {
-		reqParams = &BlockRPCRequest{
-			Height: common.HexInt64{Value: *params.Index}.String(),
-		}
-		block, err = ic.v3.GetBlockByHeight(reqParams)
-	} else if params.Hash != nil {
-		reqParams = &BlockRPCRequest{
-			Hash: *params.Hash,
-		}
-		block, err = ic.v3.GetBlockByHash(reqParams)
-	} else {
-		return nil, fmt.Errorf("invalid Params")
-	}
-	if err != nil {
-		return nil, fmt.Errorf("%w: could not get block", err)
-	}
-
-	rtBlock, err := ParseBlock(block)
-	if err != nil {
-		return nil, err
-	}
-
-	trsArray, err := ic.v3.GetReceipts(rtBlock)
-	if err != nil {
-		return nil, fmt.Errorf("%w: could not get blockReceipts", err)
-	}
-	ic.v3.MakeBlockWithReceipts(rtBlock, trsArray)
-	return rtBlock, nil
-}
-
 func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*RosettaTypes.Transaction, error) {
 	var reqParams *TransactionRPCRequest
 	reqParams = &TransactionRPCRequest{
 		Hash: params.Hash,
 	}
 
-	tx, err := ic.v3.GetTransaction(reqParams)
+	tx, err := ic.v3.getTransaction(reqParams)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get transaction", err)
 	}
 
-	txR, err := ic.v3.GetTransactionResult(reqParams)
+	txR, err := ic.v3.getTransactionResult(reqParams)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get transaction result", err)
 	}
-	ic.v3.MakeTransactionWithReceipt(tx, txR)
+	ic.v3.makeTransactionWithReceipt(tx, txR)
 	return tx, nil
 }
 
 func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
-	resp, err := ic.v3.GetMainPReps()
+	resp, err := ic.v3.getMainPReps()
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get peer", err)
 	}
@@ -240,7 +204,7 @@ func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 
 	for _, element := range preps.([]interface{}) {
 		address := element.(map[string]interface{})["address"]
-		resp, _ := ic.v3.GetPRep(address.(string))
+		resp, _ := ic.v3.getPRep(address.(string))
 		peers = append(peers, &RosettaTypes.Peer{
 			PeerID:   address.(string),
 			Metadata: *resp,
@@ -255,14 +219,14 @@ func (ic *Client) SendTransaction(tx Transaction) error {
 	if err != nil {
 		return err
 	}
-	if err := ic.v3.SendTransaction(js); err != nil {
+	if err := ic.v3.sendTransaction(js); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (ic *Client) GetDefaultStepCost() (*common.HexInt, error) {
-	res, err := ic.v3.GetStepDefaultStepCost()
+	res, err := ic.v3.getStepDefaultStepCost()
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +244,7 @@ func (ic *Client) GetBalance(
 		// result resides in the next block
 		balReq.Height = common.HexInt64{Value: *block.Index + 1}.String()
 	}
-	balance, err := ic.v3.GetBalance(balReq)
+	balance, err := ic.v3.getBalance(balReq)
 	if err != nil {
 		return nil, err
 	}
@@ -290,12 +254,12 @@ func (ic *Client) GetBalance(
 		blockReq := &BlockRPCRequest{
 			Height: common.HexInt64{Value: *block.Index}.String(),
 		}
-		blockResp, err = ic.v3.GetBlockByHeight(blockReq)
+		blockResp, err = ic.v3.getBlockByHeight(blockReq)
 		if err != nil {
 			return nil, fmt.Errorf("%w: could not get block", err)
 		}
 	} else {
-		blockResp, err = ic.v3.GetLastBlock()
+		blockResp, err = ic.v3.getLastBlock()
 		if err != nil {
 			return nil, fmt.Errorf("%w: could not get last block", err)
 		}
