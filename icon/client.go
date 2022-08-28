@@ -31,6 +31,9 @@ type Client struct {
 }
 
 func NewClient(endpoint string) *Client {
+	// increase the maximum idle connections to solve
+	// "connect: cannot assign requested address" problem
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
 	client := new(http.Client)
 	url := []string{
 		endpoint,
