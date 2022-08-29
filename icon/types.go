@@ -35,17 +35,19 @@ var (
 		GenesisOpType,
 		TransferOpType,
 		FeeOpType,
-		BaseOpType,
 		IssueOpType,
 		BurnOpType,
-		ICXTransferOpType,
+		LostOpType,
+		FSDepositOpType,
+		FSWithdrawOpType,
+		FSFeeOpType,
+		StakeOpType,
+		UnstakeOpType,
 		ClaimOpType,
+		GhostOpType,
+		RewardOpType,
+		RegPRepOpType,
 		MessageOpType,
-		DeployOpType,
-		CallOpType,
-		DepositOpType,
-		WithdrawnType,
-		BugOpType,
 	}
 
 	// OperationStatuses are all supported operation statuses.
@@ -98,16 +100,26 @@ const (
 	TreasuryAddress    = "hx1000000000000000000000000000000000000000"
 	SystemScoreAddress = "cx0000000000000000000000000000000000000000"
 
-	GenesisOpType     = "GENESIS"
-	TransferOpType    = "TRANSFER"
-	FeeOpType         = "FEE"
+	GenesisOpType    = "GENESIS"
+	TransferOpType   = "TRANSFER"
+	FeeOpType        = "FEE"
+	IssueOpType      = "ISSUE"
+	BurnOpType       = "BURN"
+	LostOpType       = "LOST"
+	FSDepositOpType  = "FS_DEPOSIT"
+	FSWithdrawOpType = "FS_WITHDRAW"
+	FSFeeOpType      = "FS_FEE"
+	StakeOpType      = "STAKE"
+	UnstakeOpType    = "UNSTAKE"
+	ClaimOpType      = "CLAIM"
+	GhostOpType      = "GHOST"
+	RewardOpType     = "REWARD"
+	RegPRepOpType    = "REG_PREP"
+	MessageOpType    = "MESSAGE"
+
 	BaseOpType        = "BASE"
-	BurnOpType        = "BURN"
 	WithdrawnType     = "WITHDRAWN"
 	ICXTransferOpType = "ICXTRANSFER"
-	ClaimOpType       = "CLAIM"
-	IssueOpType       = "ISSUE"
-	MessageOpType     = "MESSAGE"
 	DeployOpType      = "DEPLOY"
 	CallOpType        = "CALL"
 	DepositOpType     = "DEPOSIT"
