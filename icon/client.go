@@ -126,42 +126,50 @@ func (ic *Client) populateTransaction(bc *BalanceChange) (*RosettaTypes.Transact
 	var ops []*RosettaTypes.Operation
 	for _, op := range bc.Ops {
 		lastIndex := int64(len(ops))
-		fromOp := &RosettaTypes.Operation{
-			OperationIdentifier: &RosettaTypes.OperationIdentifier{
-				Index: lastIndex,
-			},
-			Type:   op.OpType,
-			Status: RosettaTypes.String(SuccessStatus),
-			Account: &RosettaTypes.AccountIdentifier{
-				Address: op.From,
-			},
-			Amount: &RosettaTypes.Amount{
-				Value:    "-" + op.IntValue(),
-				Currency: ICXCurrency,
-			},
-		}
-		ops = append(ops, fromOp)
-
-		toOp := &RosettaTypes.Operation{
-			OperationIdentifier: &RosettaTypes.OperationIdentifier{
-				Index: lastIndex + 1,
-			},
-			RelatedOperations: []*RosettaTypes.OperationIdentifier{
-				{
+		if op.From != "" {
+			fromOp := &RosettaTypes.Operation{
+				OperationIdentifier: &RosettaTypes.OperationIdentifier{
 					Index: lastIndex,
 				},
-			},
-			Type:   op.OpType,
-			Status: RosettaTypes.String(SuccessStatus),
-			Account: &RosettaTypes.AccountIdentifier{
-				Address: op.To,
-			},
-			Amount: &RosettaTypes.Amount{
-				Value:    op.IntValue(),
-				Currency: ICXCurrency,
-			},
+				Type:   op.OpType,
+				Status: RosettaTypes.String(SuccessStatus),
+				Account: &RosettaTypes.AccountIdentifier{
+					Address: op.From,
+				},
+				Amount: &RosettaTypes.Amount{
+					Value:    "-" + op.IntValue(),
+					Currency: ICXCurrency,
+				},
+			}
+			ops = append(ops, fromOp)
+		} else {
+			lastIndex -= 1
 		}
-		ops = append(ops, toOp)
+
+		if op.To != "" {
+			toOp := &RosettaTypes.Operation{
+				OperationIdentifier: &RosettaTypes.OperationIdentifier{
+					Index: lastIndex + 1,
+				},
+				Type:   op.OpType,
+				Status: RosettaTypes.String(SuccessStatus),
+				Account: &RosettaTypes.AccountIdentifier{
+					Address: op.To,
+				},
+				Amount: &RosettaTypes.Amount{
+					Value:    op.IntValue(),
+					Currency: ICXCurrency,
+				},
+			}
+			if op.From != "" {
+				toOp.RelatedOperations = []*RosettaTypes.OperationIdentifier{
+					{
+						Index: lastIndex,
+					},
+				}
+			}
+			ops = append(ops, toOp)
+		}
 
 		// some assertion check
 		if op.OpType == FeeOpType && op.To != TreasuryAddress {
