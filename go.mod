@@ -3,7 +3,7 @@ module github.com/icon-project/rosetta-icon
 go 1.16
 
 require (
-	github.com/coinbase/rosetta-sdk-go v0.7.10
+	github.com/coinbase/rosetta-sdk-go v0.8.1
 	github.com/fatih/color v1.13.0
 	github.com/icon-project/goloop v1.2.4
 	github.com/spf13/cobra v1.4.0
