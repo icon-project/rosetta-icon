@@ -35,7 +35,7 @@ clean:
 	@$(RM) $(BIN_DIR)/$(BUILD_NAME)
 
 build-docker:
-	docker build -t $(BUILD_NAME):latest https://github.com/icon-project/rosetta-icon.git
+	docker build -t $(BUILD_NAME):latest https://github.com/icon-project/rosetta-icon.git#main
 
 run-lisbon-online:
 	docker run -it --rm -v "$(PWD)/icon-data/lisbon:/data" \
