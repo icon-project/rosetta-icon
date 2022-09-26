@@ -1,0 +1,28 @@
+{
+  "network": {
+    "blockchain": "ICON",
+    "network": "Lisbon"
+  },
+  "data_directory": "cli-data-lisbon",
+  "http_timeout": 300,
+  "max_retries": 15,
+  "max_online_connections": 500,
+  "max_sync_concurrency": 4,
+  "tip_delay": 120,
+  "compression_disabled": true,
+  "l0_in_memory_enabled": true,
+  "coin_supported": false,
+  "data": {
+    "initial_balance_fetch_disabled": true,
+    "pruning_balance_disabled": true,
+    "active_reconciliation_concurrency": 10,
+    "inactive_reconciliation_concurrency": 1,
+    "inactive_reconciliation_frequency": 10000,
+    "end_conditions": {
+      "reconciliation_coverage": {
+        "coverage": 0.95,
+        "from_tip": true
+      }
+    }
+  }
+}
