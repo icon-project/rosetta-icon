@@ -4,7 +4,7 @@
 #
 
 # Configuration
-BUILD_ROOT = $(abspath ./)
+PWD = $(abspath ./)
 BIN_DIR = ./bin
 
 GOBUILD = go build
@@ -20,7 +20,7 @@ BUILD_INFO = tags($(GOBUILD_TAGS))-$(shell date '+%Y-%m-%d-%H:%M:%S')
 
 # Build flags for each command
 LDFLAGS = -ldflags "-X 'main.version=$(GL_VERSION)' -X 'main.build=$(BUILD_INFO)'"
-BUILD_NAME = "rosetta-icon"
+BUILD_NAME = rosetta-icon
 
 .DEFAULT_GOAL := all
 all: clean build
@@ -32,7 +32,18 @@ build:
 	$(GOBUILD_ENVS) $(GOBUILD) $(GOBUILD_FLAGS) -o $(BIN_DIR)/$(BUILD_NAME)
 
 clean:
-	@$(RM) -r $(BIN_DIR)
+	@$(RM) $(BIN_DIR)/$(BUILD_NAME)
+
+build-docker:
+	docker build -t $(BUILD_NAME):latest https://github.com/icon-project/rosetta-icon.git
+
+run-lisbon-online:
+	docker run -it --rm -v "$(PWD)/icon-data/lisbon:/data" \
+	    -p 7080:7080 -p 8080:8080 \
+	    -e ENDPOINT=http://localhost:9080 \
+	    -e NETWORK=LISBON -e MODE=ONLINE -e PORT=8080 \
+	    --name rosetta-icon \
+	    rosetta-icon:latest
 
 # Run Rosetta CLI
 ROSETTA_CLI := rosetta-cli
