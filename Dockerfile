@@ -50,7 +50,6 @@ FROM rocksdb-builder as goloop-builder
 # checkout goloop:rosetta branch
 RUN git clone https://github.com/icon-project/goloop.git \
   && cd goloop \
-  && git checkout rosetta \
   && make goloop
 
 RUN mv goloop/bin/goloop /app/goloop
@@ -88,6 +87,7 @@ RUN cd src \
   && make build
 
 RUN mv src/bin/rosetta-icon /app/rosetta-icon \
+  && mv src/goloop-conf /app/ \
   && rm -rf src
 
 ###################
@@ -95,7 +95,7 @@ RUN mv src/bin/rosetta-icon /app/rosetta-icon \
 FROM ubuntu:20.04
 
 RUN apt-get update \
-  && apt-get install -y python3.8-venv openjdk-11-jre-headless ca-certificates libsnappy1v5 \
+  && apt-get install -y python3.8-venv openjdk-11-jre-headless ca-certificates libsnappy1v5 jq \
   && update-ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
@@ -112,13 +112,15 @@ COPY --from=goloop-builder /app/goloop /app/bin/goloop
 COPY --from=exec-builder /app/venv /app/venv
 COPY --from=exec-builder /app/execman /app/execman
 COPY --from=rosetta-builder /app/rosetta-icon /app/bin/rosetta-icon
+COPY --from=rosetta-builder /app/goloop-conf /app/goloop-conf
+RUN mv /app/goloop-conf/start.sh /app/bin/ \
+  && chmod +x /app/bin/start.sh
 
 # Set executable path
 ENV PATH $PATH:/app/bin
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 
 # Env for goloop entrypoint
-ENV GOLOOP_DATA_ROOT=/data/data
 ENV GOLOOP_NODE_DIR=/data/data
 ENV GOLOOP_CONFIG=/data/config/server.json
 ENV GOLOOP_KEY_STORE=/data/config/keystore.json
@@ -126,6 +128,8 @@ ENV GOLOOP_KEY_SECRET=/data/config/keysecret
 ENV GOLOOP_P2P_LISTEN=":7080"
 ENV GOLOOP_RPC_ADDR=":9080"
 ENV GOLOOP_ENGINES="python,java"
+ENV GOLOOP_CONSOLE_LEVEL=info
+ENV GOLOOP_LOG_WRITER_FILENAME=/data/logs/goloop.log
 ENV JAVAEE_BIN /app/execman/bin/execman
 ENV PYEE_VERIFY_PACKAGE="true"
 
@@ -148,17 +152,15 @@ RUN { \
         echo 'fi'; \
         echo ; \
         echo 'source /app/venv/bin/activate'; \
-        echo 'if [ "${GOLOOP_LOGFILE}" != "" ]; then'; \
-        echo '  GOLOOP_LOGDIR=$(dirname ${GOLOOP_LOGFILE})'; \
+        echo 'if [ "${GOLOOP_LOG_WRITER_FILENAME}" != "" ]; then'; \
+        echo '  GOLOOP_LOGDIR=$(dirname ${GOLOOP_LOG_WRITER_FILENAME})'; \
         echo '  if [ ! -d "${GOLOOP_LOGDIR}" ]; then'; \
         echo '     mkdir -p ${GOLOOP_LOGDIR}'; \
         echo '  fi'; \
-        echo '  exec "$@ 2>&1 | tee -a ${GOLOOP_LOGFILE}"'; \
-        echo 'else'; \
-        echo '  exec "$@"'; \
         echo 'fi'; \
+        echo 'exec "$@"'; \
     } > /entrypoint \
     && chmod +x /entrypoint
 ENTRYPOINT ["/entrypoint"]
 
-CMD ["goloop", "server", "start"]
+CMD ["start.sh"]

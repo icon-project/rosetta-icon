@@ -37,8 +37,11 @@ clean:
 build-docker:
 	docker build -t $(BUILD_NAME):latest https://github.com/icon-project/rosetta-icon.git#main
 
+build-local:
+	docker build -t $(BUILD_NAME):latest .
+
 run-lisbon-online:
-	docker run -it --rm -v "$(PWD)/icon-data/lisbon:/data" \
+	docker run -d --rm -v "$(PWD)/icon-data/lisbon:/data" \
 	    -p 7080:7080 -p 8080:8080 \
 	    -e ENDPOINT=http://localhost:9080 \
 	    -e NETWORK=LISBON -e MODE=ONLINE -e PORT=8080 \
