@@ -24,9 +24,15 @@ start_chain() {
     goloop system config rpcRosetta true
     goloop system config eeInstances 6
 
+    NETKEY=${NETWORK,,}
+    CONF_DIR=/app/goloop-conf/${NETKEY}
+    if [ $NETKEY == "mainnet" ]; then
+      cp ${CONF_DIR}/icon_governance.zip /app/ || exit -1
+    fi
+
     # join chain
-    GENESIS=/app/goloop-conf/${NETWORK,,}/icon_genesis.zip
-    SEED=$(eval "echo \${SEED_${NETWORK,,}}")
+    GENESIS=${CONF_DIR}/icon_genesis.zip
+    SEED=$(eval "echo \${SEED_${NETKEY}}")
     CID=$(goloop chain join \
         --platform icon \
         --channel icon_dex \
@@ -40,6 +46,11 @@ start_chain() {
   fi
   CID=$(eval echo $CID)
   echo "CID=$CID"
+  if [ $NETKEY == "mainnet" ]; then
+    if [ ! -f ${GOLOOP_NODE_DIR}/1/block_v1_proof.bin ]; then
+      cp ${CONF_DIR}/block_v1_proof.bin ${GOLOOP_NODE_DIR}/1/ || exit -1
+    fi
+  fi
   goloop chain start $CID
 }
 

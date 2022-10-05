@@ -40,6 +40,14 @@ build-docker:
 build-local:
 	docker build -t $(BUILD_NAME):latest .
 
+run-mainnet-online:
+	docker run -d --rm -v "$(PWD)/icon-data/mainnet:/data" \
+	    -p 7080:7080 -p 8080:8080 \
+	    -e ENDPOINT=http://localhost:9080 \
+	    -e NETWORK=MAINNET -e MODE=ONLINE -e PORT=8080 \
+	    --name rosetta-icon \
+	    rosetta-icon:latest
+
 run-lisbon-online:
 	docker run -d --rm -v "$(PWD)/icon-data/lisbon:/data" \
 	    -p 7080:7080 -p 8080:8080 \
