@@ -1,4 +1,4 @@
-/bin/
-/docker/cert
-/docker/data
 .idea
+bin/
+cli-data
+icon-data
