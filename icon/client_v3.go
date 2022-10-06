@@ -272,54 +272,6 @@ func (c *ClientV3) getBalance(param *BalanceRPCRequest) (*common.HexInt, error) 
 	return balance, nil
 }
 
-func (c *ClientV3) getMainPReps() (*map[string]interface{}, error) {
-	resp := map[string]interface{}{}
-
-	params := map[string]interface{}{
-		"to":       "cx0000000000000000000000000000000000000000",
-		"dataType": "call",
-		"data": map[string]interface{}{
-			"method": "getMainPReps",
-		},
-	}
-
-	jrReq, err := GetRpcRequest("icx_call", params, -1)
-	if err != nil {
-		return nil, err
-	}
-	_, err = c.Request(jrReq, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-func (c *ClientV3) getPRep(prep string) (*map[string]interface{}, error) {
-	resp := map[string]interface{}{}
-
-	params := map[string]interface{}{
-		"to":       "cx0000000000000000000000000000000000000000",
-		"dataType": "call",
-		"data": map[string]interface{}{
-			"method": "getPRep",
-			"params": map[string]interface{}{
-				"address": prep,
-			},
-		},
-	}
-
-	jrReq, err := GetRpcRequest("icx_call", params, -1)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = c.Request(jrReq, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 func (c *ClientV3) sendTransaction(req interface{}) error {
 	resp := ""
 	jrReq, err := GetRpcRequest("icx_sendTransaction", req, -1)

@@ -88,6 +88,7 @@ const (
 
 	EndpointPrefix  = "api"
 	EndpointVersion = "v3"
+	EndpointAdmin   = "admin"
 	EndpointRosetta = "rosetta"
 
 	ICXSymbol   = "ICX"

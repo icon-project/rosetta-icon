@@ -26,8 +26,9 @@ import (
 // Client is used to fetch blocks from ICON Node and
 // to parser ICON block data into Rosetta types.
 type Client struct {
-	v3 *ClientV3
-	rc *JsonRpcClient
+	admin *ClientAdmin
+	v3    *ClientV3
+	rc    *JsonRpcClient
 }
 
 func NewClient(endpoint string) *Client {
@@ -41,8 +42,9 @@ func NewClient(endpoint string) *Client {
 		EndpointRosetta,
 	}
 	return &Client{
-		v3: NewClientV3(endpoint),
-		rc: NewJsonRpcClient(client, strings.Join(url, "/")),
+		admin: NewClientAdmin(endpoint),
+		v3:    NewClientV3(endpoint),
+		rc:    NewJsonRpcClient(client, strings.Join(url, "/")),
 	}
 }
 
@@ -205,23 +207,25 @@ func (ic *Client) GetTransaction(params *RosettaTypes.TransactionIdentifier) (*R
 }
 
 func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
-	resp, err := ic.v3.getMainPReps()
+	resp, err := ic.admin.getPeers()
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not get peer", err)
 	}
 
 	var peers []*RosettaTypes.Peer
-	preps := (*resp)["preps"]
-
-	for _, element := range preps.([]interface{}) {
-		address := element.(map[string]interface{})["address"]
-		resp, _ := ic.v3.getPRep(address.(string))
-		peers = append(peers, &RosettaTypes.Peer{
-			PeerID:   address.(string),
-			Metadata: *resp,
-		})
+	for _, elem := range resp {
+		info, ok := elem.(map[string]interface{})
+		if ok {
+			peers = append(peers, &RosettaTypes.Peer{
+				PeerID: info["id"].(string),
+				Metadata: map[string]interface{}{
+					"addr": info["addr"],
+					"in":   info["in"],
+					"role": info["role"],
+				},
+			})
+		}
 	}
-
 	return peers, nil
 }
 
