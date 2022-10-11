@@ -215,7 +215,7 @@ func (ic *Client) GetPeer() ([]*RosettaTypes.Peer, error) {
 	var peers []*RosettaTypes.Peer
 	for _, elem := range resp {
 		info, ok := elem.(map[string]interface{})
-		if ok {
+		if ok && len(info) > 0 {
 			peers = append(peers, &RosettaTypes.Peer{
 				PeerID: info["id"].(string),
 				Metadata: map[string]interface{}{
