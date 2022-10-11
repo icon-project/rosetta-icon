@@ -54,11 +54,16 @@ start_chain() {
   goloop chain start $CID
 }
 
-echo "[*] START rosetta-icon server"
-rosetta-icon run &
+if [ x"$MODE" == xONLINE ]; then
+  echo "[*] START rosetta-icon server"
+  rosetta-icon run &
 
-# start chain in backgound
-start_chain &
+  # start chain in backgound
+  start_chain &
 
-echo "[*] START goloop server"
-exec goloop server start
+  echo "[*] START goloop server"
+  exec goloop server start
+else
+  echo "[*] START rosetta-icon server"
+  exec rosetta-icon run
+fi

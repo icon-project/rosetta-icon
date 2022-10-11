@@ -42,18 +42,30 @@ build-local:
 
 run-mainnet-online:
 	docker run -d --rm -v "$(PWD)/icon-data/mainnet:/data" \
-	    -p 7080:7080 -p 8080:8080 \
-	    -e ENDPOINT=http://localhost:9080 \
 	    -e NETWORK=MAINNET -e MODE=ONLINE -e PORT=8080 \
+	    -p 7080:7080 -p 8080:8080 \
 	    --name rosetta-icon \
+	    rosetta-icon:latest
+
+run-mainnet-offline:
+	docker run -d --rm \
+	    -e NETWORK=MAINNET -e MODE=OFFLINE -e PORT=8081 \
+	    -p 8081:8081 \
+	    --name rosetta-icon-offline \
 	    rosetta-icon:latest
 
 run-lisbon-online:
 	docker run -d --rm -v "$(PWD)/icon-data/lisbon:/data" \
-	    -p 7080:7080 -p 8080:8080 \
-	    -e ENDPOINT=http://localhost:9080 \
 	    -e NETWORK=LISBON -e MODE=ONLINE -e PORT=8080 \
-	    --name rosetta-icon \
+	    -p 7080:7080 -p 8080:8080 \
+	    --name rosetta-icon-lisbon \
+	    rosetta-icon:latest
+
+run-lisbon-offline:
+	docker run -d --rm \
+	    -e NETWORK=LISBON -e MODE=OFFLINE -e PORT=8081 \
+	    -p 8081:8081 \
+	    --name rosetta-icon-lisbon-offline \
 	    rosetta-icon:latest
 
 # Run Rosetta CLI
