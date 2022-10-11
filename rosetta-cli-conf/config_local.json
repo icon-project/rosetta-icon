@@ -13,6 +13,7 @@
   "l0_in_memory_enabled": true,
   "coin_supported": false,
   "construction": {
+    "offline_url": "http://localhost:8081",
     "stale_depth": 10,
     "broadcast_limit": 5,
     "constructor_dsl_file": "localnet.ros",

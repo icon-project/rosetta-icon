@@ -3,7 +3,7 @@
     "blockchain": "ICON",
     "network": "Lisbon"
   },
-  "data_directory": "cli-data-lisbon",
+  "data_directory": "cli-data",
   "http_timeout": 300,
   "max_retries": 15,
   "max_online_connections": 500,
