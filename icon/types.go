@@ -65,7 +65,7 @@ var (
 
 const (
 	// NodeVersion is the version of goloop we are using.
-	NodeVersion = "1.2.10"
+	NodeVersion = "1.2.13"
 
 	// Blockchain is ICON.
 	Blockchain string = "ICON"

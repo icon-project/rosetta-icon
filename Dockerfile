@@ -47,9 +47,11 @@ RUN cd rocksdb \
 # Compile goloop
 FROM rocksdb-builder as goloop-builder
 
-# checkout goloop:rosetta branch
+ENV GOLOOP_VERSION v1.2.13
+
 RUN git clone https://github.com/icon-project/goloop.git \
   && cd goloop \
+  && git checkout "$GOLOOP_VERSION" \
   && make goloop
 
 RUN mv goloop/bin/goloop /app/goloop
